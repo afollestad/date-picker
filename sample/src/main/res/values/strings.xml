@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">library-template</string>
+  <string name="go_text">Go!</string>
+</resources>
