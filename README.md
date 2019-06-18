@@ -69,6 +69,8 @@ You can configure basic theme properties from your layout:
     ...
     app:date_picker_selection_color="?colorAccent"
     app:date_picker_header_background_color="?colorAccent"
+    app:date_picker_medium_font="@font/some_medium_font"
+    app:date_picker_normal_font="@font/some_normal_font"
     app:date_picker_selection_vibrates="true"
     />
 ```

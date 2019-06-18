@@ -16,6 +16,7 @@
 package com.afollestad.date.view
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.widget.TextView
 import androidx.annotation.ColorInt
@@ -60,10 +61,14 @@ internal class WeekRowView(
     update()
   }
 
-  fun setSelectionColor(@ColorInt color: Int): WeekRowView {
-    selectionColor = color
+  fun setColorAndFont(
+    @ColorInt selectionColor: Int,
+    typeface: Typeface
+  ): WeekRowView {
+    this.selectionColor = selectionColor
     views.forEach {
-      it.background = createCircularSelector(color)
+      it.background = createCircularSelector(selectionColor)
+      it.typeface = typeface
     }
     return this
   }

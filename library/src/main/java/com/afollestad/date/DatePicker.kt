@@ -19,6 +19,7 @@ package com.afollestad.date
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.View
@@ -32,8 +33,10 @@ import com.afollestad.date.internal.MonthGraph
 import com.afollestad.date.internal.Util.createCircularSelector
 import com.afollestad.date.internal.YearAdapter
 import com.afollestad.date.internal.attachTopDivider
+import com.afollestad.date.internal.color
 import com.afollestad.date.internal.conceal
 import com.afollestad.date.internal.dayOfMonth
+import com.afollestad.date.internal.font
 import com.afollestad.date.internal.hasVibratePermission
 import com.afollestad.date.internal.hide
 import com.afollestad.date.internal.invalidateTopDividerNow
@@ -81,17 +84,27 @@ class DatePicker(
   private val selectionVibrates: Boolean
   private val selectionColor: Int
   private val headerBackgroundColor: Int
+  private val normalFont: Typeface
+  private val mediumFont: Typeface
 
   init {
     inflate(context, R.layout.date_picker, this)
     val ta = context.obtainStyledAttributes(attrs, R.styleable.DatePicker)
     try {
-      val accentColor = context.resolveColor(R.attr.colorAccent)
       selectionVibrates =
         ta.getBoolean(R.styleable.DatePicker_date_picker_selection_vibrates, true)
-      selectionColor = ta.getColor(R.styleable.DatePicker_date_picker_selection_color, accentColor)
-      headerBackgroundColor =
-        ta.getColor(R.styleable.DatePicker_date_picker_header_background_color, accentColor)
+      selectionColor = ta.color(R.styleable.DatePicker_date_picker_selection_color) {
+        context.resolveColor(R.attr.colorAccent)
+      }
+      headerBackgroundColor = ta.color(R.styleable.DatePicker_date_picker_header_background_color) {
+        context.resolveColor(R.attr.colorAccent)
+      }
+      normalFont = ta.font(context, R.styleable.DatePicker_date_picker_normal_font) {
+        Typeface.SANS_SERIF
+      }
+      mediumFont = ta.font(context, R.styleable.DatePicker_date_picker_medium_font) {
+        Typeface.DEFAULT_BOLD
+      }
     } finally {
       ta.recycle()
     }
@@ -144,24 +157,28 @@ class DatePicker(
 
   override fun onFinishInflate() {
     super.onFinishInflate()
-    visibleMonthView = findViewById(R.id.current_month)
+    visibleMonthView = findViewById<TextView>(R.id.current_month).apply {
+      typeface = mediumFont
+    }
     selectedYearView = findViewById<TextView>(R.id.current_year).apply {
       background = ColorDrawable(headerBackgroundColor)
+      typeface = normalFont
       onClickDebounced { switchToYearMode() }
     }
     selectedDateView = findViewById<TextView>(R.id.current_date).apply {
       background = ColorDrawable(headerBackgroundColor)
+      typeface = mediumFont
       onClickDebounced { switchToMonthMode() }
     }
 
     weekRowViews = mutableListOf(
-        findViewById<WeekRowView>(R.id.row_one).setSelectionColor(selectionColor),
-        findViewById<WeekRowView>(R.id.row_two).setSelectionColor(selectionColor),
-        findViewById<WeekRowView>(R.id.row_three).setSelectionColor(selectionColor),
-        findViewById<WeekRowView>(R.id.row_four).setSelectionColor(selectionColor),
-        findViewById<WeekRowView>(R.id.row_five).setSelectionColor(selectionColor),
-        findViewById<WeekRowView>(R.id.row_six).setSelectionColor(selectionColor),
-        findViewById<WeekRowView>(R.id.row_seven).setSelectionColor(selectionColor)
+        findViewById<WeekRowView>(R.id.row_one).setColorAndFont(selectionColor, normalFont),
+        findViewById<WeekRowView>(R.id.row_two).setColorAndFont(selectionColor, normalFont),
+        findViewById<WeekRowView>(R.id.row_three).setColorAndFont(selectionColor, normalFont),
+        findViewById<WeekRowView>(R.id.row_four).setColorAndFont(selectionColor, normalFont),
+        findViewById<WeekRowView>(R.id.row_five).setColorAndFont(selectionColor, normalFont),
+        findViewById<WeekRowView>(R.id.row_six).setColorAndFont(selectionColor, normalFont),
+        findViewById<WeekRowView>(R.id.row_seven).setColorAndFont(selectionColor, normalFont)
     )
     yearsDividerView = findViewById(R.id.year_list_divider)
     yearsRecyclerView = findViewById<RecyclerView>(R.id.year_list).apply {
@@ -207,8 +224,14 @@ class DatePicker(
     yearsRecyclerView.show()
     yearsRecyclerView.invalidateTopDividerNow(yearsDividerView)
     weekRowViews.forEach { it.conceal() }
-    selectedYearView.setTextColor(context.resolveColor(android.R.attr.textColorPrimaryInverse))
-    selectedDateView.setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
+    selectedYearView.apply {
+      setTextColor(context.resolveColor(android.R.attr.textColorPrimaryInverse))
+      typeface = mediumFont
+    }
+    selectedDateView.apply {
+      setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
+      typeface = normalFont
+    }
     vibrateForSelection()
   }
 
@@ -217,8 +240,14 @@ class DatePicker(
     yearsRecyclerView.conceal()
     weekRowViews.forEach { it.show() }
     yearsDividerView.hide()
-    selectedYearView.setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
-    selectedDateView.setTextColor(context.resolveColor(android.R.attr.textColorPrimaryInverse))
+    selectedYearView.apply {
+      setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
+      typeface = normalFont
+    }
+    selectedDateView.apply {
+      setTextColor(context.resolveColor(android.R.attr.textColorPrimaryInverse))
+      typeface = mediumFont
+    }
     vibrateForSelection()
   }
 

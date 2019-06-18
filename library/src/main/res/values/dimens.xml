@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <dimen name="current_month_header_height">48dp</dimen>
-  <dimen name="chevron_side_margins">2dp</dimen>
+  <dimen name="chevron_side_margins">4dp</dimen>
 
   <dimen name="header_main_padding_vertical">16dp</dimen>
   <dimen name="header_main_padding_horizontal">24dp</dimen>
