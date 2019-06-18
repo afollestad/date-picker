@@ -1,8 +1,3 @@
-0.1.3
+0.1.4
 
-* Lower min SDK to 16.
-
-### 0.1.2
-
-* Scope subviews.
-* Constraint layout should be an api dependency.
+* Use correct ConstraintLayout dep (from AndroidX).
