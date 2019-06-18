@@ -5,7 +5,9 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6d7ae4fee74247aa9f9a45946c9e2289)](https://www.codacy.com/app/drummeraidan_50/date-picker?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=afollestad/date-picker&amp;utm_campaign=Badge_Grade)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-<img src="https://raw.githubusercontent.com/afollestad/date-picker/master/art/showcase2.jpg" width="600" />
+<img src="https://raw.githubusercontent.com/afollestad/date-picker/master/art/showcase2.jpg" width="500" />
+
+---
 
 ### Gradle Dependency
 
@@ -16,12 +18,16 @@ dependencies {
 }
 ```
 
+---
+
 ### Why?
 
 Android includes a stock `DatePicker` in its framework, however this widget is very stubborn. It 
 does not adapt to different view widgets, making it difficult to use in modern UI. This library 
 solves for that by creating a custom implementation, based on `ConstraintLayout`, and written 
 completely in Kotlin.
+
+---
 
 ### Usage
 
@@ -50,6 +56,8 @@ datePicker.setDate(
 
 datePicker.setDate(Calendar.getInstance())
 ```
+
+---
 
 ### Styling
 
