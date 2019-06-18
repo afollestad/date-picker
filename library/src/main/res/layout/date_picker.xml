@@ -31,6 +31,7 @@
   <!-- Current Month Header -->
   <com.afollestad.date.view.SquareImageView
       android:id="@+id/left_chevron"
+      android:layout_marginLeft="@dimen/chevron_side_margins"
       android:layout_marginStart="@dimen/chevron_side_margins"
       android:contentDescription="@string/previous_month"
       android:src="@drawable/ic_chevron_left"
@@ -50,6 +51,7 @@
   <com.afollestad.date.view.SquareImageView
       android:id="@+id/right_chevron"
       android:layout_marginEnd="@dimen/chevron_side_margins"
+      android:layout_marginRight="@dimen/chevron_side_margins"
       android:contentDescription="@string/next_month"
       android:src="@drawable/ic_chevron_right"
       app:layout_constraintEnd_toEndOf="parent"
