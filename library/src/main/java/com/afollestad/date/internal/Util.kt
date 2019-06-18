@@ -36,11 +36,14 @@ internal object Util {
     overColoredBackground: Boolean = true
   ): ColorStateList {
     val states = arrayOf(
-        intArrayOf(-android.R.attr.state_selected),
-        intArrayOf(android.R.attr.state_selected)
+        intArrayOf(-android.R.attr.state_enabled),
+        intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_selected),
+        intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected)
     )
+    val disabledTextColor = context.resolveColor(android.R.attr.textColorPrimaryDisableOnly)
     val primaryTextColor = context.resolveColor(android.R.attr.textColorPrimary)
     val colors = intArrayOf(
+        disabledTextColor,
         primaryTextColor,
         if (overColoredBackground) {
           if (selectedColor.isColorDark()) Color.WHITE else Color.BLACK
@@ -66,10 +69,12 @@ internal object Util {
     }
 
     return StateListDrawable().apply {
-      addState(intArrayOf(android.R.attr.state_pressed), selected.mutate().apply {
-        alpha = (255 * 0.3).toInt()
-      })
-      addState(intArrayOf(android.R.attr.state_selected), selected)
+      addState(
+          intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed),
+          selected.mutate().apply {
+            alpha = (255 * 0.3).toInt()
+          })
+      addState(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected), selected)
     }
   }
 
