@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <declare-styleable name="DatePicker">
+    <attr format="boolean" name="date_picker_selection_vibrates"/>
+    <attr format="color" name="date_picker_header_background_color"/>
+    <attr format="color" name="date_picker_selection_color"/>
+  </declare-styleable>
+</resources>

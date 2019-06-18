@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
+    >
+
+  <!-- Main Header -->
+  <TextView
+      android:id="@+id/current_year"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:background="?colorAccent"
+      style="@style/DatePicker.HeaderYear"
+      />
+  <TextView
+      android:id="@+id/current_date"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/current_year"
+      tools:background="?colorAccent"
+      style="@style/DatePicker.HeaderDate"
+      />
+
+  <!-- Current Month Header -->
+  <com.afollestad.date.view.SquareImageView
+      android:id="@+id/left_chevron"
+      android:layout_marginStart="@dimen/chevron_side_margins"
+      android:contentDescription="@string/previous_month"
+      android:src="@drawable/ic_chevron_left"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/current_date"
+      style="@style/DatePicker.Chevron"
+      />
+  <TextView
+      android:id="@+id/current_month"
+      app:layout_constraintEnd_toStartOf="@+id/right_chevron"
+      app:layout_constraintHorizontal_chainStyle="packed"
+      app:layout_constraintStart_toEndOf="@+id/left_chevron"
+      app:layout_constraintTop_toBottomOf="@+id/current_date"
+      tools:text="July 2019"
+      style="@style/DatePicker.CurrentMonth"
+      />
+  <com.afollestad.date.view.SquareImageView
+      android:id="@+id/right_chevron"
+      android:layout_marginEnd="@dimen/chevron_side_margins"
+      android:contentDescription="@string/next_month"
+      android:src="@drawable/ic_chevron_right"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/current_date"
+      style="@style/DatePicker.Chevron"
+      />
+
+  <!-- Week rows for month mode -->
+  <com.afollestad.date.view.WeekRowView
+      android:id="@+id/row_one"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/current_month"
+      style="@style/WeekRowView"
+      />
+  <com.afollestad.date.view.WeekRowView
+      android:id="@+id/row_two"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/row_one"
+      style="@style/WeekRowView"
+      />
+  <com.afollestad.date.view.WeekRowView
+      android:id="@+id/row_three"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/row_two"
+      style="@style/WeekRowView"
+      />
+  <com.afollestad.date.view.WeekRowView
+      android:id="@+id/row_four"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/row_three"
+      style="@style/WeekRowView"
+      />
+  <com.afollestad.date.view.WeekRowView
+      android:id="@+id/row_five"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/row_four"
+      style="@style/WeekRowView"
+      />
+  <com.afollestad.date.view.WeekRowView
+      android:id="@+id/row_six"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/row_five"
+      style="@style/WeekRowView"
+      />
+  <com.afollestad.date.view.WeekRowView
+      android:id="@+id/row_seven"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/row_six"
+      style="@style/WeekRowView"
+      />
+
+  <!-- Year list for year mode-->
+  <View
+      android:id="@+id/year_list_divider"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/divider_height"
+      android:background="?android:listDivider"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/current_month"
+      />
+
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/year_list"
+      app:layout_constraintBottom_toBottomOf="@+id/row_seven"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/year_list_divider"
+      style="@style/YearList"
+      />
+
+</merge>

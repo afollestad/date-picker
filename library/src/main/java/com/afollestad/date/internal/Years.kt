@@ -13,29 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.librarytemplatesample
+package com.afollestad.date.internal
 
-import android.view.View
-
-internal object Debouncer {
-  @Volatile private var enabled: Boolean = true
-  private val enableAgain = Runnable { enabled = true }
-
-  fun canPerform(view: View): Boolean {
-    if (enabled) {
-      enabled = false
-      view.post(enableAgain)
-      return true
-    }
-    return false
-  }
-}
-
-internal fun <T : View> T.onClickDebounced(click: (view: T) -> Unit) {
-  setOnClickListener {
-    if (Debouncer.canPerform(it)) {
-      @Suppress("UNCHECKED_CAST")
-      click(it as T)
-    }
-  }
+/**
+ * If the year (receiver) was 2019, we get 1900 and 2100 in the resulting pair.
+ *
+ * @author Aidan Follestad (@afollestad)
+ */
+internal fun Int.visibleYearRange(): Pair<Int, Int> {
+  val middle = (this / 100f).toInt() * 100
+  return Pair(middle - 100, middle + 100)
 }

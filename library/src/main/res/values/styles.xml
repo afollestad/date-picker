@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <style name="DatePicker"/>
+
+  <style name="DatePicker.CurrentMonth">
+    <item name="android:textColor">?android:textColorPrimary</item>
+    <item name="android:fontFamily">sans-serif-medium</item>
+    <item name="android:gravity">center</item>
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">@dimen/current_month_header_height</item>
+    <item name="android:layout_marginTop">1dp</item>
+  </style>
+
+  <style name="DatePicker.Chevron">
+    <item name="android:layout_width">@dimen/current_month_header_height</item>
+    <item name="android:layout_height">@dimen/current_month_header_height</item>
+    <item name="android:scaleType">center</item>
+    <item name="android:layout_marginTop">1dp</item>
+  </style>
+
+  <style name="DatePicker.HeaderYear">
+    <item name="android:paddingTop">@dimen/header_main_padding_vertical</item>
+    <item name="android:paddingLeft">@dimen/header_main_padding_horizontal</item>
+    <item name="android:paddingRight">@dimen/header_main_padding_horizontal</item>
+    <item name="android:textSize">@dimen/header_main_text_size_year</item>
+    <item name="android:textColor">?android:textColorSecondaryInverse</item>
+    <item name="android:fontFamily">sans-serif</item>
+  </style>
+
+  <style name="DatePicker.HeaderDate">
+    <item name="android:paddingBottom">@dimen/header_main_padding_vertical</item>
+    <item name="android:paddingLeft">@dimen/header_main_padding_horizontal</item>
+    <item name="android:paddingRight">@dimen/header_main_padding_horizontal</item>
+    <item name="android:textSize">@dimen/header_main_text_size_date</item>
+    <item name="android:textColor">?android:textColorPrimaryInverse</item>
+    <item name="android:fontFamily">sans-serif-medium</item>
+  </style>
+
+  <style name="WeekRowView">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:gravity">center</item>
+    <item name="android:minHeight">@dimen/week_day_row_height</item>
+    <item name="android:orientation">horizontal</item>
+  </style>
+
+  <style name="WeekRowView.Column">
+    <item name="android:layout_width">0dp</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:gravity">center</item>
+    <item name="android:fontFamily">sans-serif</item>
+    <item name="android:textSize">@dimen/week_day_row_column_text_size</item>
+    <item name="android:textColor">?android:textColorPrimary</item>
+  </style>
+
+  <style name="YearList">
+    <item name="android:scrollbars">vertical</item>
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">0dp</item>
+    <item name="android:visibility">invisible</item>
+  </style>
+
+  <style name="YearList.Row">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">@dimen/year_list_row_height</item>
+    <item name="android:gravity">center</item>
+    <item name="android:background">?selectableItemBackground</item>
+    <item name="android:textSize">@dimen/year_list_text_size</item>
+    <item name="android:padding">@dimen/year_list_row_padding</item>
+    <item name="android:visibility">visible</item>
+  </style>
+
+</resources>
