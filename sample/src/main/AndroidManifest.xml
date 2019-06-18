@@ -2,7 +2,9 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.afollestad.librarytemplatesample">
+    package="com.afollestad.datepickersample">
+
+  <uses-permission android:name="android.permission.VIBRATE"/>
 
   <application
       android:allowBackup="true"
@@ -12,7 +14,7 @@
       android:supportsRtl="true"
       android:theme="@style/AppTheme"
       tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-    <activity android:name=".MainActivity">
+    <activity android:name="com.afollestad.datepickersample.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

@@ -37,9 +37,9 @@ publish {
   bintrayKey = key
   userOrg = 'drummer-aidan'
   groupId = 'com.afollestad'
-  artifactId = 'library-template'
+  artifactId = 'date-picker'
   publishVersion = versions.publishVersion
-  desc = 'A cool library to do something cool!'
-  website = 'https://github.com/afollestad/library-template'
+  desc = 'A responsive date picker widget for Android, written in Kotlin.'
+  website = 'https://github.com/afollestad/date-picker'
   dryRun = false
 }

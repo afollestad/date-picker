@@ -13,7 +13,7 @@ android {
   }
 
   defaultConfig {
-    applicationId "com.afollestad.librarytemplate"
+    applicationId "com.afollestad.datepickersample"
     minSdkVersion versions.minSdk
     targetSdkVersion versions.compileSdk
     versionCode versions.publishVersionCode
