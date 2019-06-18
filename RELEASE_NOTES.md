@@ -1,3 +1,4 @@
-0.1.1
+0.1.2
 
-* Add attributes to customize fonts.
+* Scope subviews.
+* Constraint layout should be an api dependency.
