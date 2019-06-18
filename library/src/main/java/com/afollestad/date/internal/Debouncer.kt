@@ -17,6 +17,7 @@ package com.afollestad.date.internal
 
 import android.view.View
 
+/** @author Aidan Follestad (@afollestad) */
 internal object Debouncer {
   @Volatile private var enabled: Boolean = true
   private val enableAgain = Runnable { enabled = true }
@@ -31,6 +32,7 @@ internal object Debouncer {
   }
 }
 
+/** @author Aidan Follestad (@afollestad) */
 internal fun <T : View> T.onClickDebounced(click: (view: T) -> Unit): T {
   setOnClickListener {
     if (Debouncer.canPerform(it)) {

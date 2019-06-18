@@ -13,37 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date
 
+import com.afollestad.date.internal.DayOfWeek
+import com.afollestad.date.internal.asDayOfWeek
 import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */
-internal var Calendar.year: Int
+var Calendar.year: Int
   get() = get(Calendar.YEAR)
   set(value) {
     set(Calendar.YEAR, value)
   }
 
 /** @author Aidan Follestad (@afollestad) */
-internal var Calendar.month: Int
+var Calendar.month: Int
   get() = get(Calendar.MONTH)
   set(value) {
     set(Calendar.MONTH, value)
   }
 
 /** @author Aidan Follestad (@afollestad) */
-internal var Calendar.dayOfMonth: Int
+var Calendar.dayOfMonth: Int
   get() = get(Calendar.DAY_OF_MONTH)
   set(value) {
     set(Calendar.DAY_OF_MONTH, value)
   }
 
 /** @author Aidan Follestad (@afollestad) */
-internal val Calendar.dayOfWeek: DayOfWeek
-  get() = get(Calendar.DAY_OF_WEEK).asDayOfWeek()
-
-/** @author Aidan Follestad (@afollestad) */
-internal val Calendar.totalDaysInMonth: Int
+val Calendar.totalDaysInMonth: Int
   get() = getActualMaximum(Calendar.DAY_OF_MONTH)
 
 /** @author Aidan Follestad (@afollestad) */
@@ -57,3 +55,7 @@ internal fun Calendar.decrementMonth() {
   add(Calendar.MONTH, -1)
   set(Calendar.DAY_OF_MONTH, 1)
 }
+
+/** @author Aidan Follestad (@afollestad) */
+internal val Calendar.dayOfWeek: DayOfWeek
+  get() = get(Calendar.DAY_OF_WEEK).asDayOfWeek()

@@ -16,6 +16,12 @@
 package com.afollestad.date.internal
 
 import androidx.annotation.CheckResult
+import com.afollestad.date.dayOfMonth
+import com.afollestad.date.dayOfWeek
+import com.afollestad.date.decrementMonth
+import com.afollestad.date.incrementMonth
+import com.afollestad.date.month
+import com.afollestad.date.totalDaysInMonth
 import java.util.Calendar
 import kotlin.properties.Delegates
 
