@@ -5,7 +5,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6d7ae4fee74247aa9f9a45946c9e2289)](https://www.codacy.com/app/drummeraidan_50/date-picker?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=afollestad/date-picker&amp;utm_campaign=Badge_Grade)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-<img src="https://raw.githubusercontent.com/afollestad/date-picker/master/art/showcase.jpg" width="500" />
+<img src="https://raw.githubusercontent.com/afollestad/date-picker/master/art/showcase2.jpg" width="600" />
 
 ### Gradle Dependency
 
