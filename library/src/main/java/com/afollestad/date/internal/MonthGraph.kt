@@ -16,12 +16,14 @@
 package com.afollestad.date.internal
 
 import androidx.annotation.CheckResult
+import com.afollestad.date.MonthDef
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.dayOfWeek
 import com.afollestad.date.decrementMonth
 import com.afollestad.date.incrementMonth
 import com.afollestad.date.month
 import com.afollestad.date.totalDaysInMonth
+import com.afollestad.date.year
 import java.util.Calendar
 import kotlin.properties.Delegates
 
@@ -36,6 +38,8 @@ internal data class Date(
 
 /** @author Aidan Follestad (@afollestad) */
 internal data class Week(
+  @MonthDef val month: Int,
+  val year: Int,
   val dates: List<Date>
 )
 
@@ -97,7 +101,13 @@ internal class MonthGraph(
       )
       if (datesBuffer.size == DAYS_IN_WEEK) {
         // We've reached another week
-        weeks.add(Week(dates = datesBuffer.toList()))
+        weeks.add(
+            Week(
+                month = calendar.month,
+                year = calendar.year,
+                dates = datesBuffer.toList()
+            )
+        )
         datesBuffer.clear()
       }
     }
@@ -113,12 +123,24 @@ internal class MonthGraph(
           .takeWhile { it != loopTarget }
           .forEach { datesBuffer.add(Date(it)) }
       // Add any left over as a last week
-      weeks.add(Week(dates = datesBuffer.toList()))
+      weeks.add(
+          Week(
+              month = calendar.month,
+              year = calendar.year,
+              dates = datesBuffer.toList()
+          )
+      )
       datesBuffer.clear()
     }
     // Make sure we always come out to 6 weeks at least
     while (weeks.size < TOTAL_WEEKS) {
-      weeks.add(Week(dates = getEmptyDates()))
+      weeks.add(
+          Week(
+              month = calendar.month,
+              year = calendar.year,
+              dates = getEmptyDates()
+          )
+      )
     }
 
     require(weeks.size == TOTAL_WEEKS) { "${weeks.size} must equal $TOTAL_WEEKS" }

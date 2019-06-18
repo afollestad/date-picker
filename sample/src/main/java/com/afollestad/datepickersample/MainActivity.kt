@@ -18,6 +18,7 @@ package com.afollestad.datepickersample
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.afollestad.date.DatePicker
+import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
   private lateinit var datePicker: DatePicker
@@ -30,5 +31,7 @@ class MainActivity : AppCompatActivity() {
     datePicker.onDateChanged {
       toast("Date changed: ${it.format()}")
     }
+
+    datePicker.setMinDate(Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, -2) })
   }
 }

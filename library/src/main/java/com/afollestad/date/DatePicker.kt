@@ -160,12 +160,40 @@ class DatePicker(
     weekRowViews.forEach { it.minDate = minDate }
   }
 
+  /** Sets a min date. Dates before this are not selectable. */
+  fun setMinDate(
+    @IntRange(from = 1, to = MAX_VALUE) year: Int,
+    @MonthDef month: Int,
+    @IntRange(from = 1, to = 31) selectedDate: Int? = null
+  ) {
+    this.minDate = DateSnapshot(
+        month = month,
+        day = selectedDate ?: 1,
+        year = year
+    )
+    weekRowViews.forEach { it.minDate = minDate }
+  }
+
   /** Gets the max date, if any. */
   fun getMaxDate(): Calendar? = this.maxDate?.asCalendar()
 
   /** Sets a max date. Dates after this are not selectable. */
   fun setMaxDate(calendar: Calendar) {
     this.maxDate = calendar.snapshot()
+    weekRowViews.forEach { it.maxDate = maxDate }
+  }
+
+  /** Sets a max date. Dates after this are not selectable. */
+  fun setMaxDate(
+    @IntRange(from = 1, to = MAX_VALUE) year: Int,
+    @MonthDef month: Int,
+    @IntRange(from = 1, to = 31) selectedDate: Int? = null
+  ) {
+    this.maxDate = DateSnapshot(
+        month = month,
+        day = selectedDate ?: 1,
+        year = year
+    )
     weekRowViews.forEach { it.maxDate = maxDate }
   }
 
@@ -334,7 +362,7 @@ class DatePicker(
   }
 
   private fun getSelectedDate(): Int? {
-    if (selectedDate?.month != monthGraph.currentMonth()) {
+    if (selectedDate?.month != monthGraph.calendar.month) {
       return null
     }
     return selectedDate?.day

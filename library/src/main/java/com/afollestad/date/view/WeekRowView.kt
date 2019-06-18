@@ -23,6 +23,7 @@ import com.afollestad.date.DatePicker
 import com.afollestad.date.R
 import com.afollestad.date.internal.DateSnapshot
 import com.afollestad.date.internal.DayOfWeek
+import com.afollestad.date.internal.NO_DATE
 import com.afollestad.date.internal.Week
 import com.afollestad.date.internal.Util.createCircularSelector
 import com.afollestad.date.internal.Util.createTextSelector
@@ -94,7 +95,6 @@ internal class WeekRowView(
         findViewById<TextView>(R.id.six).onClickDebounced(::onColumnClicked),
         findViewById<TextView>(R.id.seven).onClickDebounced(::onColumnClicked)
     )
-    render()
   }
 
   private fun render() {
@@ -106,18 +106,33 @@ internal class WeekRowView(
   }
 
   private fun renderSpecificWeek() {
-    requireNotNull(week) { "week must be provided." }
     check(daysOfWeek == null) { "If a week is provided, daysOfWeek should NOT be." }
+    val currentWeek = week ?: error("Week must be provided!")
+    val actualMinDate = minDate
+    val actualMaxDate = maxDate
 
     for ((index, textView) in views.withIndex()) {
       textView.setTextColor(createTextSelector(context, selectionColor))
-      val date = week!!.dates[index]
-      textView.isSelected = (selectedDate == date.date)
+      val dayOfMonth = currentWeek.dates[index]
+      textView.isSelected = (selectedDate == dayOfMonth.date)
       if (textView.isSelected) {
         datePicker.selectedView = textView
       }
-      textView.text = date.date.positiveOrEmptyAsString()
-      textView.isEnabled = textView.text.isNotEmpty()
+      textView.text = dayOfMonth.date.positiveOrEmptyAsString()
+
+      if (dayOfMonth.date != NO_DATE && (actualMinDate != null || actualMaxDate != null)) {
+        val isBeforeMinDate = actualMinDate != null &&
+            (currentWeek.year < actualMinDate.year ||
+                currentWeek.month < actualMinDate.month ||
+                dayOfMonth.date < actualMinDate.day)
+        val isAfterMaxDate = actualMaxDate != null &&
+            (currentWeek.year > actualMaxDate.year ||
+                currentWeek.month > actualMaxDate.month ||
+                dayOfMonth.date > actualMaxDate.day)
+        textView.isEnabled = !isBeforeMinDate && !isAfterMaxDate
+      } else {
+        textView.isEnabled = textView.text.isNotEmpty()
+      }
     }
   }
 
