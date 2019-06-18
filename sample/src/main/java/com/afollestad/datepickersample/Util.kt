@@ -15,20 +15,21 @@
  */
 package com.afollestad.datepickersample
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.afollestad.date.DatePicker
+import android.app.Activity
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
-class MainActivity : AppCompatActivity() {
-  private lateinit var datePicker: DatePicker
+private var toast: Toast? = null
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
-    datePicker = findViewById(R.id.datePicker)
+internal fun Activity.toast(message: String) {
+  toast?.cancel()
+  toast = Toast.makeText(this, message, LENGTH_SHORT)
+      .apply { show() }
+}
 
-    datePicker.onDateChanged {
-      toast("Date changed: ${it.format()}")
-    }
-  }
+internal fun Calendar.format(): String {
+  return SimpleDateFormat.getDateInstance()
+      .format(time)
 }

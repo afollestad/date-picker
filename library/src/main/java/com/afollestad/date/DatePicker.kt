@@ -51,6 +51,8 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+typealias OnDateChanged = (date: Calendar) -> Unit
+
 /** @author Aidan Follestad (@afollestad) */
 class DatePicker(
   context: Context,
@@ -83,6 +85,8 @@ class DatePicker(
   private val headerBackgroundColor: Int
   private val normalFont: Typeface
   private val mediumFont: Typeface
+  private var minDate: DateSnapshot? = null
+  private val dateChangedListeners: MutableList<OnDateChanged> = mutableListOf()
 
   init {
     inflate(context, R.layout.date_picker, this)
@@ -113,6 +117,11 @@ class DatePicker(
   fun setDate(calendar: Calendar) {
     this.didInit = true
     this.selectedDate = calendar.snapshot()
+    // We clone to send to the callback, since MonthGraph mutates [calendar[
+    if (this.dateChangedListeners.isNotEmpty()) {
+      val calendarCopy = calendar.clone() as Calendar
+      this.dateChangedListeners.forEach { it(calendarCopy) }
+    }
     this.monthGraph = MonthGraph(calendar)
     updateAll()
   }
@@ -137,10 +146,14 @@ class DatePicker(
   /** Gets the selected date, if any. */
   fun getDate(): Calendar? = selectedDate?.asCalendar()
 
-  internal fun onSelectedDate(dateSnapshot: DateSnapshot) {
-    selectedDate = dateSnapshot
-    vibrateForSelection()
-    updateHeaders()
+  /** Appends a listener that is invoked when the selected date changes. */
+  fun onDateChanged(block: OnDateChanged) {
+    dateChangedListeners.add(block)
+  }
+
+  /** Removes a listener that is invoked when the selected date changes. */
+  fun removeOnDateChanged(block: OnDateChanged): Boolean {
+    return dateChangedListeners.remove(block)
   }
 
   override fun onAttachedToWindow() {
@@ -246,6 +259,16 @@ class DatePicker(
       typeface = mediumFont
     }
     vibrateForSelection()
+  }
+
+  internal fun onDateSelected(date: Int) {
+    val calendar = (monthGraph.calendar.clone() as Calendar).apply {
+      dayOfMonth = date
+    }
+    selectedDate = calendar.snapshot()
+    vibrateForSelection()
+    updateHeaders()
+    this.dateChangedListeners.forEach { it(calendar) }
   }
 
   private fun onYearSelected(year: Int) {

@@ -126,7 +126,7 @@ internal class WeekRowView(
     check(value.isNotEmpty()) { "Clickable views cannot have empty text." }
 
     datePicker.selectedView?.isSelected = false
-    datePicker.onSelectedDate(monthGraph!!.snapshot().copy(day = value.toInt()))
+    datePicker.onDateSelected(value.toInt())
     view.isSelected = true
     datePicker.selectedView = view
   }
