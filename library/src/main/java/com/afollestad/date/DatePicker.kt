@@ -24,6 +24,7 @@ import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.IntRange
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,6 +48,7 @@ import com.afollestad.date.internal.show
 import com.afollestad.date.internal.snapshot
 import com.afollestad.date.internal.vibrator
 import com.afollestad.date.view.WeekRowView
+import java.lang.Long.MAX_VALUE
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -75,17 +77,20 @@ class DatePicker(
   private lateinit var selectedYearView: TextView
   private lateinit var selectedDateView: TextView
   private lateinit var visibleMonthView: TextView
+  private lateinit var goPreviousMonthView: View
+  private lateinit var goNextMonthView: View
   private lateinit var weekRowViews: MutableList<WeekRowView>
   private lateinit var yearsRecyclerView: RecyclerView
   private lateinit var yearsDividerView: View
 
   // Config properties
   private val selectionVibrates: Boolean
-  private val selectionColor: Int
+  internal val selectionColor: Int
   private val headerBackgroundColor: Int
-  private val normalFont: Typeface
+  internal val normalFont: Typeface
   private val mediumFont: Typeface
-  private var minDate: DateSnapshot? = null
+  internal var minDate: DateSnapshot? = null
+  internal var maxDate: DateSnapshot? = null
   private val dateChangedListeners: MutableList<OnDateChanged> = mutableListOf()
 
   init {
@@ -128,9 +133,9 @@ class DatePicker(
 
   /** Sets the month and year displayed in the view, along with the selected selectedDate (optionally). */
   fun setDate(
-    year: Int? = null,
-    month: Int,
-    selectedDate: Int? = null
+    @IntRange(from = 1, to = MAX_VALUE) year: Int? = null,
+    @MonthDef month: Int,
+    @IntRange(from = 1, to = 31) selectedDate: Int? = null
   ) = setDate(
       Calendar.getInstance().apply {
         if (year != null) {
@@ -145,6 +150,24 @@ class DatePicker(
 
   /** Gets the selected date, if any. */
   fun getDate(): Calendar? = selectedDate?.asCalendar()
+
+  /** Gets the min date, if any. */
+  fun getMinDate(): Calendar? = this.minDate?.asCalendar()
+
+  /** Sets a min date. Dates before this are not selectable. */
+  fun setMinDate(calendar: Calendar) {
+    this.minDate = calendar.snapshot()
+    weekRowViews.forEach { it.minDate = minDate }
+  }
+
+  /** Gets the max date, if any. */
+  fun getMaxDate(): Calendar? = this.maxDate?.asCalendar()
+
+  /** Sets a max date. Dates after this are not selectable. */
+  fun setMaxDate(calendar: Calendar) {
+    this.maxDate = calendar.snapshot()
+    weekRowViews.forEach { it.maxDate = maxDate }
+  }
 
   /** Appends a listener that is invoked when the selected date changes. */
   fun onDateChanged(block: OnDateChanged) {
@@ -182,13 +205,13 @@ class DatePicker(
     }
 
     weekRowViews = mutableListOf(
-        findViewById<WeekRowView>(R.id.row_one).setColorAndFont(selectionColor, normalFont),
-        findViewById<WeekRowView>(R.id.row_two).setColorAndFont(selectionColor, normalFont),
-        findViewById<WeekRowView>(R.id.row_three).setColorAndFont(selectionColor, normalFont),
-        findViewById<WeekRowView>(R.id.row_four).setColorAndFont(selectionColor, normalFont),
-        findViewById<WeekRowView>(R.id.row_five).setColorAndFont(selectionColor, normalFont),
-        findViewById<WeekRowView>(R.id.row_six).setColorAndFont(selectionColor, normalFont),
-        findViewById<WeekRowView>(R.id.row_seven).setColorAndFont(selectionColor, normalFont)
+        findViewById<WeekRowView>(R.id.row_one).setup(this),
+        findViewById<WeekRowView>(R.id.row_two).setup(this),
+        findViewById<WeekRowView>(R.id.row_three).setup(this),
+        findViewById<WeekRowView>(R.id.row_four).setup(this),
+        findViewById<WeekRowView>(R.id.row_five).setup(this),
+        findViewById<WeekRowView>(R.id.row_six).setup(this),
+        findViewById<WeekRowView>(R.id.row_seven).setup(this)
     )
     yearsDividerView = findViewById(R.id.year_list_divider)
     yearsRecyclerView = findViewById<RecyclerView>(R.id.year_list).apply {
@@ -198,11 +221,11 @@ class DatePicker(
       attachTopDivider(yearsDividerView)
     }
 
-    findViewById<View>(R.id.left_chevron).apply {
+    goPreviousMonthView = findViewById<View>(R.id.left_chevron).apply {
       background = createCircularSelector(selectionColor)
       onClickDebounced { previousMonth() }
     }
-    findViewById<View>(R.id.right_chevron).apply {
+    goNextMonthView = findViewById<View>(R.id.right_chevron).apply {
       background = createCircularSelector(selectionColor)
       onClickDebounced { nextMonth() }
     }
@@ -291,12 +314,16 @@ class DatePicker(
 
     for ((index, view) in weekRowViews.withIndex()) {
       if (index == 0) {
-        view.setState(null, monthGraph, null)
+        view.renderDaysOfWeek(monthGraph.orderedWeekDays)
       } else {
         val week = weeks[index - 1]
-        view.setState(week, monthGraph, getSelectedDate())
+        view.renderWeek(week, getSelectedDate())
       }
     }
+
+    // Disable chevrons if they are out of the min/max date range
+    goPreviousMonthView.isEnabled = monthGraph.canGoBack(minDate)
+    goNextMonthView.isEnabled = monthGraph.canGoForward(maxDate)
   }
 
   private fun updateHeaders() {

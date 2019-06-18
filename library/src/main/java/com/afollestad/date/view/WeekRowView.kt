@@ -16,14 +16,13 @@
 package com.afollestad.date.view
 
 import android.content.Context
-import android.graphics.Typeface
 import android.util.AttributeSet
 import android.widget.TextView
-import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.afollestad.date.DatePicker
 import com.afollestad.date.R
-import com.afollestad.date.internal.MonthGraph
+import com.afollestad.date.internal.DateSnapshot
+import com.afollestad.date.internal.DayOfWeek
 import com.afollestad.date.internal.Week
 import com.afollestad.date.internal.Util.createCircularSelector
 import com.afollestad.date.internal.Util.createTextSelector
@@ -36,39 +35,50 @@ internal class WeekRowView(
   context: Context,
   attrs: AttributeSet?
 ) : ConstraintLayout(context, attrs) {
-
   private val datePicker: DatePicker by lazy {
     parent as? DatePicker ?: error("Parent ($parent) should be a DatePicker!")
   }
+
+  // Specific week mode
   private var week: Week? = null
-  private var monthGraph: MonthGraph? = null
   private var selectedDate: Int? = null
+
+  // Days of week mode
+  private var daysOfWeek: List<DayOfWeek>? = null
+
+  // Config properties
   private var selectionColor: Int by Delegates.notNull()
+  internal var minDate: DateSnapshot? = null
+  internal var maxDate: DateSnapshot? = null
+
   private lateinit var views: MutableList<TextView>
 
   init {
     inflate(context, R.layout.week_row_view, this)
   }
 
-  fun setState(
-    week: Week?,
-    graph: MonthGraph,
+  fun renderWeek(
+    week: Week,
     selectedDate: Int?
   ) {
     this.week = week
-    this.monthGraph = graph
     this.selectedDate = selectedDate
-    update()
+    render()
   }
 
-  fun setColorAndFont(
-    @ColorInt selectionColor: Int,
-    typeface: Typeface
-  ): WeekRowView {
-    this.selectionColor = selectionColor
+  fun renderDaysOfWeek(days: List<DayOfWeek>) {
+    this.daysOfWeek = days
+    render()
+  }
+
+  fun setup(from: DatePicker): WeekRowView {
+    this.selectionColor = from.selectionColor
+    this.minDate = from.minDate
+    this.maxDate = from.maxDate
+
     views.forEach {
       it.background = createCircularSelector(selectionColor)
-      it.typeface = typeface
+      it.typeface = from.normalFont
     }
     return this
   }
@@ -84,40 +94,43 @@ internal class WeekRowView(
         findViewById<TextView>(R.id.six).onClickDebounced(::onColumnClicked),
         findViewById<TextView>(R.id.seven).onClickDebounced(::onColumnClicked)
     )
-    update()
+    render()
   }
 
-  private fun update() {
-    if (monthGraph == null) {
-      return
+  private fun render() {
+    if (week == null) {
+      renderDaysOfWeek()
+    } else {
+      renderSpecificWeek()
     }
+  }
+
+  private fun renderSpecificWeek() {
+    requireNotNull(week) { "week must be provided." }
+    check(daysOfWeek == null) { "If a week is provided, daysOfWeek should NOT be." }
+
     for ((index, textView) in views.withIndex()) {
-      textView.text = when {
-        week == null -> {
-          val dayOfWeek = monthGraph!!.orderedWeekDays[index]
-          dayOfWeek.name.first()
-              .toString()
-        }
-        index < week!!.dates.size -> {
-          val date = week!!.dates[index]
-          textView.isSelected = (selectedDate == date.date)
-          if (textView.isSelected) {
-            datePicker.selectedView = textView
-          }
-          date.date.emptyOrPositiveAsString()
-        }
-        else -> ""
+      textView.setTextColor(createTextSelector(context, selectionColor))
+      val date = week!!.dates[index]
+      textView.isSelected = (selectedDate == date.date)
+      if (textView.isSelected) {
+        datePicker.selectedView = textView
       }
-      if (week == null) {
-        textView.setTextColor(context.resolveColor(android.R.attr.textColorSecondary))
-      } else {
-        textView.setTextColor(createTextSelector(context, selectionColor))
-      }
-      textView.isEnabled = if (week == null) {
-        false
-      } else {
-        textView.text.isNotEmpty()
-      }
+      textView.text = date.date.positiveOrEmptyAsString()
+      textView.isEnabled = textView.text.isNotEmpty()
+    }
+  }
+
+  private fun renderDaysOfWeek() {
+    requireNotNull(daysOfWeek) { "daysOfWeek must be provided." }
+    check(week == null) { "If daysOfWeek are provided, a week should NOT be." }
+
+    for ((index, textView) in views.withIndex()) {
+      textView.setTextColor(context.resolveColor(android.R.attr.textColorSecondary))
+      val dayOfWeek = daysOfWeek!![index]
+      textView.text = dayOfWeek.name.first()
+          .toString()
+      textView.isEnabled = false
     }
   }
 
@@ -127,11 +140,10 @@ internal class WeekRowView(
 
     datePicker.selectedView?.isSelected = false
     datePicker.onDateSelected(value.toInt())
-    view.isSelected = true
-    datePicker.selectedView = view
+    datePicker.selectedView = view.apply { isSelected = true }
   }
 
-  private fun Int.emptyOrPositiveAsString(): String {
+  private fun Int.positiveOrEmptyAsString(): String {
     return if (this < 1) "" else toString()
   }
 }

@@ -52,8 +52,6 @@ internal class MonthGraph(
     invalidateData()
   }
 
-  @CheckResult fun snapshot(): DateSnapshot = calendar.snapshot()
-
   @CheckResult fun currentMonth(): Int = calendar.month
 
   fun previousMonth() {
@@ -61,9 +59,23 @@ internal class MonthGraph(
     invalidateData()
   }
 
+  fun canGoBack(minDate: DateSnapshot?): Boolean {
+    if (minDate == null) {
+      return true
+    }
+    return true // TODO different logic
+  }
+
   fun nextMonth() {
     calendar.incrementMonth()
     invalidateData()
+  }
+
+  fun canGoForward(maxDate: DateSnapshot?): Boolean {
+    if (maxDate == null) {
+      return true
+    }
+    return true // TODO different logic
   }
 
   @CheckResult fun getWeeks(): List<Week> {
