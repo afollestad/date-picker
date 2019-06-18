@@ -17,9 +17,11 @@ package com.afollestad.date.view
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.annotation.RestrictTo
 import androidx.appcompat.widget.AppCompatImageView
 
 /** @author Aidan Follestad (@afollestad) */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 class SquareImageView(
   context: Context,
   attrs: AttributeSet?

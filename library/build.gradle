@@ -31,8 +31,8 @@ android {
 dependencies {
   api 'androidx.appcompat:appcompat:' + versions.androidx
   api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:' + versions.kotlin
-
-  implementation 'com.android.support.constraint:constraint-layout:' + versions.constraintLayout
+  api  'com.android.support.constraint:constraint-layout:' + versions.constraintLayout
+  
   implementation 'androidx.recyclerview:recyclerview:' + versions.recyclerView
 
   testImplementation 'org.robolectric:robolectric:' + versions.robolectric
