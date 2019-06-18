@@ -4,6 +4,8 @@
 [![Build Status](https://travis-ci.org/afollestad/date-picker.svg)](https://travis-ci.org/afollestad/date-picker)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+![Showcase](https://raw.githubusercontent.com/afollestad/date-picker/master/art/showcase.jpg)
+
 ### Gradle Dependency
 
 ```gradle
