@@ -15,7 +15,7 @@
  */
 package com.afollestad.date.internal
 
-import  com.afollestad.date.dayOfMonth
+import com.afollestad.date.dayOfMonth
 import com.afollestad.date.month
 import com.afollestad.date.year
 import java.util.Calendar
