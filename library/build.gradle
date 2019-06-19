@@ -35,7 +35,6 @@ dependencies {
 
   implementation 'androidx.recyclerview:recyclerview:' + versions.recyclerView
 
-  testImplementation 'org.robolectric:robolectric:' + versions.robolectric
   testImplementation 'junit:junit:' + versions.junit
   testImplementation 'org.mockito:mockito-core:' + versions.mockito
   testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:' + versions.mockitoKotlin
