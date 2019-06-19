@@ -1,3 +1,4 @@
-0.1.4
+0.2.0
 
-* Use correct ConstraintLayout dep (from AndroidX).
+* The ability to set min and max dates.
+* The ability to get callbacks when the date changes.
