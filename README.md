@@ -94,7 +94,7 @@ datePicker.onDateChanged { calendar ->
 
 ### Min and Max Dates
 
-<img src="https://raw.githubusercontent.com/afollestad/date-picker/master/art/min_max_date.jpg" width="250" />
+<img src="https://raw.githubusercontent.com/afollestad/date-picker/master/art/min_max_date.png" width="250" />
 
 ```kotlin
 val datePicker: DatePicker = // ...
