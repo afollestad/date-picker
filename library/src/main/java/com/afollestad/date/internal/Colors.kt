@@ -16,6 +16,7 @@
 package com.afollestad.date.internal
 
 import android.graphics.Color
+import androidx.annotation.ColorInt
 
 /** @author Aidan Follestad (@afollestad) */
 internal fun Int.isColorDark(threshold: Double = 0.5): Boolean {
@@ -25,4 +26,9 @@ internal fun Int.isColorDark(threshold: Double = 0.5): Boolean {
   val darkness =
     1 - (0.299 * Color.red(this) + 0.587 * Color.green(this) + 0.114 * Color.blue(this)) / 255
   return darkness >= threshold
+}
+
+/** @author Aidan Follestad (@afollestad) */
+@ColorInt internal fun Int.withAlpha(alpha: Float): Int {
+  return Color.argb((255 * alpha).toInt(), Color.red(this), Color.green(this), Color.blue(this))
 }

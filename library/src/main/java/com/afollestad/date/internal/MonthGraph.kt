@@ -16,7 +16,6 @@
 package com.afollestad.date.internal
 
 import androidx.annotation.CheckResult
-import com.afollestad.date.MonthDef
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.dayOfWeek
 import com.afollestad.date.decrementMonth
@@ -33,12 +32,13 @@ internal const val NO_DATE: Int = -1
 /** @author Aidan Follestad (@afollestad) */
 internal data class Date(
   val dayOfWeek: DayOfWeek,
-  val date: Int = NO_DATE
+  val date: Int = NO_DATE,
+  val lastOfMonth: Boolean
 )
 
 /** @author Aidan Follestad (@afollestad) */
 internal data class Week(
-  @MonthDef val month: Int,
+  val month: Int,
   val year: Int,
   val dates: List<Date>
 )
@@ -55,8 +55,6 @@ internal class MonthGraph(
     calendar.dayOfMonth = 1
     invalidateData()
   }
-
-  @CheckResult fun currentMonth(): Int = calendar.month
 
   fun previousMonth() {
     calendar.decrementMonth()
@@ -89,14 +87,15 @@ internal class MonthGraph(
     // Add prefix days first, days the lead up from last month to the first day of this
     orderedWeekDays
         .takeWhile { it != firstWeekDayInMonth }
-        .forEach { datesBuffer.add(Date(it)) }
+        .forEach { datesBuffer.add(Date(it, lastOfMonth = false)) }
 
     for (date in 1..daysInMonth) {
       calendar.dayOfMonth = date
       datesBuffer.add(
           Date(
               dayOfWeek = calendar.dayOfWeek,
-              date = date
+              date = date,
+              lastOfMonth = date == daysInMonth
           )
       )
       if (datesBuffer.size == DAYS_IN_WEEK) {
@@ -121,7 +120,7 @@ internal class MonthGraph(
           .nextDayOfWeek()
           .andTheRest()
           .takeWhile { it != loopTarget }
-          .forEach { datesBuffer.add(Date(it)) }
+          .forEach { datesBuffer.add(Date(it, lastOfMonth = false)) }
       // Add any left over as a last week
       weeks.add(
           Week(
@@ -148,7 +147,7 @@ internal class MonthGraph(
   }
 
   private fun getEmptyDates(): List<Date> {
-    return orderedWeekDays.map { Date(it, NO_DATE) }
+    return orderedWeekDays.map { Date(it, NO_DATE, lastOfMonth = false) }
   }
 
   private fun invalidateData() {

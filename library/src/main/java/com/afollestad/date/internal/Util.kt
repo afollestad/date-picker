@@ -18,19 +18,23 @@ package com.afollestad.date.internal
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.PorterDuff.Mode.SRC_IN
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.GradientDrawable.OVAL
 import android.graphics.drawable.RippleDrawable
 import android.graphics.drawable.StateListDrawable
 import android.os.Build
+import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 
 /** @author Aidan Follestad (@afollestad) */
 internal object Util {
 
   /** @author Aidan Follestad (@afollestad) */
-  fun createTextSelector(
+  @CheckResult fun createTextSelector(
     context: Context,
     @ColorInt selectedColor: Int,
     overColoredBackground: Boolean = true
@@ -55,7 +59,9 @@ internal object Util {
   }
 
   /** @author Aidan Follestad (@afollestad) */
-  fun createCircularSelector(@ColorInt selectedColor: Int): Drawable {
+  @CheckResult fun createCircularSelector(
+    @ColorInt selectedColor: Int
+  ): Drawable {
     val selected: Drawable = circleShape(selectedColor)
 
     if (Build.VERSION.SDK_INT >= 21) {
@@ -75,6 +81,19 @@ internal object Util {
             alpha = (255 * 0.3).toInt()
           })
       addState(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected), selected)
+    }
+  }
+
+  /** @author Aidan Follestad (@afollestad) */
+  @CheckResult fun coloredDrawable(
+    context: Context,
+    @DrawableRes shapeRes: Int,
+    @ColorInt color: Int
+  ): Drawable {
+    return ContextCompat.getDrawable(context, shapeRes)!!.apply {
+      @Suppress("DEPRECATION")
+      setColorFilter(color, SRC_IN)
+      alpha = Color.alpha(color)
     }
   }
 

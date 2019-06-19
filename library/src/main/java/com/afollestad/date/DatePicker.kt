@@ -47,6 +47,7 @@ import com.afollestad.date.internal.resolveColor
 import com.afollestad.date.internal.show
 import com.afollestad.date.internal.snapshot
 import com.afollestad.date.internal.vibrator
+import com.afollestad.date.internal.withAlpha
 import com.afollestad.date.view.WeekRowView
 import java.lang.Long.MAX_VALUE
 import java.text.SimpleDateFormat
@@ -86,6 +87,7 @@ class DatePicker(
   // Config properties
   private val selectionVibrates: Boolean
   internal val selectionColor: Int
+  internal val disabledBackgroundColor: Int
   private val headerBackgroundColor: Int
   internal val normalFont: Typeface
   private val mediumFont: Typeface
@@ -102,6 +104,10 @@ class DatePicker(
       selectionColor = ta.color(R.styleable.DatePicker_date_picker_selection_color) {
         context.resolveColor(R.attr.colorAccent)
       }
+      disabledBackgroundColor =
+        ta.color(R.styleable.DatePicker_date_picker_disabled_background_color) {
+          context.resolveColor(android.R.attr.textColorSecondary).withAlpha(0.3f)
+        }
       headerBackgroundColor = ta.color(R.styleable.DatePicker_date_picker_header_background_color) {
         context.resolveColor(R.attr.colorAccent)
       }
@@ -134,7 +140,7 @@ class DatePicker(
   /** Sets the month and year displayed in the view, along with the selected selectedDate (optionally). */
   fun setDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int? = null,
-    @MonthDef month: Int,
+    month: Int,
     @IntRange(from = 1, to = 31) selectedDate: Int? = null
   ) = setDate(
       Calendar.getInstance().apply {
@@ -163,7 +169,7 @@ class DatePicker(
   /** Sets a min date. Dates before this are not selectable. */
   fun setMinDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int,
-    @MonthDef month: Int,
+    month: Int,
     @IntRange(from = 1, to = 31) selectedDate: Int? = null
   ) {
     this.minDate = DateSnapshot(
@@ -186,7 +192,7 @@ class DatePicker(
   /** Sets a max date. Dates after this are not selectable. */
   fun setMaxDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int,
-    @MonthDef month: Int,
+    month: Int,
     @IntRange(from = 1, to = 31) selectedDate: Int? = null
   ) {
     this.maxDate = DateSnapshot(
@@ -241,6 +247,7 @@ class DatePicker(
         findViewById<WeekRowView>(R.id.row_six).setup(this),
         findViewById<WeekRowView>(R.id.row_seven).setup(this)
     )
+
     yearsDividerView = findViewById(R.id.year_list_divider)
     yearsRecyclerView = findViewById<RecyclerView>(R.id.year_list).apply {
       layoutManager = LinearLayoutManager(context)

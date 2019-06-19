@@ -38,6 +38,16 @@ internal data class DateSnapshot(
           this.dayOfMonth = newDay
         }
   }
+
+  fun isBefore(other: DateSnapshot?): Boolean {
+    if (other == null) return false
+    return year < other.year || month < other.month || day < other.day
+  }
+
+  fun isAfter(other: DateSnapshot?): Boolean {
+    if (other == null) return false
+    return year > other.year || month > other.month || day > other.day
+  }
 }
 
 /** @author Aidan Follestad (@afollestad) */

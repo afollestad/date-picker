@@ -27,6 +27,7 @@ import com.afollestad.date.internal.NO_DATE
 import com.afollestad.date.internal.Week
 import com.afollestad.date.internal.Util.createCircularSelector
 import com.afollestad.date.internal.Util.createTextSelector
+import com.afollestad.date.internal.Util.coloredDrawable
 import com.afollestad.date.internal.onClickDebounced
 import com.afollestad.date.internal.resolveColor
 import kotlin.properties.Delegates
@@ -49,6 +50,7 @@ internal class WeekRowView(
 
   // Config properties
   private var selectionColor: Int by Delegates.notNull()
+  private var disabledBackgroundColor: Int by Delegates.notNull()
   internal var minDate: DateSnapshot? = null
   internal var maxDate: DateSnapshot? = null
 
@@ -74,13 +76,10 @@ internal class WeekRowView(
 
   fun setup(from: DatePicker): WeekRowView {
     this.selectionColor = from.selectionColor
+    this.disabledBackgroundColor = from.disabledBackgroundColor
     this.minDate = from.minDate
     this.maxDate = from.maxDate
-
-    views.forEach {
-      it.background = createCircularSelector(selectionColor)
-      it.typeface = from.normalFont
-    }
+    this.views.forEach { it.typeface = from.normalFont }
     return this
   }
 
@@ -108,41 +107,63 @@ internal class WeekRowView(
   private fun renderSpecificWeek() {
     check(daysOfWeek == null) { "If a week is provided, daysOfWeek should NOT be." }
     val currentWeek = week ?: error("Week must be provided!")
-    val actualMinDate = minDate
-    val actualMaxDate = maxDate
 
     for ((index, textView) in views.withIndex()) {
-      textView.setTextColor(createTextSelector(context, selectionColor))
       val dayOfMonth = currentWeek.dates[index]
+      textView.setTextColor(createTextSelector(context, selectionColor))
+      textView.text = dayOfMonth.date.positiveOrEmptyAsString()
+
+      if (dayOfMonth.date == NO_DATE) {
+        textView.isEnabled = false
+        textView.isSelected = false
+        textView.background = null
+        continue
+      }
       textView.isSelected = (selectedDate == dayOfMonth.date)
       if (textView.isSelected) {
         datePicker.selectedView = textView
       }
-      textView.text = dayOfMonth.date.positiveOrEmptyAsString()
 
-      if (dayOfMonth.date != NO_DATE && (actualMinDate != null || actualMaxDate != null)) {
-        val isBeforeMinDate = actualMinDate != null &&
-            (currentWeek.year < actualMinDate.year ||
-                currentWeek.month < actualMinDate.month ||
-                dayOfMonth.date < actualMinDate.day)
-        val isAfterMaxDate = actualMaxDate != null &&
-            (currentWeek.year > actualMaxDate.year ||
-                currentWeek.month > actualMaxDate.month ||
-                dayOfMonth.date > actualMaxDate.day)
-        textView.isEnabled = !isBeforeMinDate && !isAfterMaxDate
-      } else {
-        textView.isEnabled = textView.text.isNotEmpty()
+      val currentDate = DateSnapshot(
+          month = currentWeek.month,
+          year = currentWeek.year,
+          day = dayOfMonth.date
+      )
+      when {
+        currentDate.isBefore(minDate) -> {
+          val drawable = when {
+            currentDate.day == 1 -> R.drawable.ic_tube_start
+            currentDate.day == minDate!!.day - 1 -> R.drawable.ic_tube_end
+            else -> R.drawable.ic_tube_middle
+          }
+          textView.background = coloredDrawable(context, drawable, disabledBackgroundColor)
+          textView.isEnabled = false
+        }
+        currentDate.isAfter(maxDate) -> {
+          val drawable = when {
+            dayOfMonth.lastOfMonth -> R.drawable.ic_tube_end
+            currentDate.day == maxDate!!.day + 1 -> R.drawable.ic_tube_start
+            else -> R.drawable.ic_tube_middle
+          }
+          textView.background = coloredDrawable(context, drawable, disabledBackgroundColor)
+          textView.isEnabled = false
+        }
+        else -> {
+          textView.isEnabled = textView.text.toString()
+              .isNotEmpty()
+          textView.background = createCircularSelector(selectionColor)
+        }
       }
     }
   }
 
   private fun renderDaysOfWeek() {
-    requireNotNull(daysOfWeek) { "daysOfWeek must be provided." }
     check(week == null) { "If daysOfWeek are provided, a week should NOT be." }
+    val actualDaysOfWeek = daysOfWeek ?: error("daysOfWeek must be provided.")
 
     for ((index, textView) in views.withIndex()) {
       textView.setTextColor(context.resolveColor(android.R.attr.textColorSecondary))
-      val dayOfWeek = daysOfWeek!![index]
+      val dayOfWeek = actualDaysOfWeek[index]
       textView.text = dayOfWeek.name.first()
           .toString()
       textView.isEnabled = false

@@ -33,5 +33,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     datePicker.setMinDate(Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, -2) })
+    datePicker.setMaxDate(Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, 2) })
   }
 }
