@@ -20,7 +20,9 @@ import com.afollestad.date.dayOfMonth
 import com.afollestad.date.dayOfWeek
 import com.afollestad.date.decrementMonth
 import com.afollestad.date.incrementMonth
+import com.afollestad.date.lastMonth
 import com.afollestad.date.month
+import com.afollestad.date.nextMonth
 import com.afollestad.date.totalDaysInMonth
 import com.afollestad.date.year
 import java.util.Calendar
@@ -65,7 +67,9 @@ internal class MonthGraph(
     if (minDate == null) {
       return true
     }
-    return true // TODO different logic
+    val lastMonth = calendar.lastMonth()
+        .snapshot()
+    return !lastMonth.isBefore(minDate)
   }
 
   fun nextMonth() {
@@ -77,7 +81,9 @@ internal class MonthGraph(
     if (maxDate == null) {
       return true
     }
-    return true // TODO different logic
+    val nextMonth = calendar.nextMonth()
+        .snapshot()
+    return !nextMonth.isAfter(maxDate)
   }
 
   @CheckResult fun getWeeks(): List<Week> {

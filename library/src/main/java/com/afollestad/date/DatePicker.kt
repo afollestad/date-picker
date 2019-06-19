@@ -47,6 +47,7 @@ import com.afollestad.date.internal.isVisible
 import com.afollestad.date.internal.onClickDebounced
 import com.afollestad.date.internal.resolveColor
 import com.afollestad.date.internal.show
+import com.afollestad.date.internal.showOrHide
 import com.afollestad.date.internal.snapshot
 import com.afollestad.date.internal.vibrator
 import com.afollestad.date.internal.withAlpha
@@ -173,11 +174,11 @@ class DatePicker(
   fun setMinDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int,
     month: Int,
-    @IntRange(from = 1, to = 31) selectedDate: Int? = null
+    @IntRange(from = 1, to = 31) dayOfMonth: Int? = null
   ) {
     this.minDate = DateSnapshot(
         month = month,
-        day = selectedDate ?: 1,
+        day = dayOfMonth ?: 1,
         year = year
     )
     weekRowViews.forEach { it.minDate = minDate }
@@ -196,11 +197,11 @@ class DatePicker(
   fun setMaxDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int,
     month: Int,
-    @IntRange(from = 1, to = 31) selectedDate: Int? = null
+    @IntRange(from = 1, to = 31) dayOfMonth: Int? = null
   ) {
     this.maxDate = DateSnapshot(
         month = month,
-        day = selectedDate ?: 1,
+        day = dayOfMonth ?: 1,
         year = year
     )
     weekRowViews.forEach { it.maxDate = maxDate }
@@ -209,11 +210,6 @@ class DatePicker(
   /** Appends a listener that is invoked when the selected date changes. */
   fun onDateChanged(block: OnDateChanged) {
     dateChangedListeners.add(block)
-  }
-
-  /** Removes a listener that is invoked when the selected date changes. */
-  fun removeOnDateChanged(block: OnDateChanged): Boolean {
-    return dateChangedListeners.remove(block)
   }
 
   override fun onAttachedToWindow() {
@@ -360,8 +356,8 @@ class DatePicker(
     }
 
     // Disable chevrons if they are out of the min/max date range
-    goPreviousMonthView.isEnabled = monthGraph.canGoBack(minDate)
-    goNextMonthView.isEnabled = monthGraph.canGoForward(maxDate)
+    goPreviousMonthView.showOrHide(monthGraph.canGoBack(minDate))
+    goNextMonthView.showOrHide(monthGraph.canGoForward(maxDate))
   }
 
   private fun updateHeaders() {

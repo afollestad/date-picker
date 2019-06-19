@@ -44,13 +44,19 @@ internal data class DateSnapshot(
 /** @author Aidan Follestad (@afollestad) */
 @CheckResult internal fun DateSnapshot?.isBefore(other: DateSnapshot?): Boolean {
   if (this == null || other == null) return false
-  return year < other.year || month < other.month || day < other.day
+  if (year < other.year) return true
+  if (year == other.year && month < other.month) return true
+  if (year == other.year && month == other.month && day < other.day) return true
+  return false
 }
 
 /** @author Aidan Follestad (@afollestad) */
 @CheckResult internal fun DateSnapshot?.isAfter(other: DateSnapshot?): Boolean {
   if (this == null || other == null) return false
-  return year > other.year || month > other.month || day > other.day
+  if (year > other.year) return true
+  if (year == other.year && month > other.month) return true
+  if (year == other.year && month == other.month && day > other.day) return true
+  return false
 }
 
 /** @author Aidan Follestad (@afollestad) */

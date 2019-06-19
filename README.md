@@ -29,7 +29,7 @@ completely in Kotlin.
 
 ---
 
-### Usage
+### Basics
 
 It's simple, just add a `DatePicker` to your layout (with the fully qualified package name):
 
@@ -50,10 +50,9 @@ val selectedDate: Calendar? = datePicker.getDate()
 
 datePicker.setDate(
     year = 2019,
-    month = 6,
+    month = Calendar.JUNE,
     selectedDate = 17
 )
-
 datePicker.setDate(Calendar.getInstance())
 ```
 
@@ -71,9 +70,48 @@ You can configure basic theme properties from your layout:
     app:date_picker_header_background_color="?colorAccent"
     app:date_picker_medium_font="@font/some_medium_font"
     app:date_picker_normal_font="@font/some_normal_font"
+    app:date_picker_disabled_background_color="@color/disabled_color"
     app:date_picker_selection_vibrates="true"
     />
 ```
 
 *(Note that in order for date_picker_selection_vibrates=true to have an effect, your app needs to 
 declare the `VIBRATE` permission in its manifest.)*
+
+---
+
+### Callback
+
+```kotlin
+val datePicker: DatePicker = // ...
+
+datePicker.onDateChanged { calendar ->
+  // use calendar - this library provides convenience extensions like month, year, and dayOfMonth too.
+}
+```
+
+---
+
+### Min and Max Dates
+
+<img src="https://raw.githubusercontent.com/afollestad/date-picker/master/art/min_max_date.jpg" width="250" />
+
+```kotlin
+val datePicker: DatePicker = // ...
+
+val minDate = datePicker.getMinDate()
+datePicker.setMinDate(
+  year = 1995,
+  month = Calendar.JULY,
+  dayOfMonth = 28  // optional
+)
+datePicker.setMinDate(Calendar.getInstance())
+
+val maxDate = datePicker.getMaxDate()
+datePicker.setMaxDate(
+  year = 1995,
+  month = Calendar.JULY,
+  dayOfMonth = 28  // optional
+)
+datePicker.setMaxDate(Calendar.getInstance())
+```

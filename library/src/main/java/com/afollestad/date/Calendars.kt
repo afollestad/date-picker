@@ -46,16 +46,32 @@ val Calendar.totalDaysInMonth: Int
 
 /** @author Aidan Follestad (@afollestad) */
 internal fun Calendar.incrementMonth() {
-  add(Calendar.MONTH, 1)
   set(Calendar.DAY_OF_MONTH, 1)
+  add(Calendar.MONTH, 1)
 }
 
 /** @author Aidan Follestad (@afollestad) */
 internal fun Calendar.decrementMonth() {
-  add(Calendar.MONTH, -1)
   set(Calendar.DAY_OF_MONTH, 1)
+  add(Calendar.MONTH, -1)
 }
 
 /** @author Aidan Follestad (@afollestad) */
 internal val Calendar.dayOfWeek: DayOfWeek
   get() = get(Calendar.DAY_OF_WEEK).asDayOfWeek()
+
+/** @author Aidan Follestad (@afollestad) */
+internal fun Calendar.lastMonth(): Calendar {
+  return (clone() as Calendar).apply {
+    decrementMonth()
+    dayOfMonth = totalDaysInMonth
+  }
+}
+
+/** @author Aidan Follestad (@afollestad) */
+internal fun Calendar.nextMonth(): Calendar {
+  return (clone() as Calendar).apply {
+    incrementMonth()
+    dayOfMonth = 1
+  }
+}

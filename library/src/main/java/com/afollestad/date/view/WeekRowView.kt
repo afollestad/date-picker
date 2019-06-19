@@ -153,9 +153,9 @@ internal class WeekRowView(
           textView.isEnabled = false
         }
         else -> {
+          textView.background = createCircularSelector(selectionColor)
           textView.isEnabled = textView.text.toString()
               .isNotEmpty()
-          textView.background = createCircularSelector(selectionColor)
         }
       }
     }
