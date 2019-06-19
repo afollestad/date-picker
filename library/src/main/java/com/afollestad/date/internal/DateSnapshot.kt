@@ -15,6 +15,7 @@
  */
 package com.afollestad.date.internal
 
+import androidx.annotation.CheckResult
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.month
 import com.afollestad.date.year
@@ -38,20 +39,22 @@ internal data class DateSnapshot(
           this.dayOfMonth = newDay
         }
   }
-
-  fun isBefore(other: DateSnapshot?): Boolean {
-    if (other == null) return false
-    return year < other.year || month < other.month || day < other.day
-  }
-
-  fun isAfter(other: DateSnapshot?): Boolean {
-    if (other == null) return false
-    return year > other.year || month > other.month || day > other.day
-  }
 }
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun Calendar.snapshot(): DateSnapshot {
+@CheckResult internal fun DateSnapshot?.isBefore(other: DateSnapshot?): Boolean {
+  if (this == null || other == null) return false
+  return year < other.year || month < other.month || day < other.day
+}
+
+/** @author Aidan Follestad (@afollestad) */
+@CheckResult internal fun DateSnapshot?.isAfter(other: DateSnapshot?): Boolean {
+  if (this == null || other == null) return false
+  return year > other.year || month > other.month || day > other.day
+}
+
+/** @author Aidan Follestad (@afollestad) */
+@CheckResult internal fun Calendar.snapshot(): DateSnapshot {
   return DateSnapshot(
       month = this.month,
       day = this.dayOfMonth,

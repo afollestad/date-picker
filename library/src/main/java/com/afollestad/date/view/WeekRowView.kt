@@ -28,6 +28,8 @@ import com.afollestad.date.internal.Week
 import com.afollestad.date.internal.Util.createCircularSelector
 import com.afollestad.date.internal.Util.createTextSelector
 import com.afollestad.date.internal.Util.coloredDrawable
+import com.afollestad.date.internal.isAfter
+import com.afollestad.date.internal.isBefore
 import com.afollestad.date.internal.onClickDebounced
 import com.afollestad.date.internal.resolveColor
 import kotlin.properties.Delegates
@@ -133,7 +135,8 @@ internal class WeekRowView(
         currentDate.isBefore(minDate) -> {
           val drawable = when {
             currentDate.day == 1 -> R.drawable.ic_tube_start
-            currentDate.day == minDate!!.day - 1 -> R.drawable.ic_tube_end
+            currentDate.day == minDate!!.day - 1 &&
+                currentDate.month == minDate!!.month -> R.drawable.ic_tube_end
             else -> R.drawable.ic_tube_middle
           }
           textView.background = coloredDrawable(context, drawable, disabledBackgroundColor)
@@ -142,7 +145,8 @@ internal class WeekRowView(
         currentDate.isAfter(maxDate) -> {
           val drawable = when {
             dayOfMonth.lastOfMonth -> R.drawable.ic_tube_end
-            currentDate.day == maxDate!!.day + 1 -> R.drawable.ic_tube_start
+            currentDate.day == maxDate!!.day + 1 &&
+                currentDate.month == maxDate!!.month -> R.drawable.ic_tube_start
             else -> R.drawable.ic_tube_middle
           }
           textView.background = coloredDrawable(context, drawable, disabledBackgroundColor)

@@ -40,6 +40,8 @@ import com.afollestad.date.internal.font
 import com.afollestad.date.internal.hasVibratePermission
 import com.afollestad.date.internal.hide
 import com.afollestad.date.internal.invalidateTopDividerNow
+import com.afollestad.date.internal.isAfter
+import com.afollestad.date.internal.isBefore
 import com.afollestad.date.internal.isConcealed
 import com.afollestad.date.internal.isVisible
 import com.afollestad.date.internal.onClickDebounced
@@ -106,7 +108,8 @@ class DatePicker(
       }
       disabledBackgroundColor =
         ta.color(R.styleable.DatePicker_date_picker_disabled_background_color) {
-          context.resolveColor(android.R.attr.textColorSecondary).withAlpha(0.3f)
+          context.resolveColor(android.R.attr.textColorSecondary)
+              .withAlpha(0.3f)
         }
       headerBackgroundColor = ta.color(R.styleable.DatePicker_date_picker_header_background_color) {
         context.resolveColor(R.attr.colorAccent)
@@ -352,7 +355,7 @@ class DatePicker(
         view.renderDaysOfWeek(monthGraph.orderedWeekDays)
       } else {
         val week = weeks[index - 1]
-        view.renderWeek(week, getSelectedDate())
+        view.renderWeek(week, getValidatedSelectedDate())
       }
     }
 
@@ -368,7 +371,10 @@ class DatePicker(
     selectedDateView.text = dateFormatter.format(selectedDateCalendar.time)
   }
 
-  private fun getSelectedDate(): Int? {
+  private fun getValidatedSelectedDate(): Int? {
+    if (selectedDate.isBefore(minDate) || selectedDate.isAfter(maxDate)) {
+      return null
+    }
     if (selectedDate?.month != monthGraph.calendar.month) {
       return null
     }
