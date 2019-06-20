@@ -16,13 +16,11 @@
 package com.afollestad.date.internal
 
 import androidx.annotation.CheckResult
+import androidx.annotation.VisibleForTesting
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.dayOfWeek
-import com.afollestad.date.decrementMonth
-import com.afollestad.date.incrementMonth
-import com.afollestad.date.lastMonth
 import com.afollestad.date.month
-import com.afollestad.date.nextMonth
+import com.afollestad.date.snapshot.DateSnapshot
 import com.afollestad.date.totalDaysInMonth
 import com.afollestad.date.year
 import java.util.Calendar
@@ -35,7 +33,8 @@ internal const val NO_DATE: Int = -1
 internal data class Date(
   val dayOfWeek: DayOfWeek,
   val date: Int = NO_DATE,
-  val lastOfMonth: Boolean
+  val lastOfMonth: Boolean = false,
+  val isSelected: Boolean = false
 )
 
 /** @author Aidan Follestad (@afollestad) */
@@ -47,53 +46,42 @@ internal data class Week(
 
 /** @author Aidan Follestad (@afollestad) */
 internal class MonthGraph(
-  val calendar: Calendar
+  private val calendar: Calendar
 ) {
-  var daysInMonth: Int by Delegates.notNull()
-  lateinit var firstWeekDayInMonth: DayOfWeek
-  lateinit var orderedWeekDays: List<DayOfWeek>
+  @VisibleForTesting var daysInMonth: Int by Delegates.notNull()
+  @VisibleForTesting var firstWeekDayInMonth: DayOfWeek
+  var orderedWeekDays: List<DayOfWeek>
 
   init {
     calendar.dayOfMonth = 1
-    invalidateData()
+    daysInMonth = calendar.totalDaysInMonth
+    firstWeekDayInMonth = calendar.dayOfWeek
+    orderedWeekDays = calendar.firstDayOfWeek
+        .asDayOfWeek()
+        .andTheRest()
   }
 
-  fun previousMonth() {
-    calendar.decrementMonth()
-    invalidateData()
-  }
-
-  fun canGoBack(minDate: DateSnapshot?): Boolean {
-    if (minDate == null) {
-      return true
-    }
-    val lastMonth = calendar.lastMonth()
-        .snapshot()
-    return !lastMonth.isBefore(minDate)
-  }
-
-  fun nextMonth() {
-    calendar.incrementMonth()
-    invalidateData()
-  }
-
-  fun canGoForward(maxDate: DateSnapshot?): Boolean {
-    if (maxDate == null) {
-      return true
-    }
-    val nextMonth = calendar.nextMonth()
-        .snapshot()
-    return !nextMonth.isAfter(maxDate)
-  }
-
-  @CheckResult fun getWeeks(): List<Week> {
+  @CheckResult fun getWeeks(selectedDate: DateSnapshot): List<Week> {
     val weeks = mutableListOf<Week>()
     val datesBuffer = mutableListOf<Date>()
 
     // Add prefix days first, days the lead up from last month to the first day of this
-    orderedWeekDays
-        .takeWhile { it != firstWeekDayInMonth }
-        .forEach { datesBuffer.add(Date(it, lastOfMonth = false)) }
+    datesBuffer.addAll(
+        orderedWeekDays
+            .takeWhile { it != firstWeekDayInMonth }
+            .map { Date(it) }
+    )
+    if (datesBuffer.size == DAYS_IN_WEEK) {
+      // We've reached another week
+      weeks.add(
+          Week(
+              month = calendar.month,
+              year = calendar.year,
+              dates = datesBuffer.toList()
+          )
+      )
+      datesBuffer.clear()
+    }
 
     for (date in 1..daysInMonth) {
       calendar.dayOfMonth = date
@@ -101,7 +89,8 @@ internal class MonthGraph(
           Date(
               dayOfWeek = calendar.dayOfWeek,
               date = date,
-              lastOfMonth = date == daysInMonth
+              lastOfMonth = date == daysInMonth,
+              isSelected = selectedDate == DateSnapshot(calendar.month, date, calendar.year)
           )
       )
       if (datesBuffer.size == DAYS_IN_WEEK) {
@@ -121,12 +110,14 @@ internal class MonthGraph(
       // Fill in remaining days of week
       val loopTarget = orderedWeekDays.last()
           .nextDayOfWeek()
-      datesBuffer.last()
-          .dayOfWeek
-          .nextDayOfWeek()
-          .andTheRest()
-          .takeWhile { it != loopTarget }
-          .forEach { datesBuffer.add(Date(it, lastOfMonth = false)) }
+      datesBuffer.addAll(
+          datesBuffer.last()
+              .dayOfWeek
+              .nextDayOfWeek()
+              .andTheRest()
+              .takeWhile { it != loopTarget }
+              .map { Date(it) }
+      )
       // Add any left over as a last week
       weeks.add(
           Week(
@@ -153,15 +144,7 @@ internal class MonthGraph(
   }
 
   private fun getEmptyDates(): List<Date> {
-    return orderedWeekDays.map { Date(it, NO_DATE, lastOfMonth = false) }
-  }
-
-  private fun invalidateData() {
-    daysInMonth = calendar.totalDaysInMonth
-    firstWeekDayInMonth = calendar.dayOfWeek
-    orderedWeekDays = calendar.firstDayOfWeek
-        .asDayOfWeek()
-        .andTheRest()
+    return orderedWeekDays.map { Date(it, NO_DATE) }
   }
 
   private companion object {

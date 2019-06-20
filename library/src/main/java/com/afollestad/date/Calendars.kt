@@ -45,33 +45,19 @@ val Calendar.totalDaysInMonth: Int
   get() = getActualMaximum(Calendar.DAY_OF_MONTH)
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun Calendar.incrementMonth() {
+internal fun Calendar.incrementMonth(): Calendar {
   set(Calendar.DAY_OF_MONTH, 1)
   add(Calendar.MONTH, 1)
+  return this
 }
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun Calendar.decrementMonth() {
-  set(Calendar.DAY_OF_MONTH, 1)
+internal fun Calendar.decrementMonth(): Calendar {
   add(Calendar.MONTH, -1)
+  set(Calendar.DAY_OF_MONTH, totalDaysInMonth)
+  return this
 }
 
 /** @author Aidan Follestad (@afollestad) */
 internal val Calendar.dayOfWeek: DayOfWeek
   get() = get(Calendar.DAY_OF_WEEK).asDayOfWeek()
-
-/** @author Aidan Follestad (@afollestad) */
-internal fun Calendar.lastMonth(): Calendar {
-  return (clone() as Calendar).apply {
-    decrementMonth()
-    dayOfMonth = totalDaysInMonth
-  }
-}
-
-/** @author Aidan Follestad (@afollestad) */
-internal fun Calendar.nextMonth(): Calendar {
-  return (clone() as Calendar).apply {
-    incrementMonth()
-    dayOfMonth = 1
-  }
-}

@@ -13,35 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.snapshot
 
-import android.view.View
-import android.view.View.GONE
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import androidx.annotation.CheckResult
+import com.afollestad.date.dayOfMonth
+import com.afollestad.date.month
+import com.afollestad.date.year
+import java.util.Calendar
+import java.util.Locale
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun View.show() {
-  visibility = VISIBLE
+internal data class MonthSnapshot(
+  val month: Int,
+  val year: Int
+)
+
+/** @author Aidan Follestad (@afollestad) */
+@CheckResult internal fun Calendar.snapshotMonth(): MonthSnapshot {
+  return MonthSnapshot(
+      month = this.month,
+      year = this.year
+  )
 }
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun View.hide() {
-  visibility = GONE
+@CheckResult internal fun MonthSnapshot.asCalendar(day: Int): Calendar {
+  val snapshot = this
+  return Calendar.getInstance(Locale.getDefault())
+      .apply {
+        this.year = snapshot.year
+        this.month = snapshot.month
+        this.dayOfMonth = day
+      }
 }
-
-/** @author Aidan Follestad (@afollestad) */
-internal fun View.conceal() {
-  visibility = INVISIBLE
-}
-
-/** @author Aidan Follestad (@afollestad) */
-internal fun View.showOrHide(show: Boolean) = if (show) show() else hide()
-
-internal fun View.showOrConceal(show: Boolean) = if (show) show() else conceal()
-
-/** @author Aidan Follestad (@afollestad) */
-internal fun View.isVisible(): Boolean = visibility == VISIBLE
-
-/** @author Aidan Follestad (@afollestad) */
-internal fun View.isConcealed(): Boolean = visibility == INVISIBLE

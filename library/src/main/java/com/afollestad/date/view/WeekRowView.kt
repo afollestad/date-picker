@@ -21,15 +21,14 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.afollestad.date.DatePicker
 import com.afollestad.date.R
-import com.afollestad.date.internal.DateSnapshot
+import com.afollestad.date.controllers.MinMaxController
+import com.afollestad.date.snapshot.DateSnapshot
 import com.afollestad.date.internal.DayOfWeek
 import com.afollestad.date.internal.NO_DATE
 import com.afollestad.date.internal.Week
 import com.afollestad.date.internal.Util.createCircularSelector
 import com.afollestad.date.internal.Util.createTextSelector
 import com.afollestad.date.internal.Util.coloredDrawable
-import com.afollestad.date.internal.isAfter
-import com.afollestad.date.internal.isBefore
 import com.afollestad.date.internal.onClickDebounced
 import com.afollestad.date.internal.resolveColor
 import kotlin.properties.Delegates
@@ -45,7 +44,6 @@ internal class WeekRowView(
 
   // Specific week mode
   private var week: Week? = null
-  private var selectedDate: Int? = null
 
   // Days of week mode
   private var daysOfWeek: List<DayOfWeek>? = null
@@ -53,21 +51,16 @@ internal class WeekRowView(
   // Config properties
   private var selectionColor: Int by Delegates.notNull()
   private var disabledBackgroundColor: Int by Delegates.notNull()
-  internal var minDate: DateSnapshot? = null
-  internal var maxDate: DateSnapshot? = null
 
+  private lateinit var minMaxController: MinMaxController
   private lateinit var views: MutableList<TextView>
 
   init {
     inflate(context, R.layout.week_row_view, this)
   }
 
-  fun renderWeek(
-    week: Week,
-    selectedDate: Int?
-  ) {
+  fun renderWeek(week: Week) {
     this.week = week
-    this.selectedDate = selectedDate
     render()
   }
 
@@ -77,10 +70,9 @@ internal class WeekRowView(
   }
 
   fun setup(from: DatePicker): WeekRowView {
+    this.minMaxController = from.minMaxController
     this.selectionColor = from.selectionColor
     this.disabledBackgroundColor = from.disabledBackgroundColor
-    this.minDate = from.minDate
-    this.maxDate = from.maxDate
     this.views.forEach { it.typeface = from.normalFont }
     return this
   }
@@ -121,34 +113,22 @@ internal class WeekRowView(
         textView.background = null
         continue
       }
-      textView.isSelected = (selectedDate == dayOfMonth.date)
-      if (textView.isSelected) {
-        datePicker.selectedView = textView
-      }
 
       val currentDate = DateSnapshot(
           month = currentWeek.month,
           year = currentWeek.year,
           day = dayOfMonth.date
       )
+      textView.isSelected = dayOfMonth.isSelected
+
       when {
-        currentDate.isBefore(minDate) -> {
-          val drawable = when {
-            currentDate.day == 1 -> R.drawable.ic_tube_start
-            currentDate.day == minDate!!.day - 1 &&
-                currentDate.month == minDate!!.month -> R.drawable.ic_tube_end
-            else -> R.drawable.ic_tube_middle
-          }
-          textView.background = coloredDrawable(context, drawable, disabledBackgroundColor)
+        minMaxController.isOutOfMinRange(currentDate) -> {
+          val drawableRes = minMaxController.getOutOfMinRangeBackgroundRes(currentDate)
+          textView.background = coloredDrawable(context, drawableRes, disabledBackgroundColor)
           textView.isEnabled = false
         }
-        currentDate.isAfter(maxDate) -> {
-          val drawable = when {
-            dayOfMonth.lastOfMonth -> R.drawable.ic_tube_end
-            currentDate.day == maxDate!!.day + 1 &&
-                currentDate.month == maxDate!!.month -> R.drawable.ic_tube_start
-            else -> R.drawable.ic_tube_middle
-          }
+        minMaxController.isOutOfMaxRange(currentDate) -> {
+          val drawable = minMaxController.getOutOfMaxRangeBackgroundRes(dayOfMonth, currentDate)
           textView.background = coloredDrawable(context, drawable, disabledBackgroundColor)
           textView.isEnabled = false
         }
@@ -177,10 +157,7 @@ internal class WeekRowView(
   private fun onColumnClicked(view: TextView) {
     val value = view.text.toString()
     check(value.isNotEmpty()) { "Clickable views cannot have empty text." }
-
-    datePicker.selectedView?.isSelected = false
-    datePicker.onDateSelected(value.toInt())
-    datePicker.selectedView = view.apply { isSelected = true }
+    datePicker.controller.setDayOfMonth(value.toInt())
   }
 
   private fun Int.positiveOrEmptyAsString(): String {

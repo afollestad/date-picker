@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
       toast("Date changed: ${it.format()}")
     }
 
-    datePicker.setMinDate(Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, -12) })
-    datePicker.setMaxDate(Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, 5) })
+    datePicker.setMinDate(Calendar.getInstance().apply { add(Calendar.MONTH, -1) })
+    datePicker.setMaxDate(Calendar.getInstance().apply { add(Calendar.MONTH, 1) })
   }
 }

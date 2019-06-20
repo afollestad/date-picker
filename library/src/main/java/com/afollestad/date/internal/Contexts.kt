@@ -15,12 +15,8 @@
  */
 package com.afollestad.date.internal
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.os.Vibrator
 import androidx.annotation.AttrRes
-import androidx.core.content.ContextCompat
 
 /** @author Aidan Follestad (@afollestad) */
 internal fun Context.resolveColor(
@@ -37,17 +33,4 @@ internal fun Context.resolveColor(
   } finally {
     a.recycle()
   }
-}
-
-/** @author Aidan Follestad (@afollestad) */
-internal fun Context.hasVibratePermission(): Boolean {
-  return ContextCompat.checkSelfPermission(
-      this,
-      Manifest.permission.VIBRATE
-  ) == PERMISSION_GRANTED
-}
-
-/** @author Aidan Follestad (@afollestad) */
-internal fun Context.vibrator(): Vibrator {
-  return getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 }

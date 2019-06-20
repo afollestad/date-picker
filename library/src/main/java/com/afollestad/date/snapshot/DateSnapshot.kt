@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.snapshot
 
 import androidx.annotation.CheckResult
 import com.afollestad.date.dayOfMonth
@@ -28,7 +28,7 @@ internal data class DateSnapshot(
   val day: Int,
   val year: Int
 ) {
-  fun asCalendar(): Calendar {
+  @CheckResult fun asCalendar(): Calendar {
     val newMonth = month
     val newDay = day
     val newYear = year
@@ -39,24 +39,6 @@ internal data class DateSnapshot(
           this.dayOfMonth = newDay
         }
   }
-}
-
-/** @author Aidan Follestad (@afollestad) */
-@CheckResult internal fun DateSnapshot?.isBefore(other: DateSnapshot?): Boolean {
-  if (this == null || other == null) return false
-  if (year < other.year) return true
-  if (year == other.year && month < other.month) return true
-  if (year == other.year && month == other.month && day < other.day) return true
-  return false
-}
-
-/** @author Aidan Follestad (@afollestad) */
-@CheckResult internal fun DateSnapshot?.isAfter(other: DateSnapshot?): Boolean {
-  if (this == null || other == null) return false
-  if (year > other.year) return true
-  if (year == other.year && month > other.month) return true
-  if (year == other.year && month == other.month && day > other.day) return true
-  return false
 }
 
 /** @author Aidan Follestad (@afollestad) */

@@ -22,6 +22,7 @@ import com.afollestad.date.internal.DayOfWeek.SUNDAY
 import com.afollestad.date.internal.DayOfWeek.THURSDAY
 import com.afollestad.date.internal.DayOfWeek.TUESDAY
 import com.afollestad.date.internal.DayOfWeek.WEDNESDAY
+import com.afollestad.date.snapshot.snapshot
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.Calendar
@@ -36,6 +37,7 @@ class MonthGraphTest {
           set(Calendar.MONTH, Calendar.JANUARY)
           set(Calendar.DAY_OF_MONTH, 5)
         }
+    val selectedDate = calendar.snapshot()
 
     val graph = MonthGraph(calendar)
     assertThat(graph.firstWeekDayInMonth).isEqualTo(TUESDAY)
@@ -44,73 +46,73 @@ class MonthGraphTest {
     )
     assertThat(graph.daysInMonth).isEqualTo(31)
 
-    val weeks = graph.getWeeks()
+    val weeks = graph.getWeeks(selectedDate)
     assertThat(weeks.size).isEqualTo(6)
 
     assertThat(weeks[0].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, NO_DATE, false),
-            Date(MONDAY, NO_DATE, false),
-            Date(TUESDAY, 1, false),
-            Date(WEDNESDAY, 2, false),
-            Date(THURSDAY, 3, false),
-            Date(FRIDAY, 4, false),
-            Date(SATURDAY, 5, false)
+            Date(SUNDAY, NO_DATE),
+            Date(MONDAY, NO_DATE),
+            Date(TUESDAY, 1),
+            Date(WEDNESDAY, 2),
+            Date(THURSDAY, 3),
+            Date(FRIDAY, 4),
+            Date(SATURDAY, 5, isSelected = true)
         )
     )
     assertThat(weeks[1].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 6, false),
-            Date(MONDAY, 7, false),
-            Date(TUESDAY, 8, false),
-            Date(WEDNESDAY, 9, false),
-            Date(THURSDAY, 10, false),
-            Date(FRIDAY, 11, false),
-            Date(SATURDAY, 12, false)
+            Date(SUNDAY, 6),
+            Date(MONDAY, 7),
+            Date(TUESDAY, 8),
+            Date(WEDNESDAY, 9),
+            Date(THURSDAY, 10),
+            Date(FRIDAY, 11),
+            Date(SATURDAY, 12)
         )
     )
     assertThat(weeks[2].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 13, false),
-            Date(MONDAY, 14, false),
-            Date(TUESDAY, 15, false),
-            Date(WEDNESDAY, 16, false),
-            Date(THURSDAY, 17, false),
-            Date(FRIDAY, 18, false),
-            Date(SATURDAY, 19, false)
+            Date(SUNDAY, 13),
+            Date(MONDAY, 14),
+            Date(TUESDAY, 15),
+            Date(WEDNESDAY, 16),
+            Date(THURSDAY, 17),
+            Date(FRIDAY, 18),
+            Date(SATURDAY, 19)
         )
     )
     assertThat(weeks[3].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 20, false),
-            Date(MONDAY, 21, false),
-            Date(TUESDAY, 22, false),
-            Date(WEDNESDAY, 23, false),
-            Date(THURSDAY, 24, false),
-            Date(FRIDAY, 25, false),
-            Date(SATURDAY, 26, false)
+            Date(SUNDAY, 20),
+            Date(MONDAY, 21),
+            Date(TUESDAY, 22),
+            Date(WEDNESDAY, 23),
+            Date(THURSDAY, 24),
+            Date(FRIDAY, 25),
+            Date(SATURDAY, 26)
         )
     )
     assertThat(weeks[4].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 27, false),
-            Date(MONDAY, 28, false),
-            Date(TUESDAY, 29, false),
-            Date(WEDNESDAY, 30, false),
-            Date(THURSDAY, 31, true),
-            Date(FRIDAY, NO_DATE, false),
-            Date(SATURDAY, NO_DATE, false)
+            Date(SUNDAY, 27),
+            Date(MONDAY, 28),
+            Date(TUESDAY, 29),
+            Date(WEDNESDAY, 30),
+            Date(THURSDAY, 31, lastOfMonth = true),
+            Date(FRIDAY, NO_DATE),
+            Date(SATURDAY, NO_DATE)
         )
     )
     assertThat(weeks[5].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, NO_DATE, false),
-            Date(MONDAY, NO_DATE, false),
-            Date(TUESDAY, NO_DATE, false),
-            Date(WEDNESDAY, NO_DATE, false),
-            Date(THURSDAY, NO_DATE, false),
-            Date(FRIDAY, NO_DATE, false),
-            Date(SATURDAY, NO_DATE, false)
+            Date(SUNDAY, NO_DATE),
+            Date(MONDAY, NO_DATE),
+            Date(TUESDAY, NO_DATE),
+            Date(WEDNESDAY, NO_DATE),
+            Date(THURSDAY, NO_DATE),
+            Date(FRIDAY, NO_DATE),
+            Date(SATURDAY, NO_DATE)
         )
     )
   }
@@ -122,6 +124,7 @@ class MonthGraphTest {
           set(Calendar.MONTH, Calendar.FEBRUARY)
           set(Calendar.DAY_OF_MONTH, 1)
         }
+    val selectedDate = calendar.snapshot()
 
     val graph = MonthGraph(calendar)
     assertThat(graph.firstWeekDayInMonth).isEqualTo(FRIDAY)
@@ -130,73 +133,73 @@ class MonthGraphTest {
     )
     assertThat(graph.daysInMonth).isEqualTo(28)
 
-    val weeks = graph.getWeeks()
+    val weeks = graph.getWeeks(selectedDate)
     assertThat(weeks.size).isEqualTo(6)
 
     assertThat(weeks[0].dates).isEqualTo(
         listOf(
-            Date(MONDAY, NO_DATE, false),
-            Date(TUESDAY, NO_DATE, false),
-            Date(WEDNESDAY, NO_DATE, false),
-            Date(THURSDAY, NO_DATE, false),
-            Date(FRIDAY, 1, false),
-            Date(SATURDAY, 2, false),
-            Date(SUNDAY, 3, false)
+            Date(MONDAY, NO_DATE),
+            Date(TUESDAY, NO_DATE),
+            Date(WEDNESDAY, NO_DATE),
+            Date(THURSDAY, NO_DATE),
+            Date(FRIDAY, 1, isSelected = true),
+            Date(SATURDAY, 2),
+            Date(SUNDAY, 3)
         )
     )
     assertThat(weeks[1].dates).isEqualTo(
         listOf(
-            Date(MONDAY, 4, false),
-            Date(TUESDAY, 5, false),
-            Date(WEDNESDAY, 6, false),
-            Date(THURSDAY, 7, false),
-            Date(FRIDAY, 8, false),
-            Date(SATURDAY, 9, false),
-            Date(SUNDAY, 10, false)
+            Date(MONDAY, 4),
+            Date(TUESDAY, 5),
+            Date(WEDNESDAY, 6),
+            Date(THURSDAY, 7),
+            Date(FRIDAY, 8),
+            Date(SATURDAY, 9),
+            Date(SUNDAY, 10)
         )
     )
     assertThat(weeks[2].dates).isEqualTo(
         listOf(
-            Date(MONDAY, 11, false),
-            Date(TUESDAY, 12, false),
-            Date(WEDNESDAY, 13, false),
-            Date(THURSDAY, 14, false),
-            Date(FRIDAY, 15, false),
-            Date(SATURDAY, 16, false),
-            Date(SUNDAY, 17, false)
+            Date(MONDAY, 11),
+            Date(TUESDAY, 12),
+            Date(WEDNESDAY, 13),
+            Date(THURSDAY, 14),
+            Date(FRIDAY, 15),
+            Date(SATURDAY, 16),
+            Date(SUNDAY, 17)
         )
     )
     assertThat(weeks[3].dates).isEqualTo(
         listOf(
-            Date(MONDAY, 18, false),
-            Date(TUESDAY, 19, false),
-            Date(WEDNESDAY, 20, false),
-            Date(THURSDAY, 21, false),
-            Date(FRIDAY, 22, false),
-            Date(SATURDAY, 23, false),
-            Date(SUNDAY, 24, false)
+            Date(MONDAY, 18),
+            Date(TUESDAY, 19),
+            Date(WEDNESDAY, 20),
+            Date(THURSDAY, 21),
+            Date(FRIDAY, 22),
+            Date(SATURDAY, 23),
+            Date(SUNDAY, 24)
         )
     )
     assertThat(weeks[4].dates).isEqualTo(
         listOf(
-            Date(MONDAY, 25, false),
-            Date(TUESDAY, 26, false),
-            Date(WEDNESDAY, 27, false),
-            Date(THURSDAY, 28, true),
-            Date(FRIDAY, NO_DATE, false),
-            Date(SATURDAY, NO_DATE, false),
-            Date(SUNDAY, NO_DATE, false)
+            Date(MONDAY, 25),
+            Date(TUESDAY, 26),
+            Date(WEDNESDAY, 27),
+            Date(THURSDAY, 28, lastOfMonth = true),
+            Date(FRIDAY, NO_DATE),
+            Date(SATURDAY, NO_DATE),
+            Date(SUNDAY, NO_DATE)
         )
     )
     assertThat(weeks[5].dates).isEqualTo(
         listOf(
-            Date(MONDAY, NO_DATE, false),
-            Date(TUESDAY, NO_DATE, false),
-            Date(WEDNESDAY, NO_DATE, false),
-            Date(THURSDAY, NO_DATE, false),
-            Date(FRIDAY, NO_DATE, false),
-            Date(SATURDAY, NO_DATE, false),
-            Date(SUNDAY, NO_DATE, false)
+            Date(MONDAY, NO_DATE),
+            Date(TUESDAY, NO_DATE),
+            Date(WEDNESDAY, NO_DATE),
+            Date(THURSDAY, NO_DATE),
+            Date(FRIDAY, NO_DATE),
+            Date(SATURDAY, NO_DATE),
+            Date(SUNDAY, NO_DATE)
         )
     )
   }
@@ -208,6 +211,7 @@ class MonthGraphTest {
           set(Calendar.MONTH, Calendar.JUNE)
           set(Calendar.DAY_OF_MONTH, 8)
         }
+    val selectedDate = calendar.snapshot()
 
     val graph = MonthGraph(calendar)
     assertThat(graph.firstWeekDayInMonth).isEqualTo(SATURDAY)
@@ -216,73 +220,73 @@ class MonthGraphTest {
     )
     assertThat(graph.daysInMonth).isEqualTo(30)
 
-    val weeks = graph.getWeeks()
+    val weeks = graph.getWeeks(selectedDate)
     assertThat(weeks.size).isEqualTo(6)
 
     assertThat(weeks[0].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, NO_DATE, false),
-            Date(MONDAY, NO_DATE, false),
-            Date(TUESDAY, NO_DATE, false),
-            Date(WEDNESDAY, NO_DATE, false),
-            Date(THURSDAY, NO_DATE, false),
-            Date(FRIDAY, NO_DATE, false),
-            Date(SATURDAY, 1, false)
+            Date(SUNDAY, NO_DATE),
+            Date(MONDAY, NO_DATE),
+            Date(TUESDAY, NO_DATE),
+            Date(WEDNESDAY, NO_DATE),
+            Date(THURSDAY, NO_DATE),
+            Date(FRIDAY, NO_DATE),
+            Date(SATURDAY, 1)
         )
     )
     assertThat(weeks[1].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 2, false),
-            Date(MONDAY, 3, false),
-            Date(TUESDAY, 4, false),
-            Date(WEDNESDAY, 5, false),
-            Date(THURSDAY, 6, false),
-            Date(FRIDAY, 7, false),
-            Date(SATURDAY, 8, false)
+            Date(SUNDAY, 2),
+            Date(MONDAY, 3),
+            Date(TUESDAY, 4),
+            Date(WEDNESDAY, 5),
+            Date(THURSDAY, 6),
+            Date(FRIDAY, 7),
+            Date(SATURDAY, 8, isSelected = true)
         )
     )
     assertThat(weeks[2].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 9, false),
-            Date(MONDAY, 10, false),
-            Date(TUESDAY, 11, false),
-            Date(WEDNESDAY, 12, false),
-            Date(THURSDAY, 13, false),
-            Date(FRIDAY, 14, false),
-            Date(SATURDAY, 15, false)
+            Date(SUNDAY, 9),
+            Date(MONDAY, 10),
+            Date(TUESDAY, 11),
+            Date(WEDNESDAY, 12),
+            Date(THURSDAY, 13),
+            Date(FRIDAY, 14),
+            Date(SATURDAY, 15)
         )
     )
     assertThat(weeks[3].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 16, false),
-            Date(MONDAY, 17, false),
-            Date(TUESDAY, 18, false),
-            Date(WEDNESDAY, 19, false),
-            Date(THURSDAY, 20, false),
-            Date(FRIDAY, 21, false),
-            Date(SATURDAY, 22, false)
+            Date(SUNDAY, 16),
+            Date(MONDAY, 17),
+            Date(TUESDAY, 18),
+            Date(WEDNESDAY, 19),
+            Date(THURSDAY, 20),
+            Date(FRIDAY, 21),
+            Date(SATURDAY, 22)
         )
     )
     assertThat(weeks[4].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 23, false),
-            Date(MONDAY, 24, false),
-            Date(TUESDAY, 25, false),
-            Date(WEDNESDAY, 26, false),
-            Date(THURSDAY, 27, false),
-            Date(FRIDAY, 28, false),
-            Date(SATURDAY, 29, false)
+            Date(SUNDAY, 23),
+            Date(MONDAY, 24),
+            Date(TUESDAY, 25),
+            Date(WEDNESDAY, 26),
+            Date(THURSDAY, 27),
+            Date(FRIDAY, 28),
+            Date(SATURDAY, 29)
         )
     )
     assertThat(weeks[5].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 30, true),
-            Date(MONDAY, NO_DATE, false),
-            Date(TUESDAY, NO_DATE, false),
-            Date(WEDNESDAY, NO_DATE, false),
-            Date(THURSDAY, NO_DATE, false),
-            Date(FRIDAY, NO_DATE, false),
-            Date(SATURDAY, NO_DATE, false)
+            Date(SUNDAY, 30, lastOfMonth = true),
+            Date(MONDAY, NO_DATE),
+            Date(TUESDAY, NO_DATE),
+            Date(WEDNESDAY, NO_DATE),
+            Date(THURSDAY, NO_DATE),
+            Date(FRIDAY, NO_DATE),
+            Date(SATURDAY, NO_DATE)
         )
     )
   }
@@ -294,6 +298,7 @@ class MonthGraphTest {
           set(Calendar.MONTH, Calendar.JULY)
           set(Calendar.DAY_OF_MONTH, 28)
         }
+    val selectedDate = calendar.snapshot()
 
     val graph = MonthGraph(calendar)
     assertThat(graph.firstWeekDayInMonth).isEqualTo(SATURDAY)
@@ -302,73 +307,73 @@ class MonthGraphTest {
     )
     assertThat(graph.daysInMonth).isEqualTo(31)
 
-    val weeks = graph.getWeeks()
+    val weeks = graph.getWeeks(selectedDate)
     assertThat(weeks.size).isEqualTo(6)
 
     assertThat(weeks[0].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, NO_DATE, false),
-            Date(MONDAY, NO_DATE, false),
-            Date(TUESDAY, NO_DATE, false),
-            Date(WEDNESDAY, NO_DATE, false),
-            Date(THURSDAY, NO_DATE, false),
-            Date(FRIDAY, NO_DATE, false),
-            Date(SATURDAY, 1, false)
+            Date(SUNDAY, NO_DATE),
+            Date(MONDAY, NO_DATE),
+            Date(TUESDAY, NO_DATE),
+            Date(WEDNESDAY, NO_DATE),
+            Date(THURSDAY, NO_DATE),
+            Date(FRIDAY, NO_DATE),
+            Date(SATURDAY, 1)
         )
     )
     assertThat(weeks[1].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 2, false),
-            Date(MONDAY, 3, false),
-            Date(TUESDAY, 4, false),
-            Date(WEDNESDAY, 5, false),
-            Date(THURSDAY, 6, false),
-            Date(FRIDAY, 7, false),
-            Date(SATURDAY, 8, false)
+            Date(SUNDAY, 2),
+            Date(MONDAY, 3),
+            Date(TUESDAY, 4),
+            Date(WEDNESDAY, 5),
+            Date(THURSDAY, 6),
+            Date(FRIDAY, 7),
+            Date(SATURDAY, 8)
         )
     )
     assertThat(weeks[2].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 9, false),
-            Date(MONDAY, 10, false),
-            Date(TUESDAY, 11, false),
-            Date(WEDNESDAY, 12, false),
-            Date(THURSDAY, 13, false),
-            Date(FRIDAY, 14, false),
-            Date(SATURDAY, 15, false)
+            Date(SUNDAY, 9),
+            Date(MONDAY, 10),
+            Date(TUESDAY, 11),
+            Date(WEDNESDAY, 12),
+            Date(THURSDAY, 13),
+            Date(FRIDAY, 14),
+            Date(SATURDAY, 15)
         )
     )
     assertThat(weeks[3].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 16, false),
-            Date(MONDAY, 17, false),
-            Date(TUESDAY, 18, false),
-            Date(WEDNESDAY, 19, false),
-            Date(THURSDAY, 20, false),
-            Date(FRIDAY, 21, false),
-            Date(SATURDAY, 22, false)
+            Date(SUNDAY, 16),
+            Date(MONDAY, 17),
+            Date(TUESDAY, 18),
+            Date(WEDNESDAY, 19),
+            Date(THURSDAY, 20),
+            Date(FRIDAY, 21),
+            Date(SATURDAY, 22)
         )
     )
     assertThat(weeks[4].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 23, false),
-            Date(MONDAY, 24, false),
-            Date(TUESDAY, 25, false),
-            Date(WEDNESDAY, 26, false),
-            Date(THURSDAY, 27, false),
-            Date(FRIDAY, 28, false),
-            Date(SATURDAY, 29, false)
+            Date(SUNDAY, 23),
+            Date(MONDAY, 24),
+            Date(TUESDAY, 25),
+            Date(WEDNESDAY, 26),
+            Date(THURSDAY, 27),
+            Date(FRIDAY, 28, isSelected = true),
+            Date(SATURDAY, 29)
         )
     )
     assertThat(weeks[5].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 30, false),
-            Date(MONDAY, 31, true),
-            Date(TUESDAY, NO_DATE, false),
-            Date(WEDNESDAY, NO_DATE, false),
-            Date(THURSDAY, NO_DATE, false),
-            Date(FRIDAY, NO_DATE, false),
-            Date(SATURDAY, NO_DATE, false)
+            Date(SUNDAY, 30),
+            Date(MONDAY, 31, lastOfMonth = true),
+            Date(TUESDAY, NO_DATE),
+            Date(WEDNESDAY, NO_DATE),
+            Date(THURSDAY, NO_DATE),
+            Date(FRIDAY, NO_DATE),
+            Date(SATURDAY, NO_DATE)
         )
     )
   }

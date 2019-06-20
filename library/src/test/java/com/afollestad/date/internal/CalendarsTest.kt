@@ -19,9 +19,7 @@ import com.afollestad.date.dayOfMonth
 import com.afollestad.date.dayOfWeek
 import com.afollestad.date.decrementMonth
 import com.afollestad.date.incrementMonth
-import com.afollestad.date.lastMonth
 import com.afollestad.date.month
-import com.afollestad.date.nextMonth
 import com.afollestad.date.totalDaysInMonth
 import com.afollestad.date.year
 import com.google.common.truth.Truth.assertThat
@@ -66,23 +64,9 @@ class CalendarsTest {
 
   @Test fun decrementMonth() {
     calendar.decrementMonth()
-    assertThat(calendar.dayOfMonth).isEqualTo(1)
+    assertThat(calendar.dayOfMonth).isEqualTo(30)
     assertThat(calendar.month).isEqualTo(Calendar.JUNE)
     assertThat(calendar.year).isEqualTo(2019)
-  }
-
-  @Test fun nextMonth() {
-    val nextMonth = calendar.nextMonth()
-    assertThat(nextMonth.dayOfMonth).isEqualTo(1)
-    assertThat(nextMonth.month).isEqualTo(Calendar.AUGUST)
-    assertThat(nextMonth.year).isEqualTo(2019)
-  }
-
-  @Test fun lastMonth() {
-    val lastMonth = calendar.lastMonth()
-    assertThat(lastMonth.dayOfMonth).isEqualTo(30)
-    assertThat(lastMonth.month).isEqualTo(Calendar.JUNE)
-    assertThat(lastMonth.year).isEqualTo(2019)
   }
 
   @Test fun dayOfWeek() {
