@@ -15,6 +15,7 @@
  */
 package com.afollestad.date.controllers
 
+import com.afollestad.date.assertException
 import com.afollestad.date.snapshot.DateSnapshot
 import com.afollestad.date.snapshot.snapshot
 import com.afollestad.date.totalDaysInMonth
@@ -32,10 +33,17 @@ class MinMaxControllerTest {
     assertThat(controller.getMinDate()!!.snapshot()).isEqualTo(snapshot)
   }
 
-  @Test fun setMinDate_manually() {
+  @Test fun `setMinDate - manually`() {
     val snapshot = DateSnapshot(Calendar.JULY, 28, 1995)
     controller.setMinDate(snapshot.year, snapshot.month, snapshot.day)
     assertThat(controller.getMinDate()!!.snapshot()).isEqualTo(snapshot)
+  }
+
+  @Test fun `setMinDate - with date that is greater than or equal to max date`() {
+    controller.setMaxDate(1995, Calendar.JULY, 28)
+    assertException(IllegalStateException::class) {
+      controller.setMinDate(1995, Calendar.JULY, 29)
+    }
   }
 
   @Test fun setMaxDate() {
@@ -44,13 +52,20 @@ class MinMaxControllerTest {
     assertThat(controller.getMaxDate()!!.snapshot()).isEqualTo(snapshot)
   }
 
-  @Test fun setMaxDate_manually() {
+  @Test fun `setMaxDate - manually`() {
     val snapshot = DateSnapshot(Calendar.JULY, 28, 1995)
     controller.setMaxDate(snapshot.year, snapshot.month, snapshot.day)
     assertThat(controller.getMaxDate()!!.snapshot()).isEqualTo(snapshot)
   }
 
-  @Test fun isOutOfMinRange_true() {
+  @Test fun `setMaxDate - with date that is less than or equal to min date`() {
+    controller.setMinDate(1995, Calendar.JULY, 28)
+    assertException(IllegalStateException::class) {
+      controller.setMaxDate(1995, Calendar.JULY, 27)
+    }
+  }
+
+  @Test fun `isOutOfMinRange - true`() {
     controller.minDate = now
     // month
     assertThat(controller.isOutOfMinRange(DateSnapshot(Calendar.JUNE, 28, 2019))).isTrue()
@@ -60,7 +75,7 @@ class MinMaxControllerTest {
     assertThat(controller.isOutOfMinRange(DateSnapshot(Calendar.JULY, 28, 2018))).isTrue()
   }
 
-  @Test fun isOutOfMinRange_false() {
+  @Test fun `isOutOfMinRange - false`() {
     controller.minDate = now
     // month
     assertThat(controller.isOutOfMinRange(DateSnapshot(Calendar.AUGUST, 28, 2019))).isFalse()
@@ -82,7 +97,7 @@ class MinMaxControllerTest {
     controller.getOutOfMinRangeBackgroundRes(now.copy(day = 26, year = 2000))
   }
 
-  @Test fun isOutOfMaxRange_true() {
+  @Test fun `isOutOfMaxRange - true`() {
     controller.maxDate = now
     // month
     assertThat(controller.isOutOfMaxRange(DateSnapshot(Calendar.AUGUST, 28, 2019))).isTrue()
@@ -92,7 +107,7 @@ class MinMaxControllerTest {
     assertThat(controller.isOutOfMaxRange(DateSnapshot(Calendar.JULY, 28, 2020))).isTrue()
   }
 
-  @Test fun isOutOfMaxRange_false() {
+  @Test fun `isOutOfMaxRange - false`() {
     controller.maxDate = now
     // month
     assertThat(controller.isOutOfMaxRange(DateSnapshot(Calendar.JUNE, 28, 2019))).isFalse()

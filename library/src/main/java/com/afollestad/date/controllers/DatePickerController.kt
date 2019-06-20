@@ -55,7 +55,14 @@ internal class DatePickerController(
 
   fun maybeInit() {
     if (!didInit) {
-      setFullDate(getNow())
+      var now = getNow()
+      val nowSnapshot = now.snapshot()
+      if (minMaxController.isOutOfMaxRange(nowSnapshot)) {
+        now = minMaxController.getMaxDate()!!
+      } else if (minMaxController.isOutOfMinRange(nowSnapshot)) {
+        now = minMaxController.getMinDate()!!
+      }
+      setFullDate(now)
     }
   }
 

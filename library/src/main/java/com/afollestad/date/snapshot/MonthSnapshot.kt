@@ -26,7 +26,14 @@ import java.util.Locale
 internal data class MonthSnapshot(
   val month: Int,
   val year: Int
-)
+) {
+  operator fun compareTo(other: MonthSnapshot): Int {
+    if (month == other.month && year == other.year) return 0
+    if (year < other.year) return -1
+    if (year == other.year && month < other.month) return -1
+    return 1
+  }
+}
 
 /** @author Aidan Follestad (@afollestad) */
 @CheckResult internal fun Calendar.snapshotMonth(): MonthSnapshot {

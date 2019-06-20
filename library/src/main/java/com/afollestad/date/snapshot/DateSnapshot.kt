@@ -39,6 +39,14 @@ internal data class DateSnapshot(
           this.dayOfMonth = newDay
         }
   }
+
+  operator fun compareTo(other: DateSnapshot): Int {
+    if (month == other.month && year == other.year && day == other.day) return 0
+    if (year < other.year) return -1
+    if (year == other.year && month < other.month) return -1
+    if (year == other.year && month == other.month && day < other.day) return -1
+    return 1
+  }
 }
 
 /** @author Aidan Follestad (@afollestad) */

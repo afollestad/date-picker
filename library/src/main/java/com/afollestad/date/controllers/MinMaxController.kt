@@ -37,6 +37,7 @@ internal class MinMaxController {
 
   fun setMinDate(date: Calendar) {
     this.minDate = date.snapshot()
+    validateMinAndMax()
   }
 
   fun setMinDate(
@@ -45,12 +46,14 @@ internal class MinMaxController {
     @IntRange(from = 1, to = 31) dayOfMonth: Int
   ) {
     this.minDate = DateSnapshot(month = month, year = year, day = dayOfMonth)
+    validateMinAndMax()
   }
 
   @CheckResult fun getMaxDate(): Calendar? = maxDate?.asCalendar()
 
   fun setMaxDate(date: Calendar) {
     this.maxDate = date.snapshot()
+    validateMinAndMax()
   }
 
   fun setMaxDate(
@@ -59,6 +62,7 @@ internal class MinMaxController {
     @IntRange(from = 1, to = 31) dayOfMonth: Int
   ) {
     this.maxDate = DateSnapshot(month = month, year = year, day = dayOfMonth)
+    validateMinAndMax()
   }
 
   @CheckResult fun canGoBack(from: Calendar): Boolean {
@@ -77,15 +81,7 @@ internal class MinMaxController {
 
   @CheckResult fun isOutOfMinRange(date: DateSnapshot?): Boolean {
     if (date == null || minDate == null) return false
-    if (date.year < minDate!!.year) return true
-    if (date.year == minDate!!.year && date.month < minDate!!.month) return true
-    if (date.year == minDate!!.year &&
-        date.month == minDate!!.month &&
-        date.day < minDate!!.day
-    ) {
-      return true
-    }
-    return false
+    return date < minDate!!
   }
 
   @DrawableRes @CheckResult
@@ -100,15 +96,7 @@ internal class MinMaxController {
 
   @CheckResult fun isOutOfMaxRange(date: DateSnapshot?): Boolean {
     if (date == null || maxDate == null) return false
-    if (date.year > maxDate!!.year) return true
-    if (date.year == maxDate!!.year && date.month > maxDate!!.month) return true
-    if (date.year == maxDate!!.year &&
-        date.month == maxDate!!.month &&
-        date.day > maxDate!!.day
-    ) {
-      return true
-    }
-    return false
+    return date > maxDate!!
   }
 
   @DrawableRes @CheckResult
@@ -120,6 +108,14 @@ internal class MinMaxController {
       date.day == maxDate!!.day + 1 &&
           date.month == maxDate!!.month -> R.drawable.ic_tube_start
       else -> R.drawable.ic_tube_middle
+    }
+  }
+
+  private fun validateMinAndMax() {
+    if (minDate != null && maxDate != null) {
+      check(minDate!! < maxDate!!) {
+        "Min date must be less than max date."
+      }
     }
   }
 }

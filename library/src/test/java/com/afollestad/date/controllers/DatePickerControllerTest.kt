@@ -36,6 +36,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Test
 import java.util.Calendar
 import java.util.GregorianCalendar
@@ -93,6 +94,36 @@ class DatePickerControllerTest {
     assertThat(controller.selectedDate).isNull()
 
     verify(listener, never()).invoke(any())
+  }
+
+  @Test fun `maybeInit - now is before min date`() {
+    val minDate = DateSnapshot(Calendar.AUGUST, 7, 2016)
+    controller.didInit = false
+    whenever(minMaxController.isOutOfMinRange(isA())).doReturn(true)
+    whenever(minMaxController.getMinDate()).doReturn(minDate.asCalendar())
+    controller.maybeInit()
+
+    assertThat(controller.didInit).isTrue()
+    assertThat(controller.viewingMonth).isEqualTo(MonthSnapshot(Calendar.AUGUST, 2016))
+    assertThat(controller.monthGraph).isNotNull()
+    assertThat(controller.selectedDate).isEqualTo(minDate)
+
+    assertListenerGotDate(minDate)
+  }
+
+  @Test fun `maybeInit - now is after max date`() {
+    val maxDate = DateSnapshot(Calendar.JUNE, 2, 1990)
+    controller.didInit = false
+    whenever(minMaxController.isOutOfMaxRange(isA())).doReturn(true)
+    whenever(minMaxController.getMaxDate()).doReturn(maxDate.asCalendar())
+    controller.maybeInit()
+
+    assertThat(controller.didInit).isTrue()
+    assertThat(controller.viewingMonth).isEqualTo(MonthSnapshot(Calendar.JUNE, 1990))
+    assertThat(controller.monthGraph).isNotNull()
+    assertThat(controller.selectedDate).isEqualTo(maxDate)
+
+    assertListenerGotDate(maxDate)
   }
 
   @Test fun previousMonth() {
