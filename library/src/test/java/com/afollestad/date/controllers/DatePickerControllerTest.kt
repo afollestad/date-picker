@@ -81,7 +81,7 @@ class DatePickerControllerTest {
     assertThat(controller.monthGraph).isNotNull()
     assertThat(controller.selectedDate).isEqualTo(selectedDate)
 
-    assertListenerGotDate(selectedDate)
+    verify(listener, never()).invoke(any())
   }
 
   @Test fun `maybeInit - did already init`() {
@@ -108,7 +108,7 @@ class DatePickerControllerTest {
     assertThat(controller.monthGraph).isNotNull()
     assertThat(controller.selectedDate).isEqualTo(minDate)
 
-    assertListenerGotDate(minDate)
+    verify(listener, never()).invoke(any())
   }
 
   @Test fun `maybeInit - now is after max date`() {
@@ -124,7 +124,7 @@ class DatePickerControllerTest {
     assertThat(controller.monthGraph).isNotNull()
     assertThat(controller.selectedDate).isEqualTo(maxDate)
 
-    assertListenerGotDate(maxDate)
+    verify(listener, never()).invoke(any())
   }
 
   @Test fun previousMonth() {
