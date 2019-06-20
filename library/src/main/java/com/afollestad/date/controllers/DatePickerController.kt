@@ -46,12 +46,16 @@ internal class DatePickerController(
   private val switchToMonthMode: () -> Unit,
   private val getNow: () -> Calendar = { Calendar.getInstance() }
 ) {
-  @VisibleForTesting var didInit: Boolean = false
+  @VisibleForTesting
+  var didInit: Boolean = false
   private val dateChangedListeners: MutableList<OnDateChanged> = mutableListOf()
 
-  @VisibleForTesting var viewingMonth: MonthSnapshot? = null
-  @VisibleForTesting var monthGraph: MonthGraph? = null
-  @VisibleForTesting var selectedDate: DateSnapshot? = null
+  @VisibleForTesting
+  var viewingMonth: MonthSnapshot? = null
+  @VisibleForTesting
+  var monthGraph: MonthGraph? = null
+  @VisibleForTesting
+  var selectedDate: DateSnapshot? = null
 
   fun maybeInit() {
     if (!didInit) {
@@ -62,7 +66,7 @@ internal class DatePickerController(
       } else if (minMaxController.isOutOfMinRange(nowSnapshot)) {
         now = minMaxController.getMinDate()!!
       }
-      setFullDate(now)
+      setFullDate(now, notifyListeners = false)
     }
   }
 
@@ -82,10 +86,15 @@ internal class DatePickerController(
     vibrator.vibrateForSelection()
   }
 
-  fun setFullDate(calendar: Calendar) {
+  fun setFullDate(
+    calendar: Calendar,
+    notifyListeners: Boolean = true
+  ) {
     this.didInit = true
     this.selectedDate = calendar.snapshot()
-    notifyListeners { calendar.clone() as Calendar }
+    if (notifyListeners) {
+      notifyListeners { calendar.clone() as Calendar }
+    }
     setCurrentMonth(calendar)
     render(calendar)
   }
@@ -93,7 +102,8 @@ internal class DatePickerController(
   fun setFullDate(
     @IntRange(from = 1, to = Long.MAX_VALUE) year: Int? = null,
     month: Int,
-    @IntRange(from = 1, to = 31) selectedDate: Int? = null
+    @IntRange(from = 1, to = 31) selectedDate: Int? = null,
+    notifyListeners: Boolean = true
   ) = setFullDate(getNow().apply {
     if (year != null) {
       this.year = year
@@ -102,9 +112,10 @@ internal class DatePickerController(
     if (selectedDate != null) {
       this.dayOfMonth = selectedDate
     }
-  })
+  }, notifyListeners = notifyListeners)
 
-  @CheckResult fun getFullDate(): Calendar? = selectedDate?.asCalendar()
+  @CheckResult
+  fun getFullDate(): Calendar? = selectedDate?.asCalendar()
 
   fun setDayOfMonth(day: Int) {
     if (!didInit) {

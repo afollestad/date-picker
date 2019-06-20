@@ -130,14 +130,20 @@ class DatePicker(
   }
 
   /** Sets the month displayed in the view, along with the selected date. */
-  fun setDate(calendar: Calendar) = controller.setFullDate(calendar)
+  fun setDate(
+    calendar: Calendar,
+    notifyListeners: Boolean = true
+  ) = controller.setFullDate(calendar, notifyListeners)
 
   /** Sets the month and year displayed in the view, along with the selected selectedDate (optionally). */
   fun setDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int? = null,
     month: Int,
-    @IntRange(from = 1, to = 31) selectedDate: Int? = null
-  ) = controller.setFullDate(year = year, month = month, selectedDate = selectedDate)
+    @IntRange(from = 1, to = 31) selectedDate: Int? = null,
+    notifyListeners: Boolean = true
+  ) = controller.setFullDate(
+      year = year, month = month, selectedDate = selectedDate, notifyListeners = notifyListeners
+  )
 
   /** Gets the selected date, if any. */
   @CheckResult fun getDate(): Calendar? = controller.getFullDate()
@@ -268,7 +274,8 @@ class DatePicker(
   }
 
   private fun renderWeeks(weeks: List<Week>) {
-    yearAdapter.selectedYear = weeks.first().year
+    yearAdapter.selectedYear = weeks.first()
+        .year
     yearAdapter.getSelectedPosition()
         ?.let { yearsRecyclerView.scrollToPosition(it - 2) }
 
