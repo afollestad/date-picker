@@ -85,6 +85,7 @@ declare the `VIBRATE` permission in its manifest.)*
 ```kotlin
 val datePicker: DatePicker = // ...
 
+// This appends an additional callback, it does not overwrite previous calls
 datePicker.onDateChanged { calendar ->
   // use calendar - this library provides convenience extensions like month, year, and dayOfMonth too.
 }
