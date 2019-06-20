@@ -29,7 +29,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.date.controllers.DateFormatter
+import com.afollestad.date.internal.DateFormatter
 import com.afollestad.date.controllers.DatePickerController
 import com.afollestad.date.controllers.MinMaxController
 import com.afollestad.date.controllers.VibratorController

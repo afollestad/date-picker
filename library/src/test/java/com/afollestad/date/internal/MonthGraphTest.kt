@@ -99,7 +99,7 @@ class MonthGraphTest {
             Date(MONDAY, 28),
             Date(TUESDAY, 29),
             Date(WEDNESDAY, 30),
-            Date(THURSDAY, 31, lastOfMonth = true),
+            Date(THURSDAY, 31),
             Date(FRIDAY, NO_DATE),
             Date(SATURDAY, NO_DATE)
         )
@@ -185,7 +185,7 @@ class MonthGraphTest {
             Date(MONDAY, 25),
             Date(TUESDAY, 26),
             Date(WEDNESDAY, 27),
-            Date(THURSDAY, 28, lastOfMonth = true),
+            Date(THURSDAY, 28),
             Date(FRIDAY, NO_DATE),
             Date(SATURDAY, NO_DATE),
             Date(SUNDAY, NO_DATE)
@@ -280,7 +280,7 @@ class MonthGraphTest {
     )
     assertThat(weeks[5].dates).isEqualTo(
         listOf(
-            Date(SUNDAY, 30, lastOfMonth = true),
+            Date(SUNDAY, 30),
             Date(MONDAY, NO_DATE),
             Date(TUESDAY, NO_DATE),
             Date(WEDNESDAY, NO_DATE),
@@ -368,7 +368,7 @@ class MonthGraphTest {
     assertThat(weeks[5].dates).isEqualTo(
         listOf(
             Date(SUNDAY, 30),
-            Date(MONDAY, 31, lastOfMonth = true),
+            Date(MONDAY, 31),
             Date(TUESDAY, NO_DATE),
             Date(WEDNESDAY, NO_DATE),
             Date(THURSDAY, NO_DATE),

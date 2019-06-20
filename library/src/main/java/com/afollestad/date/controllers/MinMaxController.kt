@@ -18,18 +18,20 @@ package com.afollestad.date.controllers
 import androidx.annotation.CheckResult
 import androidx.annotation.DrawableRes
 import androidx.annotation.IntRange
+import androidx.annotation.VisibleForTesting
 import com.afollestad.date.R
+import com.afollestad.date.dayOfMonth
 import com.afollestad.date.decrementMonth
 import com.afollestad.date.incrementMonth
-import com.afollestad.date.internal.Date
 import com.afollestad.date.snapshot.DateSnapshot
 import com.afollestad.date.snapshot.snapshot
+import com.afollestad.date.totalDaysInMonth
 import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */
 internal class MinMaxController {
-  private var minDate: DateSnapshot? = null
-  private var maxDate: DateSnapshot? = null
+  @VisibleForTesting var minDate: DateSnapshot? = null
+  @VisibleForTesting var maxDate: DateSnapshot? = null
 
   @CheckResult fun getMinDate(): Calendar? = minDate?.asCalendar()
 
@@ -60,18 +62,14 @@ internal class MinMaxController {
   }
 
   @CheckResult fun canGoBack(from: Calendar): Boolean {
-    if (minDate == null) {
-      return true
-    }
+    if (minDate == null) return true
     val lastMonth = from.decrementMonth()
         .snapshot()
     return !isOutOfMinRange(lastMonth)
   }
 
   @CheckResult fun canGoForward(from: Calendar): Boolean {
-    if (maxDate == null) {
-      return true
-    }
+    if (maxDate == null) return true
     val nextMonth = from.incrementMonth()
         .snapshot()
     return !isOutOfMaxRange(nextMonth)
@@ -90,7 +88,8 @@ internal class MinMaxController {
     return false
   }
 
-  @DrawableRes fun getOutOfMinRangeBackgroundRes(date: DateSnapshot): Int {
+  @DrawableRes @CheckResult
+  fun getOutOfMinRangeBackgroundRes(date: DateSnapshot): Int {
     return when {
       date.day == 1 -> R.drawable.ic_tube_start
       date.day == minDate!!.day - 1 &&
@@ -112,12 +111,12 @@ internal class MinMaxController {
     return false
   }
 
-  @DrawableRes fun getOutOfMaxRangeBackgroundRes(
-    dayOfMonth: Date,
-    date: DateSnapshot
-  ): Int {
+  @DrawableRes @CheckResult
+  fun getOutOfMaxRangeBackgroundRes(date: DateSnapshot): Int {
+    val calendar = date.asCalendar()
+    val isLastInMonth = calendar.dayOfMonth == calendar.totalDaysInMonth
     return when {
-      dayOfMonth.lastOfMonth -> R.drawable.ic_tube_end
+      isLastInMonth -> R.drawable.ic_tube_end
       date.day == maxDate!!.day + 1 &&
           date.month == maxDate!!.month -> R.drawable.ic_tube_start
       else -> R.drawable.ic_tube_middle

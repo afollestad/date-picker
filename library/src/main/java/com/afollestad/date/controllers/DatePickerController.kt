@@ -17,6 +17,7 @@ package com.afollestad.date.controllers
 
 import androidx.annotation.CheckResult
 import androidx.annotation.IntRange
+import androidx.annotation.VisibleForTesting
 import com.afollestad.date.OnDateChanged
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.decrementMonth
@@ -32,7 +33,6 @@ import com.afollestad.date.snapshot.snapshot
 import com.afollestad.date.snapshot.snapshotMonth
 import com.afollestad.date.year
 import java.util.Calendar
-import java.util.Locale
 
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerController(
@@ -43,23 +43,24 @@ internal class DatePickerController(
   private val renderWeeks: (List<Week>) -> Unit,
   private val goBackVisibility: (visible: Boolean) -> Unit,
   private val goForwardVisibility: (visible: Boolean) -> Unit,
-  private val switchToMonthMode: () -> Unit
+  private val switchToMonthMode: () -> Unit,
+  private val getNow: () -> Calendar = { Calendar.getInstance() }
 ) {
-  private var didInit: Boolean = false
+  @VisibleForTesting var didInit: Boolean = false
   private val dateChangedListeners: MutableList<OnDateChanged> = mutableListOf()
 
-  private lateinit var selectedDate: DateSnapshot
-  private lateinit var viewingMonth: MonthSnapshot
-  private lateinit var monthGraph: MonthGraph
+  @VisibleForTesting var viewingMonth: MonthSnapshot? = null
+  @VisibleForTesting var monthGraph: MonthGraph? = null
+  @VisibleForTesting var selectedDate: DateSnapshot? = null
 
   fun maybeInit() {
     if (!didInit) {
-      setFullDate(Calendar.getInstance())
+      setFullDate(getNow())
     }
   }
 
   fun previousMonth() {
-    val calendar = viewingMonth.asCalendar(1)
+    val calendar = viewingMonth!!.asCalendar(1)
         .decrementMonth()
     setCurrentMonth(calendar)
     render(calendar)
@@ -67,7 +68,7 @@ internal class DatePickerController(
   }
 
   fun nextMonth() {
-    val calendar = viewingMonth.asCalendar(1)
+    val calendar = viewingMonth!!.asCalendar(1)
         .incrementMonth()
     setCurrentMonth(calendar)
     render(calendar)
@@ -86,29 +87,27 @@ internal class DatePickerController(
     @IntRange(from = 1, to = Long.MAX_VALUE) year: Int? = null,
     month: Int,
     @IntRange(from = 1, to = 31) selectedDate: Int? = null
-  ) = setFullDate(
-      Calendar.getInstance().apply {
-        if (year != null) {
-          this.year = year
-        }
-        this.month = month
-        if (selectedDate != null) {
-          this.dayOfMonth = selectedDate
-        }
-      }
-  )
+  ) = setFullDate(getNow().apply {
+    if (year != null) {
+      this.year = year
+    }
+    this.month = month
+    if (selectedDate != null) {
+      this.dayOfMonth = selectedDate
+    }
+  })
 
-  @CheckResult fun getFullDate(): Calendar? = selectedDate.asCalendar()
+  @CheckResult fun getFullDate(): Calendar? = selectedDate?.asCalendar()
 
   fun setDayOfMonth(day: Int) {
     if (!didInit) {
-      setFullDate(Calendar.getInstance(Locale.getDefault()).apply {
+      setFullDate(getNow().apply {
         dayOfMonth = day
       })
       return
     }
 
-    val calendar = viewingMonth.asCalendar(day)
+    val calendar = viewingMonth!!.asCalendar(day)
     selectedDate = calendar.snapshot()
     vibrator.vibrateForSelection()
     notifyListeners { calendar }
@@ -117,9 +116,9 @@ internal class DatePickerController(
 
   fun setYear(year: Int) {
     setFullDate(
-        month = selectedDate.month,
+        month = selectedDate!!.month,
         year = year,
-        selectedDate = selectedDate.day
+        selectedDate = selectedDate!!.day
     )
     switchToMonthMode()
   }
@@ -131,12 +130,12 @@ internal class DatePickerController(
   private fun setCurrentMonth(calendar: Calendar) {
     viewingMonth = calendar.snapshotMonth()
     monthGraph = MonthGraph(calendar)
-    renderDaysOfWeek(monthGraph.orderedWeekDays)
+    renderDaysOfWeek(monthGraph!!.orderedWeekDays)
   }
 
   private fun render(calendar: Calendar) {
-    renderHeaders(calendar, selectedDate)
-    renderWeeks(monthGraph.getWeeks(selectedDate))
+    renderHeaders(calendar, selectedDate!!)
+    renderWeeks(monthGraph!!.getWeeks(selectedDate!!))
     goBackVisibility(minMaxController.canGoBack(calendar))
     goForwardVisibility(minMaxController.canGoForward(calendar))
   }

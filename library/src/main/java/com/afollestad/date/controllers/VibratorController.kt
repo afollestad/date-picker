@@ -24,6 +24,7 @@ import android.content.Context.VIBRATOR_SERVICE
 import android.content.pm.PackageManager
 import android.content.res.TypedArray
 import android.os.Vibrator
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import com.afollestad.date.R
 
@@ -32,7 +33,7 @@ class VibratorController(
   private val context: Context,
   typedArray: TypedArray
 ) {
-  private val selectionVibrates: Boolean =
+  @VisibleForTesting val selectionVibrates: Boolean =
     typedArray.getBoolean(R.styleable.DatePicker_date_picker_selection_vibrates, true)
   private val vibrator = context.getSystemService(VIBRATOR_SERVICE) as Vibrator
 

@@ -128,7 +128,7 @@ internal class WeekRowView(
           textView.isEnabled = false
         }
         minMaxController.isOutOfMaxRange(currentDate) -> {
-          val drawable = minMaxController.getOutOfMaxRangeBackgroundRes(dayOfMonth, currentDate)
+          val drawable = minMaxController.getOutOfMaxRangeBackgroundRes(currentDate)
           textView.background = coloredDrawable(context, drawable, disabledBackgroundColor)
           textView.isEnabled = false
         }

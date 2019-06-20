@@ -33,7 +33,6 @@ internal const val NO_DATE: Int = -1
 internal data class Date(
   val dayOfWeek: DayOfWeek,
   val date: Int = NO_DATE,
-  val lastOfMonth: Boolean = false,
   val isSelected: Boolean = false
 )
 
@@ -46,7 +45,7 @@ internal data class Week(
 
 /** @author Aidan Follestad (@afollestad) */
 internal class MonthGraph(
-  private val calendar: Calendar
+  @VisibleForTesting val calendar: Calendar
 ) {
   @VisibleForTesting var daysInMonth: Int by Delegates.notNull()
   @VisibleForTesting var firstWeekDayInMonth: DayOfWeek
@@ -89,7 +88,6 @@ internal class MonthGraph(
           Date(
               dayOfWeek = calendar.dayOfWeek,
               date = date,
-              lastOfMonth = date == daysInMonth,
               isSelected = selectedDate == DateSnapshot(calendar.month, date, calendar.year)
           )
       )
