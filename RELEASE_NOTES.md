@@ -1,4 +1,5 @@
-0.2.0
+0.2.1
 
-* The ability to set min and max dates.
-* The ability to get callbacks when the date changes.
+* Kotlin 1.3.40
+* Re-architected some internals to be less view-centric and more unit testable.
+* Min/max validation and other improvements to min/max support.

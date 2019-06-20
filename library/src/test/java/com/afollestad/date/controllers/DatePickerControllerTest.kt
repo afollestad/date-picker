@@ -46,7 +46,6 @@ class DatePickerControllerTest {
   private val now = GregorianCalendar(1995, Calendar.JULY, 28)
   private val vibrator = mock<VibratorController>()
   private val minMaxController = mock<MinMaxController> {
-    // TODO test false for these and their effects
     on { canGoBack(any()) } doReturn true
     on { canGoForward(any()) } doReturn true
   }
@@ -98,9 +97,10 @@ class DatePickerControllerTest {
 
   @Test fun `maybeInit - now is before min date`() {
     val minDate = DateSnapshot(Calendar.AUGUST, 7, 2016)
+    val minDateCalendar: Calendar? = minDate.asCalendar()
     controller.didInit = false
     whenever(minMaxController.isOutOfMinRange(isA())).doReturn(true)
-    whenever(minMaxController.getMinDate()).doReturn(minDate.asCalendar())
+    whenever(minMaxController.getMinDate()).doReturn(minDateCalendar)
     controller.maybeInit()
 
     assertThat(controller.didInit).isTrue()
@@ -113,9 +113,10 @@ class DatePickerControllerTest {
 
   @Test fun `maybeInit - now is after max date`() {
     val maxDate = DateSnapshot(Calendar.JUNE, 2, 1990)
+    val maxDateCalendar: Calendar? = maxDate.asCalendar()
     controller.didInit = false
     whenever(minMaxController.isOutOfMaxRange(isA())).doReturn(true)
-    whenever(minMaxController.getMaxDate()).doReturn(maxDate.asCalendar())
+    whenever(minMaxController.getMaxDate()).doReturn(maxDateCalendar)
     controller.maybeInit()
 
     assertThat(controller.didInit).isTrue()

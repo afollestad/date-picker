@@ -66,7 +66,7 @@ class MinMaxControllerTest {
   }
 
   @Test fun `isOutOfMinRange - true`() {
-    controller.minDate = now
+    controller.setMinDate(now.asCalendar())
     // month
     assertThat(controller.isOutOfMinRange(DateSnapshot(Calendar.JUNE, 28, 2019))).isTrue()
     // day
@@ -76,7 +76,7 @@ class MinMaxControllerTest {
   }
 
   @Test fun `isOutOfMinRange - false`() {
-    controller.minDate = now
+    controller.setMinDate(now.asCalendar())
     // month
     assertThat(controller.isOutOfMinRange(DateSnapshot(Calendar.AUGUST, 28, 2019))).isFalse()
     // day
@@ -86,7 +86,7 @@ class MinMaxControllerTest {
   }
 
   @Test fun getOutOfMinRangeBackgroundRes() {
-    controller.minDate = now
+    controller.setMinDate(now.asCalendar())
     // First day of month
     controller.getOutOfMinRangeBackgroundRes(now.copy(day = 1))
     // Day before today
@@ -98,7 +98,7 @@ class MinMaxControllerTest {
   }
 
   @Test fun `isOutOfMaxRange - true`() {
-    controller.maxDate = now
+    controller.setMaxDate(now.asCalendar())
     // month
     assertThat(controller.isOutOfMaxRange(DateSnapshot(Calendar.AUGUST, 28, 2019))).isTrue()
     // day
@@ -108,7 +108,7 @@ class MinMaxControllerTest {
   }
 
   @Test fun `isOutOfMaxRange - false`() {
-    controller.maxDate = now
+    controller.setMaxDate(now.asCalendar())
     // month
     assertThat(controller.isOutOfMaxRange(DateSnapshot(Calendar.JUNE, 28, 2019))).isFalse()
     // day
@@ -118,7 +118,7 @@ class MinMaxControllerTest {
   }
 
   @Test fun getOutOfMaxRangeBackgroundRes() {
-    controller.maxDate = now
+    controller.setMaxDate(now.asCalendar())
     // Last day of month
     controller.getOutOfMaxRangeBackgroundRes(now.copy(day = now.asCalendar().totalDaysInMonth))
     // Day after today

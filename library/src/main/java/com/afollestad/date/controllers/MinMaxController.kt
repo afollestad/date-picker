@@ -18,7 +18,6 @@ package com.afollestad.date.controllers
 import androidx.annotation.CheckResult
 import androidx.annotation.DrawableRes
 import androidx.annotation.IntRange
-import androidx.annotation.VisibleForTesting
 import com.afollestad.date.R
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.decrementMonth
@@ -30,8 +29,8 @@ import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */
 internal class MinMaxController {
-  @VisibleForTesting var minDate: DateSnapshot? = null
-  @VisibleForTesting var maxDate: DateSnapshot? = null
+  private var minDate: DateSnapshot? = null
+  private var maxDate: DateSnapshot? = null
 
   @CheckResult fun getMinDate(): Calendar? = minDate?.asCalendar()
 
