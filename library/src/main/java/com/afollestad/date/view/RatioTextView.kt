@@ -16,6 +16,8 @@
 package com.afollestad.date.view
 
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.InsetDrawable
 import android.util.AttributeSet
 import androidx.annotation.RestrictTo
 import androidx.appcompat.widget.AppCompatTextView
@@ -29,6 +31,8 @@ class RatioTextView(
   attrs: AttributeSet?
 ) : AppCompatTextView(context, attrs) {
   private val ratio: Float = context.getFloat(R.dimen.day_of_month_height_ratio)
+  private var originalBackground: Drawable? = null
+  private var lastInsetPadding: Int? = null
 
   override fun onMeasure(
     widthMeasureSpec: Int,
@@ -37,5 +41,21 @@ class RatioTextView(
     val width = MeasureSpec.getSize(widthMeasureSpec)
     val height = (width * ratio).toInt()
     setMeasuredDimension(width, height)
+    invalidateBackground()
+  }
+
+  override fun setBackground(background: Drawable?) {
+    originalBackground = background
+    super.setBackground(originalBackground)
+    invalidateBackground()
+  }
+
+  private fun invalidateBackground() {
+    if (measuredWidth == 0) return
+    val insetPadding = (measuredWidth - measuredHeight) / 2
+    if (lastInsetPadding == insetPadding) return
+    val currentBg: Drawable = originalBackground ?: return
+    super.setBackground(InsetDrawable(currentBg, insetPadding, 0, insetPadding, 0))
+    lastInsetPadding = insetPadding
   }
 }
