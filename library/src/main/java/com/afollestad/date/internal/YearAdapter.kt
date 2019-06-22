@@ -59,9 +59,9 @@ internal class YearAdapter(
         notifyItemChanged(value.asPosition())
       }
     }
-  private val yearRange: Pair<Int, Int> = Calendar.getInstance()
-      .year
-      .visibleYearRange()
+  private val yearRange: Pair<Int, Int> = with(Calendar.getInstance().year) {
+    Pair(this - 100, this + 100)
+  }
 
   init {
     setHasStableIds(true)

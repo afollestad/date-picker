@@ -2,9 +2,12 @@
 <resources>
 
   <style name="Divider">
-    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_width">0dp</item>
     <item name="android:layout_height">@dimen/divider_height</item>
     <item name="android:background">?android:listDivider</item>
+    <item name="layout_constraintEnd_toEndOf">parent</item>
+    <item name="layout_constraintStart_toEndOf">@id/start_boundary</item>
+    <item name="layout_constraintTop_toBottomOf">@+id/current_month</item>
   </style>
 
   <style name="DatePicker"/>
@@ -61,7 +64,7 @@
   </style>
 
   <style name="WeekRowView.WeekdayHeader.Start" parent="WeekRowView.WeekdayHeader">
-    <item name="layout_constraintStart_toStartOf">parent</item>
+    <item name="layout_constraintStart_toStartOf">@+id/start_boundary</item>
   </style>
 
   <style name="WeekRowView.WeekdayHeader.End" parent="WeekRowView.WeekdayHeader">
@@ -79,7 +82,7 @@
   </style>
 
   <style name="WeekRowView.DayOfMonth.Start" parent="WeekRowView.DayOfMonth">
-    <item name="layout_constraintStart_toStartOf">parent</item>
+    <item name="layout_constraintStart_toStartOf">@+id/start_boundary</item>
   </style>
 
   <style name="WeekRowView.DayOfMonth.End" parent="WeekRowView.DayOfMonth">
