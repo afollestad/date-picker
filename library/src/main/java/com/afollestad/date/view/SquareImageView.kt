@@ -26,10 +26,12 @@ class SquareImageView(
   context: Context,
   attrs: AttributeSet?
 ) : AppCompatImageView(context, attrs) {
+
   override fun onMeasure(
     widthMeasureSpec: Int,
     heightMeasureSpec: Int
   ) {
-    super.onMeasure(widthMeasureSpec, widthMeasureSpec)
+    val widthAndHeight = MeasureSpec.getSize(widthMeasureSpec)
+    setMeasuredDimension(widthAndHeight, widthAndHeight)
   }
 }

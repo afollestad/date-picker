@@ -104,7 +104,7 @@ val minDate = datePicker.getMinDate()
 datePicker.setMinDate(
   year = 2019,
   month = Calendar.JUNE,
-  dayOfMonth = 17
+  date = 17
 )
 datePicker.setMinDate(Calendar.getInstance())
 
@@ -112,7 +112,7 @@ val maxDate = datePicker.getMaxDate()
 datePicker.setMaxDate(
   year = 2019,
   month = Calendar.JUNE,
-  dayOfMonth = 20
+  date = 20
 )
 datePicker.setMaxDate(Calendar.getInstance())
 ```

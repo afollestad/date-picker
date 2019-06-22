@@ -15,9 +15,9 @@
  */
 package com.afollestad.date.controllers
 
+import com.afollestad.date.internal.DayOfMonth
 import com.afollestad.date.internal.DayOfWeek
 import com.afollestad.date.internal.MonthGraph
-import com.afollestad.date.internal.Week
 import com.afollestad.date.month
 import com.afollestad.date.snapshot.DateSnapshot
 import com.afollestad.date.snapshot.MonthSnapshot
@@ -51,7 +51,7 @@ class DatePickerControllerTest {
   }
   private val renderHeaders = mock<(Calendar, DateSnapshot) -> Unit>()
   private val renderDaysOfWeek = mock<(List<DayOfWeek>) -> Unit>()
-  private val renderWeeks = mock<(List<Week>) -> Unit>()
+  private val renderDaysOfMonth = mock<(List<DayOfMonth>) -> Unit>()
   private val goBackVisibility = mock<(Boolean) -> Unit>()
   private val goForwardVisibility = mock<(Boolean) -> Unit>()
   private val switchToMonthMode = mock<() -> Unit>()
@@ -62,7 +62,7 @@ class DatePickerControllerTest {
       minMaxController,
       renderHeaders,
       renderDaysOfWeek,
-      renderWeeks,
+      renderDaysOfMonth,
       goBackVisibility,
       goForwardVisibility,
       switchToMonthMode,
@@ -136,6 +136,7 @@ class DatePickerControllerTest {
     assertSetCurrentMonth(previousMonth)
     assertRender(previousMonth.asCalendar(1), now.snapshot())
     verify(vibrator).vibrateForSelection()
+    verify(switchToMonthMode).invoke()
   }
 
   @Test fun nextMonth() {
@@ -147,6 +148,7 @@ class DatePickerControllerTest {
     assertSetCurrentMonth(nextMonth)
     assertRender(nextMonth.asCalendar(1), now.snapshot())
     verify(vibrator).vibrateForSelection()
+    verify(switchToMonthMode).invoke()
   }
 
   @Test fun setFullDate() {
@@ -233,7 +235,7 @@ class DatePickerControllerTest {
         .that(calendar.month)
         .isEqualTo(captured.month)
 
-    verify(renderWeeks).invoke(isA())
+    verify(renderDaysOfMonth).invoke(isA())
     verify(goBackVisibility).invoke(canGoBack)
     verify(goForwardVisibility).invoke(canGoForward)
   }

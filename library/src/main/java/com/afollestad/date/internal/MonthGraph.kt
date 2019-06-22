@@ -21,6 +21,8 @@ import com.afollestad.date.dayOfMonth
 import com.afollestad.date.dayOfWeek
 import com.afollestad.date.month
 import com.afollestad.date.snapshot.DateSnapshot
+import com.afollestad.date.snapshot.MonthSnapshot
+import com.afollestad.date.snapshot.snapshotMonth
 import com.afollestad.date.totalDaysInMonth
 import com.afollestad.date.year
 import java.util.Calendar
@@ -30,17 +32,11 @@ import kotlin.properties.Delegates
 internal const val NO_DATE: Int = -1
 
 /** @author Aidan Follestad (@afollestad) */
-internal data class Date(
+internal data class DayOfMonth(
   val dayOfWeek: DayOfWeek,
+  val month: MonthSnapshot,
   val date: Int = NO_DATE,
   val isSelected: Boolean = false
-)
-
-/** @author Aidan Follestad (@afollestad) */
-internal data class Week(
-  val month: Int,
-  val year: Int,
-  val dates: List<Date>
 )
 
 /** @author Aidan Follestad (@afollestad) */
@@ -60,93 +56,54 @@ internal class MonthGraph(
         .andTheRest()
   }
 
-  @CheckResult fun getWeeks(selectedDate: DateSnapshot): List<Week> {
-    val weeks = mutableListOf<Week>()
-    val datesBuffer = mutableListOf<Date>()
+  @CheckResult fun getDaysOfMonth(selectedDate: DateSnapshot): List<DayOfMonth> {
+    val daysOfMonth = mutableListOf<DayOfMonth>()
+    val month = calendar.snapshotMonth()
 
     // Add prefix days first, days the lead up from last month to the first day of this
-    datesBuffer.addAll(
+    daysOfMonth.addAll(
         orderedWeekDays
             .takeWhile { it != firstWeekDayInMonth }
-            .map { Date(it) }
+            .map { DayOfMonth(it, month) }
     )
-    if (datesBuffer.size == DAYS_IN_WEEK) {
-      // We've reached another week
-      weeks.add(
-          Week(
-              month = calendar.month,
-              year = calendar.year,
-              dates = datesBuffer.toList()
-          )
-      )
-      datesBuffer.clear()
-    }
 
     for (date in 1..daysInMonth) {
       calendar.dayOfMonth = date
-      datesBuffer.add(
-          Date(
+      daysOfMonth.add(
+          DayOfMonth(
               dayOfWeek = calendar.dayOfWeek,
+              month = month,
               date = date,
               isSelected = selectedDate == DateSnapshot(calendar.month, date, calendar.year)
           )
       )
-      if (datesBuffer.size == DAYS_IN_WEEK) {
-        // We've reached another week
-        weeks.add(
-            Week(
-                month = calendar.month,
-                year = calendar.year,
-                dates = datesBuffer.toList()
-            )
-        )
-        datesBuffer.clear()
-      }
     }
 
-    if (datesBuffer.isNotEmpty()) {
+    if (daysOfMonth.size < TOTAL_DAYS_OF_MONTH) {
       // Fill in remaining days of week
       val loopTarget = orderedWeekDays.last()
           .nextDayOfWeek()
-      datesBuffer.addAll(
-          datesBuffer.last()
+      daysOfMonth.addAll(
+          daysOfMonth.last()
               .dayOfWeek
               .nextDayOfWeek()
               .andTheRest()
               .takeWhile { it != loopTarget }
-              .map { Date(it) }
-      )
-      // Add any left over as a last week
-      weeks.add(
-          Week(
-              month = calendar.month,
-              year = calendar.year,
-              dates = datesBuffer.toList()
-          )
-      )
-      datesBuffer.clear()
-    }
-    // Make sure we always come out to 6 weeks at least
-    while (weeks.size < TOTAL_WEEKS) {
-      weeks.add(
-          Week(
-              month = calendar.month,
-              year = calendar.year,
-              dates = getEmptyDates()
-          )
+              .map { DayOfMonth(it, month) }
       )
     }
+    // Make sure we fill up 6 weeks worth of dates
+    while (daysOfMonth.size < TOTAL_DAYS_OF_MONTH) {
+      daysOfMonth.addAll(orderedWeekDays.map { DayOfMonth(it, month, NO_DATE) })
+    }
 
-    require(weeks.size == TOTAL_WEEKS) { "${weeks.size} must equal $TOTAL_WEEKS" }
-    return weeks
-  }
-
-  private fun getEmptyDates(): List<Date> {
-    return orderedWeekDays.map { Date(it, NO_DATE) }
+    check(daysOfMonth.size == TOTAL_DAYS_OF_MONTH) {
+      "${daysOfMonth.size} must equal $TOTAL_DAYS_OF_MONTH"
+    }
+    return daysOfMonth
   }
 
   private companion object {
-    const val DAYS_IN_WEEK: Int = 7
-    const val TOTAL_WEEKS: Int = 6
+    const val TOTAL_DAYS_OF_MONTH: Int = 42
   }
 }

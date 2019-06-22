@@ -17,6 +17,9 @@ package com.afollestad.date.internal
 
 import android.content.Context
 import androidx.annotation.AttrRes
+import androidx.annotation.CheckResult
+import android.util.TypedValue
+import androidx.annotation.DimenRes
 
 /** @author Aidan Follestad (@afollestad) */
 internal fun Context.resolveColor(
@@ -33,4 +36,10 @@ internal fun Context.resolveColor(
   } finally {
     a.recycle()
   }
+}
+
+/** @author Aidan Follestad (@afollestad) */
+@CheckResult internal fun Context.getFloat(@DimenRes dimen: Int): Float {
+  return TypedValue().apply { resources.getValue(dimen, this, true) }
+      .float
 }

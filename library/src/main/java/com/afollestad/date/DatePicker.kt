@@ -33,14 +33,15 @@ import com.afollestad.date.internal.DateFormatter
 import com.afollestad.date.controllers.DatePickerController
 import com.afollestad.date.controllers.MinMaxController
 import com.afollestad.date.controllers.VibratorController
+import com.afollestad.date.internal.DayOfMonth
 import com.afollestad.date.internal.DayOfWeek
 import com.afollestad.date.internal.TypefaceHelper
 import com.afollestad.date.internal.Util.createCircularSelector
-import com.afollestad.date.internal.Week
 import com.afollestad.date.internal.YearAdapter
 import com.afollestad.date.internal.attachTopDivider
 import com.afollestad.date.internal.color
 import com.afollestad.date.internal.conceal
+import com.afollestad.date.internal.concealAll
 import com.afollestad.date.internal.font
 import com.afollestad.date.internal.hide
 import com.afollestad.date.internal.invalidateTopDividerNow
@@ -49,10 +50,12 @@ import com.afollestad.date.internal.isVisible
 import com.afollestad.date.internal.onClickDebounced
 import com.afollestad.date.internal.resolveColor
 import com.afollestad.date.internal.show
+import com.afollestad.date.internal.showAll
 import com.afollestad.date.internal.showOrConceal
-import com.afollestad.date.internal.withAlpha
+import com.afollestad.date.renderers.DayOfMonthRenderer
+import com.afollestad.date.renderers.WeekdayHeaderRenderer
 import com.afollestad.date.snapshot.DateSnapshot
-import com.afollestad.date.view.WeekRowView
+import com.afollestad.date.view.RatioTextView
 import java.lang.Long.MAX_VALUE
 import java.util.Calendar
 
@@ -67,9 +70,12 @@ class DatePicker(
   // Non-nullables
   internal val controller: DatePickerController
   internal val minMaxController = MinMaxController()
+
   private val vibrator: VibratorController
   private val dateFormatter = DateFormatter()
   private val yearAdapter: YearAdapter
+  private val weekdayHeaderRenderer: WeekdayHeaderRenderer
+  private val dayOfMonthRenderer: DayOfMonthRenderer
 
   // Late inits
   private lateinit var selectedYearView: TextView
@@ -77,13 +83,12 @@ class DatePicker(
   private lateinit var visibleMonthView: TextView
   private lateinit var goPreviousMonthView: View
   private lateinit var goNextMonthView: View
-  private lateinit var weekRowViews: MutableList<WeekRowView>
+  private lateinit var weekdayHeaderViews: MutableList<TextView>
+  private lateinit var dayOfMonthViews: MutableList<RatioTextView>
   private lateinit var yearsRecyclerView: RecyclerView
   private lateinit var yearsDividerView: View
 
   // Config properties
-  internal val selectionColor: Int
-  internal val disabledBackgroundColor: Int
   private val headerBackgroundColor: Int
   internal val normalFont: Typeface
   private val mediumFont: Typeface
@@ -98,20 +103,12 @@ class DatePicker(
           minMaxController = minMaxController,
           renderHeaders = ::renderHeaders,
           renderDaysOfWeek = ::renderDaysOfWeek,
-          renderWeeks = ::renderWeeks,
+          renderDaysOfMonth = ::renderDaysOfMonth,
           goBackVisibility = { goPreviousMonthView.showOrConceal(it) },
           goForwardVisibility = { goNextMonthView.showOrConceal(it) },
           switchToMonthMode = ::switchToMonthMode
       )
 
-      selectionColor = ta.color(R.styleable.DatePicker_date_picker_selection_color) {
-        context.resolveColor(R.attr.colorAccent)
-      }
-      disabledBackgroundColor =
-        ta.color(R.styleable.DatePicker_date_picker_disabled_background_color) {
-          context.resolveColor(android.R.attr.textColorSecondary)
-              .withAlpha(DEFAULT_DISABLED_BACKGROUND_OPACITY)
-        }
       headerBackgroundColor = ta.color(R.styleable.DatePicker_date_picker_header_background_color) {
         context.resolveColor(R.attr.colorAccent)
       }
@@ -121,10 +118,18 @@ class DatePicker(
       mediumFont = ta.font(context, R.styleable.DatePicker_date_picker_medium_font) {
         TypefaceHelper.create("sans-serif-medium")
       }
+
+      weekdayHeaderRenderer = WeekdayHeaderRenderer(normalFont)
+      dayOfMonthRenderer = DayOfMonthRenderer(
+          context = context,
+          typedArray = ta,
+          normalFont = normalFont,
+          minMaxController = minMaxController
+      )
     } finally {
       ta.recycle()
     }
-    yearAdapter = YearAdapter(selectionColor) {
+    yearAdapter = YearAdapter(dayOfMonthRenderer.selectionColor) {
       controller.setYear(it)
     }
   }
@@ -198,15 +203,16 @@ class DatePicker(
       onClickDebounced { switchToMonthMode() }
     }
 
-    weekRowViews = mutableListOf(
-        findViewById<WeekRowView>(R.id.row_one).setup(this),
-        findViewById<WeekRowView>(R.id.row_two).setup(this),
-        findViewById<WeekRowView>(R.id.row_three).setup(this),
-        findViewById<WeekRowView>(R.id.row_four).setup(this),
-        findViewById<WeekRowView>(R.id.row_five).setup(this),
-        findViewById<WeekRowView>(R.id.row_six).setup(this),
-        findViewById<WeekRowView>(R.id.row_seven).setup(this)
-    )
+    weekdayHeaderViews = mutableListOf()
+    dayOfMonthViews = mutableListOf()
+    for (childIndex in 0 until childCount) {
+      val child = getChildAt(childIndex) ?: break
+      if (child.tag == "weekday_header") {
+        weekdayHeaderViews.add(child as TextView)
+      } else if (child.tag == "day_of_month") {
+        dayOfMonthViews.add(child as RatioTextView)
+      }
+    }
 
     yearsDividerView = findViewById(R.id.year_list_divider)
     yearsRecyclerView = findViewById<RecyclerView>(R.id.year_list).apply {
@@ -217,11 +223,11 @@ class DatePicker(
     }
 
     goPreviousMonthView = findViewById<View>(R.id.left_chevron).apply {
-      background = createCircularSelector(selectionColor)
+      background = createCircularSelector(dayOfMonthRenderer.selectionColor)
       onClickDebounced { controller.previousMonth() }
     }
     goNextMonthView = findViewById<View>(R.id.right_chevron).apply {
-      background = createCircularSelector(selectionColor)
+      background = createCircularSelector(dayOfMonthRenderer.selectionColor)
       onClickDebounced { controller.nextMonth() }
     }
   }
@@ -230,7 +236,8 @@ class DatePicker(
     if (yearsRecyclerView.isVisible()) return
     yearsRecyclerView.show()
     yearsRecyclerView.invalidateTopDividerNow(yearsDividerView)
-    weekRowViews.forEach { it.conceal() }
+    weekdayHeaderViews.concealAll()
+    dayOfMonthViews.concealAll()
     selectedYearView.apply {
       setTextColor(context.resolveColor(android.R.attr.textColorPrimaryInverse))
       typeface = mediumFont
@@ -245,7 +252,8 @@ class DatePicker(
   private fun switchToMonthMode() {
     if (yearsRecyclerView.isConcealed()) return
     yearsRecyclerView.conceal()
-    weekRowViews.forEach { it.show() }
+    weekdayHeaderViews.showAll()
+    dayOfMonthViews.showAll()
     yearsDividerView.hide()
     selectedYearView.apply {
       setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
@@ -269,23 +277,24 @@ class DatePicker(
   }
 
   private fun renderDaysOfWeek(daysOfWeek: List<DayOfWeek>) {
-    weekRowViews.first()
-        .renderDaysOfWeek(daysOfWeek)
+    weekdayHeaderRenderer.renderAll(
+        daysOfWeek = daysOfWeek,
+        views = weekdayHeaderViews
+    )
   }
 
-  private fun renderWeeks(weeks: List<Week>) {
-    yearAdapter.selectedYear = weeks.first()
+  private fun renderDaysOfMonth(days: List<DayOfMonth>) {
+    yearAdapter.selectedYear = days.first()
+        .month
         .year
     yearAdapter.getSelectedPosition()
         ?.let { yearsRecyclerView.scrollToPosition(it - 2) }
 
-    for ((index, view) in weekRowViews.withIndex().drop(1)) {
-      val week = weeks[index - 1]
-      view.renderWeek(week)
+    dayOfMonthRenderer.renderAll(
+        daysOfMonth = days,
+        views = dayOfMonthViews
+    ) {
+      controller.setDayOfMonth(it)
     }
-  }
-
-  private companion object {
-    const val DEFAULT_DISABLED_BACKGROUND_OPACITY: Float = 0.3f
   }
 }

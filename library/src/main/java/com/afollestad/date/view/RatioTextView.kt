@@ -19,17 +19,23 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.RestrictTo
 import androidx.appcompat.widget.AppCompatTextView
+import com.afollestad.date.R
+import com.afollestad.date.internal.getFloat
 
 /** @author Aidan Follestad (@afollestad) */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-class SquareTextView(
+class RatioTextView(
   context: Context,
   attrs: AttributeSet?
 ) : AppCompatTextView(context, attrs) {
+  private val ratio: Float = context.getFloat(R.dimen.day_of_month_height_ratio)
+
   override fun onMeasure(
     widthMeasureSpec: Int,
     heightMeasureSpec: Int
   ) {
-    super.onMeasure(widthMeasureSpec, widthMeasureSpec)
+    val width = MeasureSpec.getSize(widthMeasureSpec)
+    val height = (width * ratio).toInt()
+    setMeasuredDimension(width, height)
   }
 }

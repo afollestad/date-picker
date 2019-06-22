@@ -36,6 +36,12 @@ internal fun View.conceal() {
 }
 
 /** @author Aidan Follestad (@afollestad) */
+internal fun List<View>.concealAll() = forEach { it.conceal() }
+
+/** @author Aidan Follestad (@afollestad) */
+internal fun List<View>.showAll() = forEach { it.show() }
+
+/** @author Aidan Follestad (@afollestad) */
 internal fun View.showOrHide(show: Boolean) = if (show) show() else hide()
 
 internal fun View.showOrConceal(show: Boolean) = if (show) show() else conceal()

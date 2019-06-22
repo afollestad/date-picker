@@ -22,9 +22,9 @@ import com.afollestad.date.OnDateChanged
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.decrementMonth
 import com.afollestad.date.incrementMonth
+import com.afollestad.date.internal.DayOfMonth
 import com.afollestad.date.internal.DayOfWeek
 import com.afollestad.date.internal.MonthGraph
-import com.afollestad.date.internal.Week
 import com.afollestad.date.month
 import com.afollestad.date.snapshot.DateSnapshot
 import com.afollestad.date.snapshot.MonthSnapshot
@@ -40,22 +40,18 @@ internal class DatePickerController(
   private val minMaxController: MinMaxController,
   private val renderHeaders: (Calendar, DateSnapshot) -> Unit,
   private val renderDaysOfWeek: (List<DayOfWeek>) -> Unit,
-  private val renderWeeks: (List<Week>) -> Unit,
+  private val renderDaysOfMonth: (List<DayOfMonth>) -> Unit,
   private val goBackVisibility: (visible: Boolean) -> Unit,
   private val goForwardVisibility: (visible: Boolean) -> Unit,
   private val switchToMonthMode: () -> Unit,
   private val getNow: () -> Calendar = { Calendar.getInstance() }
 ) {
-  @VisibleForTesting
-  var didInit: Boolean = false
+  @VisibleForTesting var didInit: Boolean = false
   private val dateChangedListeners: MutableList<OnDateChanged> = mutableListOf()
 
-  @VisibleForTesting
-  var viewingMonth: MonthSnapshot? = null
-  @VisibleForTesting
-  var monthGraph: MonthGraph? = null
-  @VisibleForTesting
-  var selectedDate: DateSnapshot? = null
+  @VisibleForTesting var viewingMonth: MonthSnapshot? = null
+  @VisibleForTesting var monthGraph: MonthGraph? = null
+  @VisibleForTesting var selectedDate: DateSnapshot? = null
 
   fun maybeInit() {
     if (!didInit) {
@@ -71,6 +67,7 @@ internal class DatePickerController(
   }
 
   fun previousMonth() {
+    switchToMonthMode()
     val calendar = viewingMonth!!.asCalendar(1)
         .decrementMonth()
     setCurrentMonth(calendar)
@@ -79,6 +76,7 @@ internal class DatePickerController(
   }
 
   fun nextMonth() {
+    switchToMonthMode()
     val calendar = viewingMonth!!.asCalendar(1)
         .incrementMonth()
     setCurrentMonth(calendar)
@@ -114,8 +112,7 @@ internal class DatePickerController(
     }
   }, notifyListeners = notifyListeners)
 
-  @CheckResult
-  fun getFullDate(): Calendar? = selectedDate?.asCalendar()
+  @CheckResult fun getFullDate(): Calendar? = selectedDate?.asCalendar()
 
   fun setDayOfMonth(day: Int) {
     if (!didInit) {
@@ -153,7 +150,7 @@ internal class DatePickerController(
 
   private fun render(calendar: Calendar) {
     renderHeaders(calendar, selectedDate!!)
-    renderWeeks(monthGraph!!.getWeeks(selectedDate!!))
+    renderDaysOfMonth(monthGraph!!.getDaysOfMonth(selectedDate!!))
     goBackVisibility(minMaxController.canGoBack(calendar))
     goForwardVisibility(minMaxController.canGoForward(calendar))
   }
