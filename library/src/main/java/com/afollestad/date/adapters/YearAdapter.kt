@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.adapters
 
 import android.graphics.Typeface
 import android.util.TypedValue.COMPLEX_UNIT_PX
@@ -25,7 +25,8 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.afollestad.date.R
-import com.afollestad.date.internal.Util.createTextSelector
+import com.afollestad.date.util.Util.createTextSelector
+import com.afollestad.date.util.onClickDebounced
 import com.afollestad.date.year
 import java.util.Calendar
 
@@ -76,7 +77,8 @@ internal class YearAdapter(
     val context = parent.context
     val view = LayoutInflater.from(context)
         .inflate(R.layout.year_list_row, parent, false)
-    return YearViewHolder(view, this).apply {
+    return YearViewHolder(view, this)
+        .apply {
       textView.setTextColor(
           createTextSelector(context, selectionColor, overColoredBackground = false)
       )

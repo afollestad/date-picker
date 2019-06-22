@@ -22,7 +22,7 @@ import android.util.AttributeSet
 import androidx.annotation.RestrictTo
 import androidx.appcompat.widget.AppCompatTextView
 import com.afollestad.date.R
-import com.afollestad.date.internal.getFloat
+import com.afollestad.date.util.getFloat
 
 /** @author Aidan Follestad (@afollestad) */
 @RestrictTo(RestrictTo.Scope.LIBRARY)

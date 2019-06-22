@@ -13,32 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.util
 
-import android.view.View
+import android.graphics.Color
+import androidx.annotation.ColorInt
 
 /** @author Aidan Follestad (@afollestad) */
-internal object Debouncer {
-  @Volatile private var enabled: Boolean = true
-  private val enableAgain = Runnable { enabled = true }
-
-  fun canPerform(view: View): Boolean {
-    if (enabled) {
-      enabled = false
-      view.post(enableAgain)
-      return true
-    }
+internal fun Int.isColorDark(threshold: Double = 0.5): Boolean {
+  if (this == Color.TRANSPARENT) {
     return false
   }
+  val darkness =
+    1 - (0.299 * Color.red(this) + 0.587 * Color.green(this) + 0.114 * Color.blue(this)) / 255
+  return darkness >= threshold
 }
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun <T : View> T.onClickDebounced(click: (view: T) -> Unit): T {
-  setOnClickListener {
-    if (Debouncer.canPerform(it)) {
-      @Suppress("UNCHECKED_CAST")
-      click(it as T)
-    }
-  }
-  return this
+@ColorInt internal fun Int.withAlpha(alpha: Float): Int {
+  return Color.argb((255 * alpha).toInt(), Color.red(this), Color.green(this), Color.blue(this))
 }

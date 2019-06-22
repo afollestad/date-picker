@@ -13,22 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.util
 
-import android.graphics.Color
+import android.content.Context
+import android.content.res.TypedArray
+import android.graphics.Typeface
 import androidx.annotation.ColorInt
+import androidx.annotation.StyleableRes
+import androidx.core.content.res.ResourcesCompat
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun Int.isColorDark(threshold: Double = 0.5): Boolean {
-  if (this == Color.TRANSPARENT) {
-    return false
-  }
-  val darkness =
-    1 - (0.299 * Color.red(this) + 0.587 * Color.green(this) + 0.114 * Color.blue(this)) / 255
-  return darkness >= threshold
+@ColorInt internal fun TypedArray.color(
+  @StyleableRes attr: Int,
+  fallback: () -> Int
+): Int {
+  val colorValue = getColor(attr, 0)
+  return if (colorValue == 0) fallback() else colorValue
 }
 
 /** @author Aidan Follestad (@afollestad) */
-@ColorInt internal fun Int.withAlpha(alpha: Float): Int {
-  return Color.argb((255 * alpha).toInt(), Color.red(this), Color.green(this), Color.blue(this))
+internal fun TypedArray.font(
+  context: Context,
+  @StyleableRes attr: Int,
+  fallback: () -> Typeface
+): Typeface {
+  val resId = getResourceId(attr, 0)
+  return if (resId == 0) {
+    fallback()
+  } else {
+    ResourcesCompat.getFont(context, resId) ?: fallback()
+  }
 }

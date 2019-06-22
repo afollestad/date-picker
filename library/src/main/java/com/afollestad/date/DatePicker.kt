@@ -35,23 +35,23 @@ import com.afollestad.date.controllers.MinMaxController
 import com.afollestad.date.controllers.VibratorController
 import com.afollestad.date.internal.DayOfMonth
 import com.afollestad.date.internal.DayOfWeek
-import com.afollestad.date.internal.TypefaceHelper
-import com.afollestad.date.internal.Util.createCircularSelector
-import com.afollestad.date.internal.YearAdapter
-import com.afollestad.date.internal.attachTopDivider
-import com.afollestad.date.internal.color
-import com.afollestad.date.internal.conceal
-import com.afollestad.date.internal.concealAll
-import com.afollestad.date.internal.font
-import com.afollestad.date.internal.hide
-import com.afollestad.date.internal.invalidateTopDividerNow
-import com.afollestad.date.internal.isConcealed
-import com.afollestad.date.internal.isVisible
-import com.afollestad.date.internal.onClickDebounced
-import com.afollestad.date.internal.resolveColor
-import com.afollestad.date.internal.show
-import com.afollestad.date.internal.showAll
-import com.afollestad.date.internal.showOrConceal
+import com.afollestad.date.util.TypefaceHelper
+import com.afollestad.date.util.Util.createCircularSelector
+import com.afollestad.date.adapters.YearAdapter
+import com.afollestad.date.util.attachTopDivider
+import com.afollestad.date.util.color
+import com.afollestad.date.util.conceal
+import com.afollestad.date.util.concealAll
+import com.afollestad.date.util.font
+import com.afollestad.date.util.hide
+import com.afollestad.date.util.invalidateTopDividerNow
+import com.afollestad.date.util.isConcealed
+import com.afollestad.date.util.isVisible
+import com.afollestad.date.util.onClickDebounced
+import com.afollestad.date.util.resolveColor
+import com.afollestad.date.util.show
+import com.afollestad.date.util.showAll
+import com.afollestad.date.util.showOrConceal
 import com.afollestad.date.renderers.DayOfMonthRenderer
 import com.afollestad.date.renderers.WeekdayHeaderRenderer
 import com.afollestad.date.snapshot.DateSnapshot
@@ -129,6 +129,7 @@ class DatePicker(
     } finally {
       ta.recycle()
     }
+
     yearAdapter = YearAdapter(dayOfMonthRenderer.selectionColor) {
       controller.setYear(it)
     }

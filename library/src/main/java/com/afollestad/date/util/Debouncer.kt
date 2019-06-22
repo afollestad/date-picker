@@ -13,33 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.util
 
-import android.content.Context
-import androidx.annotation.AttrRes
-import androidx.annotation.CheckResult
-import android.util.TypedValue
-import androidx.annotation.DimenRes
+import android.view.View
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun Context.resolveColor(
-  @AttrRes attr: Int,
-  fallback: (() -> Int)? = null
-): Int {
-  val a = theme.obtainStyledAttributes(intArrayOf(attr))
-  try {
-    val result = a.getColor(0, 0)
-    if (result == 0 && fallback != null) {
-      return fallback()
+internal object Debouncer {
+  @Volatile private var enabled: Boolean = true
+  private val enableAgain = Runnable { enabled = true }
+
+  fun canPerform(view: View): Boolean {
+    if (enabled) {
+      enabled = false
+      view.post(enableAgain)
+      return true
     }
-    return result
-  } finally {
-    a.recycle()
+    return false
   }
 }
 
 /** @author Aidan Follestad (@afollestad) */
-@CheckResult internal fun Context.getFloat(@DimenRes dimen: Int): Float {
-  return TypedValue().apply { resources.getValue(dimen, this, true) }
-      .float
+internal fun <T : View> T.onClickDebounced(click: (view: T) -> Unit): T {
+  setOnClickListener {
+    if (Debouncer.canPerform(it)) {
+      @Suppress("UNCHECKED_CAST")
+      click(it as T)
+    }
+  }
+  return this
 }

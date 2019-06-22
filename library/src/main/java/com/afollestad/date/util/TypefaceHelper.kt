@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.util
 
 import android.graphics.Typeface
 import androidx.annotation.CheckResult
@@ -28,7 +28,9 @@ object TypefaceHelper {
    * repeated allocations.
    */
   @CheckResult fun create(familyName: String): Typeface {
-    return cache[familyName] ?: allocateAndCache(familyName)
+    return cache[familyName] ?: allocateAndCache(
+        familyName
+    )
   }
 
   private fun allocateAndCache(familyName: String): Typeface {

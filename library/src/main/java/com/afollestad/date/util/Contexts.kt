@@ -13,34 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.util
 
 import android.content.Context
-import android.content.res.TypedArray
-import android.graphics.Typeface
-import androidx.annotation.ColorInt
-import androidx.annotation.StyleableRes
-import androidx.core.content.res.ResourcesCompat
+import androidx.annotation.AttrRes
+import androidx.annotation.CheckResult
+import android.util.TypedValue
+import androidx.annotation.DimenRes
 
 /** @author Aidan Follestad (@afollestad) */
-@ColorInt internal fun TypedArray.color(
-  @StyleableRes attr: Int,
-  fallback: () -> Int
+internal fun Context.resolveColor(
+  @AttrRes attr: Int,
+  fallback: (() -> Int)? = null
 ): Int {
-  val colorValue = getColor(attr, 0)
-  return if (colorValue == 0) fallback() else colorValue
+  val a = theme.obtainStyledAttributes(intArrayOf(attr))
+  try {
+    val result = a.getColor(0, 0)
+    if (result == 0 && fallback != null) {
+      return fallback()
+    }
+    return result
+  } finally {
+    a.recycle()
+  }
 }
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun TypedArray.font(
-  context: Context,
-  @StyleableRes attr: Int,
-  fallback: () -> Typeface
-): Typeface {
-  val resId = getResourceId(attr, 0)
-  return if (resId == 0) {
-    fallback()
-  } else {
-    ResourcesCompat.getFont(context, resId) ?: fallback()
-  }
+@CheckResult internal fun Context.getFloat(@DimenRes dimen: Int): Float {
+  return TypedValue().apply { resources.getValue(dimen, this, true) }
+      .float
 }

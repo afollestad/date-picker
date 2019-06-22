@@ -24,13 +24,13 @@ import com.afollestad.date.R
 import com.afollestad.date.controllers.MinMaxController
 import com.afollestad.date.internal.DayOfMonth
 import com.afollestad.date.internal.NO_DATE
-import com.afollestad.date.internal.Util.coloredDrawable
-import com.afollestad.date.internal.Util.createCircularSelector
-import com.afollestad.date.internal.Util.createTextSelector
-import com.afollestad.date.internal.color
-import com.afollestad.date.internal.onClickDebounced
-import com.afollestad.date.internal.resolveColor
-import com.afollestad.date.internal.withAlpha
+import com.afollestad.date.util.Util.coloredDrawable
+import com.afollestad.date.util.Util.createCircularSelector
+import com.afollestad.date.util.Util.createTextSelector
+import com.afollestad.date.util.color
+import com.afollestad.date.util.onClickDebounced
+import com.afollestad.date.util.resolveColor
+import com.afollestad.date.util.withAlpha
 import com.afollestad.date.snapshot.DateSnapshot
 import com.afollestad.date.view.DayOfMonthTextView
 
