@@ -64,7 +64,7 @@
   </style>
 
   <style name="WeekRowView.WeekdayHeader.Start" parent="WeekRowView.WeekdayHeader">
-    <item name="layout_constraintStart_toStartOf">@+id/start_boundary</item>
+    <item name="layout_constraintStart_toEndOf">@+id/start_boundary</item>
   </style>
 
   <style name="WeekRowView.WeekdayHeader.End" parent="WeekRowView.WeekdayHeader">
@@ -82,7 +82,7 @@
   </style>
 
   <style name="WeekRowView.DayOfMonth.Start" parent="WeekRowView.DayOfMonth">
-    <item name="layout_constraintStart_toStartOf">@+id/start_boundary</item>
+    <item name="layout_constraintStart_toEndOf">@+id/start_boundary</item>
   </style>
 
   <style name="WeekRowView.DayOfMonth.End" parent="WeekRowView.DayOfMonth">
