@@ -18,6 +18,9 @@
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">@dimen/current_month_header_height</item>
     <item name="android:layout_marginTop">1dp</item>
+    <item name="android:background">?selectableItemBackground</item>
+    <item name="android:paddingLeft">@dimen/current_month_header_padding_sides</item>
+    <item name="android:paddingRight">@dimen/current_month_header_padding_sides</item>
   </style>
 
   <style name="DatePicker.Chevron">
@@ -89,19 +92,23 @@
     <item name="layout_constraintEnd_toEndOf">parent</item>
   </style>
 
-  <style name="YearList">
+  <style name="YearOrMonthList">
     <item name="android:scrollbars">vertical</item>
     <item name="android:layout_width">0dp</item>
     <item name="android:layout_height">0dp</item>
     <item name="android:visibility">invisible</item>
+    <item name="layout_constraintStart_toEndOf">@id/start_boundary</item>
+    <item name="layout_constraintEnd_toEndOf">parent</item>
+    <item name="layout_constraintBottom_toBottomOf">@id/row_6_col_1</item>
+    <item name="layout_constraintTop_toBottomOf">@+id/year_month_list_divider</item>
   </style>
 
-  <style name="YearList.Row">
+  <style name="YearOrMonthList.Row">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">@dimen/year_list_row_height</item>
     <item name="android:gravity">center</item>
     <item name="android:background">?selectableItemBackground</item>
-    <item name="android:textSize">@dimen/year_list_text_size</item>
+    <item name="android:textSize">@dimen/year_month_list_text_size</item>
     <item name="android:padding">@dimen/year_list_row_padding</item>
     <item name="android:visibility">visible</item>
   </style>

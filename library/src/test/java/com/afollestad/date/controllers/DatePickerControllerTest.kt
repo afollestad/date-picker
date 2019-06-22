@@ -151,6 +151,18 @@ class DatePickerControllerTest {
     verify(switchToMonthMode).invoke()
   }
 
+  @Test fun setMonth() {
+    controller.viewingMonth = now.snapshotMonth()
+    controller.selectedDate = now.snapshot()
+    controller.setMonth(Calendar.DECEMBER)
+
+    val expectedMonth = MonthSnapshot(Calendar.DECEMBER, 1995)
+    assertSetCurrentMonth(expectedMonth)
+    assertRender(expectedMonth.asCalendar(1), now.snapshot())
+    verify(vibrator).vibrateForSelection()
+    verify(switchToMonthMode).invoke()
+  }
+
   @Test fun setFullDate() {
     controller.didInit = false
     controller.selectedDate = null

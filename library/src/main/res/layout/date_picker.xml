@@ -70,19 +70,18 @@
   <include layout="@layout/include_weekday_headers"/>
   <include layout="@layout/include_days_of_month"/>
 
-  <!-- Year list for year mode -->
   <View
-      android:id="@+id/year_list_divider"
+      android:id="@+id/year_month_list_divider"
       style="@style/Divider"
       />
 
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/year_list"
-      style="@style/YearList"
-      app:layout_constraintBottom_toBottomOf="@id/row_6_col_1"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/year_list_divider"
+      style="@style/YearOrMonthList"
+      />
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/month_list"
+      style="@style/YearOrMonthList"
       />
 
 </merge>

@@ -29,6 +29,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.date.adapters.MonthAdapter
 import com.afollestad.date.internal.DateFormatter
 import com.afollestad.date.controllers.DatePickerController
 import com.afollestad.date.controllers.MinMaxController
@@ -74,6 +75,7 @@ class DatePicker(
   private val vibrator: VibratorController
   private val dateFormatter = DateFormatter()
   private val yearAdapter: YearAdapter
+  private val monthAdapter: MonthAdapter
   private val weekdayHeaderRenderer: WeekdayHeaderRenderer
   private val dayOfMonthRenderer: DayOfMonthRenderer
 
@@ -86,7 +88,8 @@ class DatePicker(
   private lateinit var weekdayHeaderViews: MutableList<TextView>
   private lateinit var dayOfMonthViews: MutableList<DayOfMonthTextView>
   private lateinit var yearsRecyclerView: RecyclerView
-  private lateinit var yearsDividerView: View
+  private lateinit var monthRecyclerView: RecyclerView
+  private lateinit var listsDividerView: View
 
   // Config properties
   private val headerBackgroundColor: Int
@@ -106,7 +109,7 @@ class DatePicker(
           renderDaysOfMonth = ::renderDaysOfMonth,
           goBackVisibility = { goPreviousMonthView.showOrConceal(it) },
           goForwardVisibility = { goNextMonthView.showOrConceal(it) },
-          switchToMonthMode = ::switchToMonthMode
+          switchToDaysOfMonthMode = ::switchToDaysOfMonthMode
       )
 
       headerBackgroundColor = ta.color(R.styleable.DatePicker_date_picker_header_background_color) {
@@ -130,18 +133,27 @@ class DatePicker(
       ta.recycle()
     }
 
-    yearAdapter = YearAdapter(dayOfMonthRenderer.selectionColor) {
-      controller.setYear(it)
-    }
+    yearAdapter = YearAdapter(
+        normalFont = normalFont,
+        mediumFont = mediumFont,
+        selectionColor = dayOfMonthRenderer.selectionColor
+    ) { controller.setYear(it) }
+
+    monthAdapter = MonthAdapter(
+        normalFont = normalFont,
+        mediumFont = mediumFont,
+        selectionColor = dayOfMonthRenderer.selectionColor,
+        dateFormatter = dateFormatter
+    ) { controller.setMonth(it) }
   }
 
-  /** Sets the month displayed in the view, along with the selected date. */
+  /** Sets the date displayed in the view, along with the selected date. */
   fun setDate(
     calendar: Calendar,
     notifyListeners: Boolean = true
   ) = controller.setFullDate(calendar, notifyListeners)
 
-  /** Sets the month and year displayed in the view, along with the selected selectedDate (optionally). */
+  /** Sets the date and year displayed in the view, along with the selected selectedDate (optionally). */
   fun setDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int? = null,
     month: Int,
@@ -192,6 +204,7 @@ class DatePicker(
     super.onFinishInflate()
     visibleMonthView = findViewById<TextView>(R.id.current_month).apply {
       typeface = mediumFont
+      onClickDebounced { switchToMonthMode() }
     }
     selectedYearView = findViewById<TextView>(R.id.current_year).apply {
       background = ColorDrawable(headerBackgroundColor)
@@ -201,7 +214,7 @@ class DatePicker(
     selectedDateView = findViewById<TextView>(R.id.current_date).apply {
       background = ColorDrawable(headerBackgroundColor)
       typeface = mediumFont
-      onClickDebounced { switchToMonthMode() }
+      onClickDebounced { switchToDaysOfMonthMode() }
     }
 
     weekdayHeaderViews = mutableListOf()
@@ -215,12 +228,18 @@ class DatePicker(
       }
     }
 
-    yearsDividerView = findViewById(R.id.year_list_divider)
+    listsDividerView = findViewById(R.id.year_month_list_divider)
     yearsRecyclerView = findViewById<RecyclerView>(R.id.year_list).apply {
       layoutManager = LinearLayoutManager(context)
       adapter = yearAdapter
       addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-      attachTopDivider(yearsDividerView)
+      attachTopDivider(listsDividerView)
+    }
+    monthRecyclerView = findViewById<RecyclerView>(R.id.month_list).apply {
+      layoutManager = LinearLayoutManager(context)
+      adapter = monthAdapter
+      addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+      attachTopDivider(listsDividerView)
     }
 
     goPreviousMonthView = findViewById<View>(R.id.left_chevron).apply {
@@ -233,12 +252,33 @@ class DatePicker(
     }
   }
 
+  private fun switchToMonthMode() {
+    if (monthRecyclerView.isVisible()) return
+    monthRecyclerView.show()
+    monthRecyclerView.invalidateTopDividerNow(listsDividerView)
+    yearsRecyclerView.conceal()
+    weekdayHeaderViews.concealAll()
+    dayOfMonthViews.concealAll()
+
+    selectedYearView.apply {
+      setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
+      typeface = mediumFont
+    }
+    selectedDateView.apply {
+      setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
+      typeface = normalFont
+    }
+    vibrator.vibrateForSelection()
+  }
+
   private fun switchToYearMode() {
     if (yearsRecyclerView.isVisible()) return
     yearsRecyclerView.show()
-    yearsRecyclerView.invalidateTopDividerNow(yearsDividerView)
+    yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
+    monthRecyclerView.conceal()
     weekdayHeaderViews.concealAll()
     dayOfMonthViews.concealAll()
+
     selectedYearView.apply {
       setTextColor(context.resolveColor(android.R.attr.textColorPrimaryInverse))
       typeface = mediumFont
@@ -250,12 +290,16 @@ class DatePicker(
     vibrator.vibrateForSelection()
   }
 
-  private fun switchToMonthMode() {
-    if (yearsRecyclerView.isConcealed()) return
+  private fun switchToDaysOfMonthMode() {
+    if (yearsRecyclerView.isConcealed() && monthRecyclerView.isContextClickable) {
+      return
+    }
     yearsRecyclerView.conceal()
+    monthRecyclerView.conceal()
     weekdayHeaderViews.showAll()
     dayOfMonthViews.showAll()
-    yearsDividerView.hide()
+    listsDividerView.hide()
+
     selectedYearView.apply {
       setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
       typeface = normalFont
@@ -271,7 +315,7 @@ class DatePicker(
     currentMonth: Calendar,
     selectedDate: DateSnapshot
   ) {
-    visibleMonthView.text = dateFormatter.month(currentMonth)
+    visibleMonthView.text = dateFormatter.monthAndYear(currentMonth)
     val selectedCalendar = selectedDate.asCalendar()
     selectedYearView.text = dateFormatter.year(selectedCalendar)
     selectedDateView.text = dateFormatter.date(selectedCalendar)
@@ -290,6 +334,12 @@ class DatePicker(
         .year
     yearAdapter.getSelectedPosition()
         ?.let { yearsRecyclerView.scrollToPosition(it - 2) }
+
+    monthAdapter.selectedMonth = days.first()
+        .month
+        .month
+    monthAdapter.selectedMonth
+        ?.let { monthRecyclerView.scrollToPosition(it - 2) }
 
     dayOfMonthRenderer.renderAll(
         daysOfMonth = days,

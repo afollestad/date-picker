@@ -25,15 +25,16 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.afollestad.date.R
+import com.afollestad.date.internal.DateFormatter
+import com.afollestad.date.month
 import com.afollestad.date.util.Util.createTextSelector
 import com.afollestad.date.util.onClickDebounced
-import com.afollestad.date.year
 import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */
-internal class YearViewHolder(
+internal class MonthViewHolder(
   itemView: View,
-  private val adapter: YearAdapter
+  private val adapter: MonthAdapter
 ) : ViewHolder(itemView) {
   val textView = itemView as TextView
 
@@ -45,59 +46,58 @@ internal class YearViewHolder(
 }
 
 /** @author Aidan Follestad (@afollestad) */
-internal class YearAdapter(
+internal class MonthAdapter(
+  @ColorInt private val selectionColor: Int,
   private val normalFont: Typeface,
   private val mediumFont: Typeface,
-  @ColorInt private val selectionColor: Int,
-  private val onSelection: (year: Int) -> Unit
-) : RecyclerView.Adapter<YearViewHolder>() {
-  var selectedYear: Int? = null
+  private val dateFormatter: DateFormatter,
+  private val onSelection: (month: Int) -> Unit
+) : RecyclerView.Adapter<MonthViewHolder>() {
+
+  var selectedMonth: Int? = null
     set(value) {
-      val lastSelectedYear = field
+      val lastSelectedMonth = field
       field = value
-      if (lastSelectedYear != null) {
-        notifyItemChanged(lastSelectedYear.asPosition())
+      if (lastSelectedMonth != null) {
+        notifyItemChanged(lastSelectedMonth)
       }
       if (value != null) {
-        notifyItemChanged(value.asPosition())
+        notifyItemChanged(value)
       }
     }
-  private val yearRange: Pair<Int, Int> = with(Calendar.getInstance().year) {
-    Pair(this - 100, this + 100)
-  }
+  private val calendar = Calendar.getInstance()
 
   init {
     setHasStableIds(true)
   }
 
-  override fun getItemId(position: Int): Long = position.asYear().toLong()
+  override fun getItemId(position: Int): Long = position.toLong()
 
   override fun onCreateViewHolder(
     parent: ViewGroup,
     viewType: Int
-  ): YearViewHolder {
+  ): MonthViewHolder {
     val context = parent.context
     val view = LayoutInflater.from(context)
         .inflate(R.layout.year_list_row, parent, false)
-    return YearViewHolder(view, this)
+    return MonthViewHolder(view, this)
         .apply {
-      textView.setTextColor(
-          createTextSelector(context, selectionColor, overColoredBackground = false)
-      )
-    }
+          textView.setTextColor(
+              createTextSelector(context, selectionColor, overColoredBackground = false)
+          )
+        }
   }
 
-  override fun getItemCount(): Int = yearRange.second - yearRange.first
+  override fun getItemCount(): Int = calendar.getActualMaximum(Calendar.MONTH)
 
   override fun onBindViewHolder(
-    holder: YearViewHolder,
+    holder: MonthViewHolder,
     position: Int
   ) {
-    val currentYear = position.asYear()
-    val isSelected = currentYear == selectedYear
+    val isSelected = position == selectedMonth
     val res = holder.itemView.context.resources
 
-    holder.textView.text = currentYear.toString()
+    holder.textView.text = position.nameOfMonth()
     holder.textView.isSelected = isSelected
     holder.textView.setTextSize(
         COMPLEX_UNIT_PX,
@@ -116,28 +116,12 @@ internal class YearAdapter(
     }
   }
 
-  fun getSelectedPosition(): Int? = selectedYear?.asPosition()
-
   internal fun onRowClicked(position: Int) {
-    this.selectedYear = position.asYear()
-        .also { onSelection(it) }
+    this.selectedMonth = position.also { onSelection(it) }
   }
 
-  /**
-   * Gets the index that receiver, representing a year, should exist at in the list. If the base
-   * year was 1900, and the given year was 2000, the position would be 99 (since position 1 is index 0).
-   */
-  private fun Int.asPosition(): Int {
-    val base = yearRange.first
-    return this - base - 1
-  }
-
-  /**
-   * Gets the year that the receiver, representing a position, is equal to. This is
-   * basically the inverse of [asPosition].
-   */
-  private fun Int.asYear(): Int {
-    val base = yearRange.first
-    return this + 1 + base
+  private fun Int.nameOfMonth(): String {
+    calendar.month = this
+    return dateFormatter.month(calendar)
   }
 }

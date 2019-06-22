@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <dimen name="current_month_header_height">48dp</dimen>
+  <dimen name="current_month_header_padding_sides">24dp</dimen>
 
   <dimen name="header_main_padding_vertical_top">16dp</dimen>
   <dimen name="header_main_padding_vertical_bottom">0dp</dimen>
@@ -16,8 +17,9 @@
 
   <dimen name="year_list_row_height">52dp</dimen>
   <dimen name="year_list_row_padding">12dp</dimen>
-  <dimen name="year_list_text_size">18sp</dimen>
-  <dimen name="year_list_text_size_selected">22sp</dimen>
+
+  <dimen name="year_month_list_text_size">18sp</dimen>
+  <dimen name="year_month_list_text_size_selected">22sp</dimen>
 
   <dimen name="divider_height">1dp</dimen>
 

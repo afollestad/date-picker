@@ -43,7 +43,7 @@ internal class DatePickerController(
   private val renderDaysOfMonth: (List<DayOfMonth>) -> Unit,
   private val goBackVisibility: (visible: Boolean) -> Unit,
   private val goForwardVisibility: (visible: Boolean) -> Unit,
-  private val switchToMonthMode: () -> Unit,
+  private val switchToDaysOfMonthMode: () -> Unit,
   private val getNow: () -> Calendar = { Calendar.getInstance() }
 ) {
   @VisibleForTesting var didInit: Boolean = false
@@ -67,19 +67,28 @@ internal class DatePickerController(
   }
 
   fun previousMonth() {
-    switchToMonthMode()
+    switchToDaysOfMonthMode()
     val calendar = viewingMonth!!.asCalendar(1)
         .decrementMonth()
-    setCurrentMonth(calendar)
+    updateCurrentMonth(calendar)
     render(calendar)
     vibrator.vibrateForSelection()
   }
 
   fun nextMonth() {
-    switchToMonthMode()
+    switchToDaysOfMonthMode()
     val calendar = viewingMonth!!.asCalendar(1)
         .incrementMonth()
-    setCurrentMonth(calendar)
+    updateCurrentMonth(calendar)
+    render(calendar)
+    vibrator.vibrateForSelection()
+  }
+
+  fun setMonth(month: Int) {
+    switchToDaysOfMonthMode()
+    val calendar = viewingMonth!!.asCalendar(1)
+        .apply { this.month = month }
+    updateCurrentMonth(calendar)
     render(calendar)
     vibrator.vibrateForSelection()
   }
@@ -93,7 +102,7 @@ internal class DatePickerController(
     if (notifyListeners) {
       notifyListeners { calendar.clone() as Calendar }
     }
-    setCurrentMonth(calendar)
+    updateCurrentMonth(calendar)
     render(calendar)
   }
 
@@ -135,14 +144,14 @@ internal class DatePickerController(
         year = year,
         selectedDate = selectedDate!!.day
     )
-    switchToMonthMode()
+    switchToDaysOfMonthMode()
   }
 
   fun addDateChangedListener(listener: OnDateChanged) {
     dateChangedListeners.add(listener)
   }
 
-  private fun setCurrentMonth(calendar: Calendar) {
+  private fun updateCurrentMonth(calendar: Calendar) {
     viewingMonth = calendar.snapshotMonth()
     monthGraph = MonthGraph(calendar)
     renderDaysOfWeek(monthGraph!!.orderedWeekDays)
