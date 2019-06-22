@@ -34,11 +34,10 @@
   <com.afollestad.date.view.SquareImageView
       android:id="@+id/left_chevron"
       style="@style/DatePicker.Chevron"
-      android:layout_marginStart="@dimen/chevron_side_margins"
-      android:layout_marginLeft="@dimen/chevron_side_margins"
       android:contentDescription="@string/previous_month"
       android:src="@drawable/ic_chevron_left"
-      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="@+id/weekday_header_1"
+      app:layout_constraintStart_toStartOf="@+id/weekday_header_1"
       app:layout_constraintTop_toBottomOf="@+id/current_date"
       />
   <TextView
@@ -53,18 +52,17 @@
   <com.afollestad.date.view.SquareImageView
       android:id="@+id/right_chevron"
       style="@style/DatePicker.Chevron"
-      android:layout_marginEnd="@dimen/chevron_side_margins"
-      android:layout_marginRight="@dimen/chevron_side_margins"
       android:contentDescription="@string/next_month"
       android:src="@drawable/ic_chevron_right"
-      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintEnd_toEndOf="@+id/weekday_header_7"
+      app:layout_constraintStart_toStartOf="@+id/weekday_header_7"
       app:layout_constraintTop_toBottomOf="@+id/current_date"
       />
 
   <include layout="@layout/include_weekday_headers"/>
   <include layout="@layout/include_days_of_month"/>
 
-  <!-- Year list for year mode-->
+  <!-- Year list for year mode -->
   <View
       android:id="@+id/year_list_divider"
       android:layout_width="match_parent"
