@@ -7,14 +7,14 @@
     >
 
   <!-- Row 1 -->
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_1_col_1"
       style="@style/WeekRowView.DayOfMonth.Start"
       app:layout_constraintEnd_toStartOf="@+id/row_1_col_2"
       app:layout_constraintTop_toBottomOf="@id/weekday_header_1"
       tools:text="--"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_1_col_2"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_1_col_3"
@@ -22,7 +22,7 @@
       app:layout_constraintTop_toBottomOf="@id/weekday_header_1"
       tools:text="--"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_1_col_3"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_1_col_4"
@@ -30,7 +30,7 @@
       app:layout_constraintTop_toBottomOf="@id/weekday_header_1"
       tools:text="--"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_1_col_4"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_1_col_5"
@@ -38,7 +38,7 @@
       app:layout_constraintTop_toBottomOf="@id/weekday_header_1"
       tools:text="--"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_1_col_5"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_1_col_6"
@@ -46,7 +46,7 @@
       app:layout_constraintTop_toBottomOf="@id/weekday_header_1"
       tools:text="--"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_1_col_6"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_1_col_7"
@@ -54,7 +54,7 @@
       app:layout_constraintTop_toBottomOf="@id/weekday_header_1"
       tools:text="--"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_1_col_7"
       style="@style/WeekRowView.DayOfMonth.End"
       app:layout_constraintStart_toEndOf="@+id/row_1_col_6"
@@ -63,14 +63,14 @@
       />
 
   <!-- Row 2 -->
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_2_col_1"
       style="@style/WeekRowView.DayOfMonth.Start"
       app:layout_constraintEnd_toStartOf="@+id/row_2_col_2"
       app:layout_constraintTop_toBottomOf="@id/row_1_col_1"
       tools:text="2"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_2_col_2"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_2_col_3"
@@ -78,7 +78,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_1_col_2"
       tools:text="3"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_2_col_3"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_2_col_4"
@@ -86,7 +86,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_1_col_3"
       tools:text="4"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_2_col_4"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_2_col_5"
@@ -94,7 +94,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_1_col_4"
       tools:text="5"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_2_col_5"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_2_col_6"
@@ -102,7 +102,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_1_col_5"
       tools:text="6"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_2_col_6"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_2_col_7"
@@ -110,7 +110,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_1_col_6"
       tools:text="7"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_2_col_7"
       style="@style/WeekRowView.DayOfMonth.End"
       app:layout_constraintStart_toEndOf="@+id/row_2_col_6"
@@ -119,14 +119,14 @@
       />
 
   <!-- Row 3 -->
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_3_col_1"
       style="@style/WeekRowView.DayOfMonth.Start"
       app:layout_constraintEnd_toStartOf="@+id/row_3_col_2"
       app:layout_constraintTop_toBottomOf="@id/row_2_col_1"
       tools:text="9"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_3_col_2"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_3_col_3"
@@ -134,7 +134,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_2_col_2"
       tools:text="10"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_3_col_3"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_3_col_4"
@@ -142,7 +142,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_2_col_3"
       tools:text="11"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_3_col_4"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_3_col_5"
@@ -150,7 +150,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_2_col_4"
       tools:text="12"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_3_col_5"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_3_col_6"
@@ -158,7 +158,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_2_col_5"
       tools:text="13"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_3_col_6"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_3_col_7"
@@ -166,7 +166,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_2_col_6"
       tools:text="14"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_3_col_7"
       style="@style/WeekRowView.DayOfMonth.End"
       app:layout_constraintStart_toEndOf="@+id/row_3_col_6"
@@ -175,14 +175,14 @@
       />
 
   <!-- Row 4 -->
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_4_col_1"
       style="@style/WeekRowView.DayOfMonth.Start"
       app:layout_constraintEnd_toStartOf="@+id/row_4_col_2"
       app:layout_constraintTop_toBottomOf="@id/row_3_col_1"
       tools:text="16"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_4_col_2"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_4_col_3"
@@ -190,7 +190,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_3_col_2"
       tools:text="17"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_4_col_3"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_4_col_4"
@@ -198,7 +198,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_3_col_3"
       tools:text="18"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_4_col_4"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_4_col_5"
@@ -206,7 +206,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_3_col_4"
       tools:text="19"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_4_col_5"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_4_col_6"
@@ -214,7 +214,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_3_col_5"
       tools:text="20"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_4_col_6"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_4_col_7"
@@ -222,7 +222,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_3_col_6"
       tools:text="21"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_4_col_7"
       style="@style/WeekRowView.DayOfMonth.End"
       app:layout_constraintStart_toEndOf="@+id/row_4_col_6"
@@ -231,14 +231,14 @@
       />
 
   <!-- Row 5 -->
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_5_col_1"
       style="@style/WeekRowView.DayOfMonth.Start"
       app:layout_constraintEnd_toStartOf="@+id/row_5_col_2"
       app:layout_constraintTop_toBottomOf="@id/row_4_col_1"
       tools:text="23"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_5_col_2"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_5_col_3"
@@ -246,7 +246,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_4_col_2"
       tools:text="24"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_5_col_3"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_5_col_4"
@@ -254,7 +254,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_4_col_3"
       tools:text="25"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_5_col_4"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_5_col_5"
@@ -262,7 +262,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_4_col_4"
       tools:text="26"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_5_col_5"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_5_col_6"
@@ -270,7 +270,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_4_col_5"
       tools:text="27"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_5_col_6"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_5_col_7"
@@ -278,7 +278,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_4_col_6"
       tools:text="28"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_5_col_7"
       style="@style/WeekRowView.DayOfMonth.End"
       app:layout_constraintStart_toEndOf="@+id/row_5_col_6"
@@ -287,14 +287,14 @@
       />
 
   <!-- Row 6 -->
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_6_col_1"
       style="@style/WeekRowView.DayOfMonth.Start"
       app:layout_constraintEnd_toStartOf="@+id/row_6_col_2"
       app:layout_constraintTop_toBottomOf="@id/row_5_col_1"
       tools:text="30"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_6_col_2"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_6_col_3"
@@ -302,7 +302,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_5_col_2"
       tools:text="31"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_6_col_3"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_6_col_4"
@@ -310,7 +310,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_5_col_3"
       tools:text="--"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_6_col_4"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_6_col_5"
@@ -318,7 +318,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_5_col_4"
       tools:text="--"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_6_col_5"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_6_col_6"
@@ -326,7 +326,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_5_col_5"
       tools:text="--"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_6_col_6"
       style="@style/WeekRowView.DayOfMonth"
       app:layout_constraintEnd_toStartOf="@+id/row_6_col_7"
@@ -334,7 +334,7 @@
       app:layout_constraintTop_toBottomOf="@id/row_5_col_6"
       tools:text="--"
       />
-  <com.afollestad.date.view.RatioTextView
+  <com.afollestad.date.view.DayOfMonthTextView
       android:id="@+id/row_6_col_7"
       style="@style/WeekRowView.DayOfMonth.End"
       app:layout_constraintStart_toEndOf="@+id/row_6_col_6"

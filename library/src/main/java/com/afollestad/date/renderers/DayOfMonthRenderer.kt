@@ -19,7 +19,6 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.view.Gravity.CENTER
-import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import com.afollestad.date.R
 import com.afollestad.date.controllers.MinMaxController
@@ -33,6 +32,7 @@ import com.afollestad.date.internal.onClickDebounced
 import com.afollestad.date.internal.resolveColor
 import com.afollestad.date.internal.withAlpha
 import com.afollestad.date.snapshot.DateSnapshot
+import com.afollestad.date.view.DayOfMonthTextView
 
 // TODO write unit tests
 /** @author Aidan Follestad (@afollestad) */
@@ -54,7 +54,7 @@ internal class DayOfMonthRenderer(
 
   @VisibleForTesting fun render(
     dayOfMonth: DayOfMonth,
-    textView: TextView,
+    textView: DayOfMonthTextView,
     onSelection: (Int) -> Unit
   ) {
     textView.setTextColor(createTextSelector(context, selectionColor))
@@ -66,6 +66,7 @@ internal class DayOfMonthRenderer(
       textView.isEnabled = false
       textView.isSelected = false
       textView.background = null
+      textView.skipInset = false
       return
     }
 
@@ -78,16 +79,19 @@ internal class DayOfMonthRenderer(
 
     when {
       minMaxController.isOutOfMinRange(currentDate) -> {
+        textView.skipInset = true
         val drawableRes = minMaxController.getOutOfMinRangeBackgroundRes(currentDate)
         textView.background = coloredDrawable(context, drawableRes, disabledBackgroundColor)
         textView.isEnabled = false
       }
       minMaxController.isOutOfMaxRange(currentDate) -> {
+        textView.skipInset = true
         val drawable = minMaxController.getOutOfMaxRangeBackgroundRes(currentDate)
         textView.background = coloredDrawable(context, drawable, disabledBackgroundColor)
         textView.isEnabled = false
       }
       else -> {
+        textView.skipInset = false
         textView.background = createCircularSelector(selectionColor)
         textView.isEnabled = textView.text.toString()
             .isNotEmpty()
@@ -100,7 +104,7 @@ internal class DayOfMonthRenderer(
 
   fun renderAll(
     daysOfMonth: List<DayOfMonth>,
-    views: List<TextView>,
+    views: List<DayOfMonthTextView>,
     onSelection: (Int) -> Unit
   ) {
     require(daysOfMonth.size == views.size) {

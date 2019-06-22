@@ -26,13 +26,20 @@ import com.afollestad.date.internal.getFloat
 
 /** @author Aidan Follestad (@afollestad) */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-class RatioTextView(
+class DayOfMonthTextView(
   context: Context,
   attrs: AttributeSet?
 ) : AppCompatTextView(context, attrs) {
   private val ratio: Float = context.getFloat(R.dimen.day_of_month_height_ratio)
   private var originalBackground: Drawable? = null
   private var lastInsetPadding: Int? = null
+
+  var skipInset: Boolean = false
+    set(value) {
+      field = value
+      if (!value) lastInsetPadding = null
+      invalidateBackground()
+    }
 
   override fun onMeasure(
     widthMeasureSpec: Int,
@@ -51,7 +58,7 @@ class RatioTextView(
   }
 
   private fun invalidateBackground() {
-    if (measuredWidth == 0) return
+    if (skipInset || measuredWidth == 0) return
     val insetPadding = (measuredWidth - measuredHeight) / 2
     if (lastInsetPadding == insetPadding) return
     val currentBg: Drawable = originalBackground ?: return

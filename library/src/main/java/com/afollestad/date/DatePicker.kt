@@ -55,7 +55,7 @@ import com.afollestad.date.internal.showOrConceal
 import com.afollestad.date.renderers.DayOfMonthRenderer
 import com.afollestad.date.renderers.WeekdayHeaderRenderer
 import com.afollestad.date.snapshot.DateSnapshot
-import com.afollestad.date.view.RatioTextView
+import com.afollestad.date.view.DayOfMonthTextView
 import java.lang.Long.MAX_VALUE
 import java.util.Calendar
 
@@ -84,7 +84,7 @@ class DatePicker(
   private lateinit var goPreviousMonthView: View
   private lateinit var goNextMonthView: View
   private lateinit var weekdayHeaderViews: MutableList<TextView>
-  private lateinit var dayOfMonthViews: MutableList<RatioTextView>
+  private lateinit var dayOfMonthViews: MutableList<DayOfMonthTextView>
   private lateinit var yearsRecyclerView: RecyclerView
   private lateinit var yearsDividerView: View
 
@@ -210,7 +210,7 @@ class DatePicker(
       if (child.tag == "weekday_header") {
         weekdayHeaderViews.add(child as TextView)
       } else if (child.tag == "day_of_month") {
-        dayOfMonthViews.add(child as RatioTextView)
+        dayOfMonthViews.add(child as DayOfMonthTextView)
       }
     }
 
