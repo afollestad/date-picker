@@ -65,9 +65,7 @@
   <!-- Year list for year mode -->
   <View
       android:id="@+id/year_list_divider"
-      android:layout_width="match_parent"
-      android:layout_height="@dimen/divider_height"
-      android:background="?android:listDivider"
+      style="@style/Divider"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/current_month"
