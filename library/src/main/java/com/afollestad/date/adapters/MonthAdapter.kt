@@ -88,7 +88,7 @@ internal class MonthAdapter(
         }
   }
 
-  override fun getItemCount(): Int = calendar.getActualMaximum(Calendar.MONTH)
+  override fun getItemCount(): Int = calendar.getActualMaximum(Calendar.MONTH) + 1
 
   override fun onBindViewHolder(
     holder: MonthViewHolder,

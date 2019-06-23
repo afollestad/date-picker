@@ -111,6 +111,7 @@
     <item name="android:textSize">@dimen/year_month_list_text_size</item>
     <item name="android:padding">@dimen/year_list_row_padding</item>
     <item name="android:visibility">visible</item>
+    <item name="android:clipToPadding">false</item>
   </style>
 
 </resources>
