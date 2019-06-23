@@ -47,6 +47,7 @@
           android:id="@+id/left_chevron"
           style="@style/DatePicker.Chevron.Start"
           app:layout_constraintTop_toTopOf="parent"
+          tools:ignore="MissingConstraints"
           />
       <TextView
           android:id="@+id/current_month"
@@ -61,6 +62,7 @@
           android:id="@+id/right_chevron"
           style="@style/DatePicker.Chevron.End"
           app:layout_constraintTop_toTopOf="parent"
+          tools:ignore="MissingConstraints"
           />
 
       <include layout="@layout/include_weekday_headers"/>
@@ -69,15 +71,18 @@
       <View
           android:id="@+id/year_month_list_divider"
           style="@style/Divider"
+          tools:ignore="MissingConstraints"
           />
 
       <androidx.recyclerview.widget.RecyclerView
           android:id="@+id/year_list"
           style="@style/YearOrMonthList"
+          tools:ignore="MissingConstraints"
           />
       <androidx.recyclerview.widget.RecyclerView
           android:id="@+id/month_list"
           style="@style/YearOrMonthList"
+          tools:ignore="MissingConstraints"
           />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
