@@ -56,6 +56,7 @@ import com.afollestad.date.util.showOrConceal
 import com.afollestad.date.renderers.DayOfMonthRenderer
 import com.afollestad.date.renderers.WeekdayHeaderRenderer
 import com.afollestad.date.snapshot.DateSnapshot
+import com.afollestad.date.util.findViewsByTag
 import com.afollestad.date.view.DayOfMonthTextView
 import java.lang.Long.MAX_VALUE
 import java.util.Calendar
@@ -85,8 +86,8 @@ class DatePicker(
   private lateinit var visibleMonthView: TextView
   private lateinit var goPreviousMonthView: View
   private lateinit var goNextMonthView: View
-  private lateinit var weekdayHeaderViews: MutableList<TextView>
-  private lateinit var dayOfMonthViews: MutableList<DayOfMonthTextView>
+  private lateinit var weekdayHeaderViews: List<TextView>
+  private lateinit var dayOfMonthViews: List<DayOfMonthTextView>
   private lateinit var yearsRecyclerView: RecyclerView
   private lateinit var monthRecyclerView: RecyclerView
   private lateinit var listsDividerView: View
@@ -217,16 +218,8 @@ class DatePicker(
       onClickDebounced { switchToDaysOfMonthMode() }
     }
 
-    weekdayHeaderViews = mutableListOf()
-    dayOfMonthViews = mutableListOf()
-    for (childIndex in 0 until childCount) {
-      val child = getChildAt(childIndex) ?: break
-      if (child.tag == "weekday_header") {
-        weekdayHeaderViews.add(child as TextView)
-      } else if (child.tag == "day_of_month") {
-        dayOfMonthViews.add(child as DayOfMonthTextView)
-      }
-    }
+    weekdayHeaderViews = findViewsByTag("weekday_header")
+    dayOfMonthViews = findViewsByTag("day_of_month")
 
     listsDividerView = findViewById(R.id.year_month_list_divider)
     yearsRecyclerView = findViewById<RecyclerView>(R.id.year_list).apply {

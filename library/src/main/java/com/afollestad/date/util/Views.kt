@@ -19,6 +19,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 
 /** @author Aidan Follestad (@afollestad) */
 internal fun View.show() {
@@ -51,3 +52,18 @@ internal fun View.isVisible(): Boolean = visibility == VISIBLE
 
 /** @author Aidan Follestad (@afollestad) */
 internal fun View.isConcealed(): Boolean = visibility == INVISIBLE
+
+/** @author Aidan Follestad (@afollestad) */
+@Suppress("UNCHECKED_CAST")
+internal fun <T : ViewGroup, VT : View> T.findViewsByTag(tag: String): List<VT> {
+  val result = mutableListOf<VT>()
+  for (index in 0 until childCount) {
+    val child = getChildAt(index) ?: break
+    if (child is ViewGroup) {
+      result.addAll(child.findViewsByTag(tag))
+    } else if (child.tag == tag) {
+      result.add(child as VT)
+    }
+  }
+  return result
+}

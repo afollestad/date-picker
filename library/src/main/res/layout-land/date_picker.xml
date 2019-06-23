@@ -31,50 +31,48 @@
       tools:text="Fri, Jul 28"
       />
 
-  <androidx.constraintlayout.widget.Guideline
-      android:id="@+id/start_boundary"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:orientation="vertical"
-      app:layout_constraintGuide_percent="@dimen/month_sidebar_width_percent"
-      />
+  <androidx.core.widget.NestedScrollView
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@id/current_date"
+      >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
 
-  <!-- Current Month Header -->
-  <com.afollestad.date.view.SquareImageView
-      android:id="@+id/left_chevron"
-      style="@style/DatePicker.Chevron"
-      android:contentDescription="@string/previous_month"
-      android:src="@drawable/ic_chevron_left"
-      app:layout_constraintEnd_toEndOf="@+id/weekday_header_1"
-      app:layout_constraintStart_toEndOf="@id/start_boundary"
-      app:layout_constraintTop_toTopOf="parent"
-      />
-  <TextView
-      android:id="@+id/current_month"
-      style="@style/DatePicker.CurrentMonth"
-      app:layout_constraintEnd_toStartOf="@+id/right_chevron"
-      app:layout_constraintHorizontal_chainStyle="packed"
-      app:layout_constraintStart_toEndOf="@+id/left_chevron"
-      app:layout_constraintTop_toTopOf="parent"
-      tools:text="July 2019"
-      />
-  <com.afollestad.date.view.SquareImageView
-      android:id="@+id/right_chevron"
-      style="@style/DatePicker.Chevron"
-      android:contentDescription="@string/next_month"
-      android:src="@drawable/ic_chevron_right"
-      app:layout_constraintEnd_toEndOf="@+id/weekday_header_7"
-      app:layout_constraintStart_toStartOf="@+id/weekday_header_7"
-      app:layout_constraintTop_toTopOf="parent"
-      />
+      <!-- Current Month Header -->
+      <com.afollestad.date.view.SquareImageView
+          android:id="@+id/left_chevron"
+          style="@style/DatePicker.Chevron.Start"
+          app:layout_constraintTop_toTopOf="parent"
+          />
+      <TextView
+          android:id="@+id/current_month"
+          style="@style/DatePicker.CurrentMonth"
+          app:layout_constraintEnd_toStartOf="@+id/right_chevron"
+          app:layout_constraintHorizontal_chainStyle="packed"
+          app:layout_constraintStart_toEndOf="@+id/left_chevron"
+          app:layout_constraintTop_toTopOf="parent"
+          tools:text="July 2019"
+          />
+      <com.afollestad.date.view.SquareImageView
+          android:id="@+id/right_chevron"
+          style="@style/DatePicker.Chevron.End"
+          app:layout_constraintTop_toTopOf="parent"
+          />
 
-  <include layout="@layout/include_weekday_headers"/>
-  <include layout="@layout/include_days_of_month"/>
+      <include layout="@layout/include_weekday_headers"/>
+      <include layout="@layout/include_days_of_month"/>
 
-  <View
-      android:id="@+id/year_month_list_divider"
-      style="@style/Divider"
-      />
+      <View
+          android:id="@+id/year_month_list_divider"
+          style="@style/Divider"
+          />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.core.widget.NestedScrollView>
 
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/year_list"

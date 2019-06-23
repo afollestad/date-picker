@@ -6,7 +6,7 @@
     <item name="android:layout_height">@dimen/divider_height</item>
     <item name="android:background">?android:listDivider</item>
     <item name="layout_constraintEnd_toEndOf">parent</item>
-    <item name="layout_constraintStart_toEndOf">@id/start_boundary</item>
+    <item name="layout_constraintStart_toEndOf">parent</item>
     <item name="layout_constraintTop_toBottomOf">@+id/current_month</item>
   </style>
 
@@ -28,6 +28,20 @@
     <item name="android:layout_height">@dimen/current_month_header_height</item>
     <item name="android:scaleType">center</item>
     <item name="android:layout_marginTop">1dp</item>
+  </style>
+
+  <style name="DatePicker.Chevron.Start" parent="DatePicker.Chevron">
+    <item name="android:src">@drawable/ic_chevron_left</item>
+    <item name="android:contentDescription">@string/previous_month</item>
+    <item name="layout_constraintEnd_toEndOf">@+id/weekday_header_1</item>
+    <item name="layout_constraintStart_toStartOf">@+id/weekday_header_1</item>
+  </style>
+
+  <style name="DatePicker.Chevron.End" parent="DatePicker.Chevron">
+    <item name="android:src">@drawable/ic_chevron_right</item>
+    <item name="android:contentDescription">@string/next_month</item>
+    <item name="layout_constraintEnd_toEndOf">@+id/weekday_header_7</item>
+    <item name="layout_constraintStart_toStartOf">@+id/weekday_header_7</item>
   </style>
 
   <style name="DatePicker.HeaderYear">
@@ -67,7 +81,7 @@
   </style>
 
   <style name="WeekRowView.WeekdayHeader.Start" parent="WeekRowView.WeekdayHeader">
-    <item name="layout_constraintStart_toEndOf">@+id/start_boundary</item>
+    <item name="layout_constraintStart_toStartOf">parent</item>
   </style>
 
   <style name="WeekRowView.WeekdayHeader.End" parent="WeekRowView.WeekdayHeader">
@@ -85,7 +99,7 @@
   </style>
 
   <style name="WeekRowView.DayOfMonth.Start" parent="WeekRowView.DayOfMonth">
-    <item name="layout_constraintStart_toEndOf">@+id/start_boundary</item>
+    <item name="layout_constraintStart_toStartOf">parent</item>
   </style>
 
   <style name="WeekRowView.DayOfMonth.End" parent="WeekRowView.DayOfMonth">
@@ -97,7 +111,7 @@
     <item name="android:layout_width">0dp</item>
     <item name="android:layout_height">0dp</item>
     <item name="android:visibility">invisible</item>
-    <item name="layout_constraintStart_toEndOf">@id/start_boundary</item>
+    <item name="layout_constraintStart_toStartOf">parent</item>
     <item name="layout_constraintEnd_toEndOf">parent</item>
     <item name="layout_constraintBottom_toBottomOf">@id/row_6_col_1</item>
     <item name="layout_constraintTop_toBottomOf">@+id/year_month_list_divider</item>

@@ -33,11 +33,7 @@
   <!-- Current Month Header -->
   <com.afollestad.date.view.SquareImageView
       android:id="@+id/left_chevron"
-      style="@style/DatePicker.Chevron"
-      android:contentDescription="@string/previous_month"
-      android:src="@drawable/ic_chevron_left"
-      app:layout_constraintEnd_toEndOf="@+id/weekday_header_1"
-      app:layout_constraintStart_toStartOf="@+id/weekday_header_1"
+      style="@style/DatePicker.Chevron.Start"
       app:layout_constraintTop_toBottomOf="@+id/current_date"
       />
   <TextView
@@ -51,20 +47,12 @@
       />
   <com.afollestad.date.view.SquareImageView
       android:id="@+id/right_chevron"
-      style="@style/DatePicker.Chevron"
+      style="@style/DatePicker.Chevron.End"
       android:contentDescription="@string/next_month"
       android:src="@drawable/ic_chevron_right"
       app:layout_constraintEnd_toEndOf="@+id/weekday_header_7"
       app:layout_constraintStart_toStartOf="@+id/weekday_header_7"
       app:layout_constraintTop_toBottomOf="@+id/current_date"
-      />
-
-  <androidx.constraintlayout.widget.Guideline
-      android:id="@+id/start_boundary"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:orientation="vertical"
-      app:layout_constraintGuide_percent="0.0"
       />
 
   <include layout="@layout/include_weekday_headers"/>
