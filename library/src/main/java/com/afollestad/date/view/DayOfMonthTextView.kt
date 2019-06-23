@@ -58,11 +58,18 @@ class DayOfMonthTextView(
   }
 
   private fun invalidateBackground() {
-    if (skipInset || measuredWidth == 0) return
-    val insetPadding = (measuredWidth - measuredHeight) / 2
-    if (lastInsetPadding == insetPadding) return
+    if (skipInset || measuredWidth == 0 || measuredWidth == measuredHeight) return
     val currentBg: Drawable = originalBackground ?: return
-    super.setBackground(InsetDrawable(currentBg, insetPadding, 0, insetPadding, 0))
-    lastInsetPadding = insetPadding
+    lastInsetPadding = if (measuredWidth > measuredHeight) {
+      val insetPadding = (measuredWidth - measuredHeight) / 2
+      if (lastInsetPadding == insetPadding) return
+      super.setBackground(InsetDrawable(currentBg, insetPadding, 0, insetPadding, 0))
+      insetPadding
+    } else {
+      val insetPadding = (measuredHeight - measuredWidth) / 2
+      if (lastInsetPadding == insetPadding) return
+      super.setBackground(InsetDrawable(currentBg, 0, insetPadding, 0, insetPadding))
+      insetPadding
+    }
   }
 }
