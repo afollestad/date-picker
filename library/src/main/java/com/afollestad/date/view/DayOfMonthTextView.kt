@@ -19,14 +19,12 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.InsetDrawable
 import android.util.AttributeSet
-import androidx.annotation.RestrictTo
 import androidx.appcompat.widget.AppCompatTextView
 import com.afollestad.date.R
 import com.afollestad.date.util.getFloat
 
 /** @author Aidan Follestad (@afollestad) */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-class DayOfMonthTextView(
+internal class DayOfMonthTextView(
   context: Context,
   attrs: AttributeSet?
 ) : AppCompatTextView(context, attrs) {
