@@ -71,16 +71,16 @@
           style="@style/Divider"
           />
 
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/year_list"
+          style="@style/YearOrMonthList"
+          />
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/month_list"
+          style="@style/YearOrMonthList"
+          />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
   </androidx.core.widget.NestedScrollView>
-
-  <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/year_list"
-      style="@style/YearOrMonthList"
-      />
-  <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/month_list"
-      style="@style/YearOrMonthList"
-      />
 
 </merge>

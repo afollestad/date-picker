@@ -20,6 +20,7 @@ package com.afollestad.date
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
@@ -39,6 +40,7 @@ import com.afollestad.date.internal.DayOfWeek
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.adapters.YearAdapter
+import com.afollestad.date.internal.DatePickerSavedState
 import com.afollestad.date.util.attachTopDivider
 import com.afollestad.date.util.color
 import com.afollestad.date.util.conceal
@@ -199,6 +201,19 @@ class DatePicker(
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
     controller.maybeInit()
+  }
+
+  override fun onSaveInstanceState(): Parcelable? {
+    return DatePickerSavedState(getDate(), super.onSaveInstanceState())
+  }
+
+  override fun onRestoreInstanceState(state: Parcelable?) {
+    if (state is DatePickerSavedState) {
+      super.onRestoreInstanceState(state.superState)
+      state.selectedDate?.let { controller.setFullDate(it, false) }
+    } else {
+      super.onRestoreInstanceState(state)
+    }
   }
 
   override fun onFinishInflate() {
