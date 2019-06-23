@@ -63,7 +63,7 @@ import com.afollestad.date.view.DayOfMonthTextView
 import java.lang.Long.MAX_VALUE
 import java.util.Calendar
 
-typealias OnDateChanged = (date: Calendar) -> Unit
+typealias OnDateChanged = (previous: Calendar, date: Calendar) -> Unit
 
 /** @author Aidan Follestad (@afollestad) */
 class DatePicker(
@@ -195,8 +195,18 @@ class DatePicker(
     @IntRange(from = 1, to = 31) dayOfMonth: Int
   ) = minMaxController.setMaxDate(year = year, month = month, dayOfMonth = dayOfMonth)
 
+  @Deprecated(
+      message = "Use addOnDateChanged instead.",
+      replaceWith = ReplaceWith("addOnDateChanged(block)")
+  )
+  fun onDateChanged(block: (date: Calendar) -> Unit) =
+    controller.addDateChangedListener { _, newDate -> block(newDate) }
+
   /** Appends a listener that is invoked when the selected date changes. */
-  fun onDateChanged(block: OnDateChanged) = controller.addDateChangedListener(block)
+  fun addOnDateChanged(block: OnDateChanged) = controller.addDateChangedListener(block)
+
+  /** Clears all listeners added via [addOnDateChanged]. */
+  fun clearOnDateChanged() = controller.clearDateChangedListeners()
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()

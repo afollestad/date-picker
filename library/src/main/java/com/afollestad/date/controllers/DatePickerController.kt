@@ -52,6 +52,11 @@ internal class DatePickerController(
   @VisibleForTesting var viewingMonth: MonthSnapshot? = null
   @VisibleForTesting var monthGraph: MonthGraph? = null
   @VisibleForTesting var selectedDate: DateSnapshot? = null
+    set(value) {
+      field = value
+      selectedDateCalendar = value?.asCalendar()
+    }
+  private var selectedDateCalendar: Calendar? = null
 
   fun maybeInit() {
     if (!didInit) {
@@ -97,10 +102,11 @@ internal class DatePickerController(
     calendar: Calendar,
     notifyListeners: Boolean = true
   ) {
+    val oldSelected: Calendar = currentSelectedOrNow()
     this.didInit = true
     this.selectedDate = calendar.snapshot()
     if (notifyListeners) {
-      notifyListeners { calendar.clone() as Calendar }
+      notifyListeners(oldSelected) { calendar.clone() as Calendar }
     }
     updateCurrentMonth(calendar)
     render(calendar)
@@ -121,7 +127,7 @@ internal class DatePickerController(
     }
   }, notifyListeners = notifyListeners)
 
-  @CheckResult fun getFullDate(): Calendar? = selectedDate?.asCalendar()
+  @CheckResult fun getFullDate(): Calendar? = selectedDateCalendar
 
   fun setDayOfMonth(day: Int) {
     if (!didInit) {
@@ -131,10 +137,11 @@ internal class DatePickerController(
       return
     }
 
+    val oldSelected: Calendar = currentSelectedOrNow()
     val calendar = viewingMonth!!.asCalendar(day)
     selectedDate = calendar.snapshot()
     vibrator.vibrateForSelection()
-    notifyListeners { calendar }
+    notifyListeners(oldSelected) { calendar }
     render(calendar)
   }
 
@@ -151,6 +158,10 @@ internal class DatePickerController(
     dateChangedListeners.add(listener)
   }
 
+  fun clearDateChangedListeners() {
+    dateChangedListeners.clear()
+  }
+
   private fun updateCurrentMonth(calendar: Calendar) {
     viewingMonth = calendar.snapshotMonth()
     monthGraph = MonthGraph(calendar)
@@ -164,9 +175,14 @@ internal class DatePickerController(
     goForwardVisibility(minMaxController.canGoForward(calendar))
   }
 
-  private fun notifyListeners(block: () -> Calendar) {
+  private fun notifyListeners(
+    old: Calendar,
+    block: () -> Calendar
+  ) {
     if (dateChangedListeners.isNotEmpty()) {
-      dateChangedListeners.forEach { it(block()) }
+      dateChangedListeners.forEach { it(old, block()) }
     }
   }
+
+  private fun currentSelectedOrNow(): Calendar = selectedDateCalendar ?: getNow()
 }

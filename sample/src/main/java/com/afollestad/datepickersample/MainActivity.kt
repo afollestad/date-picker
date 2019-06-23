@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity() {
     setContentView(R.layout.activity_main)
     datePicker = findViewById(R.id.datePicker)
 
-    datePicker.onDateChanged {
-      toast("Date changed: ${it.format()}")
+    datePicker.addOnDateChanged { _, new ->
+      toast("Date changed: ${new.format()}")
     }
 
     datePicker.setMinDate(Calendar.getInstance().apply { add(Calendar.MONTH, -1) })

@@ -55,7 +55,7 @@ class DatePickerControllerTest {
   private val goBackVisibility = mock<(Boolean) -> Unit>()
   private val goForwardVisibility = mock<(Boolean) -> Unit>()
   private val switchToMonthMode = mock<() -> Unit>()
-  private val listener = mock<(Calendar) -> Unit>()
+  private val listener = mock<(Calendar, Calendar) -> Unit>()
 
   private val controller = DatePickerController(
       vibrator,
@@ -81,7 +81,7 @@ class DatePickerControllerTest {
     assertThat(controller.monthGraph).isNotNull()
     assertThat(controller.selectedDate).isEqualTo(selectedDate)
 
-    verify(listener, never()).invoke(any())
+    verify(listener, never()).invoke(any(), any())
   }
 
   @Test fun `maybeInit - did already init`() {
@@ -92,7 +92,7 @@ class DatePickerControllerTest {
     assertThat(controller.monthGraph).isNull()
     assertThat(controller.selectedDate).isNull()
 
-    verify(listener, never()).invoke(any())
+    verify(listener, never()).invoke(any(), any())
   }
 
   @Test fun `maybeInit - now is before min date`() {
@@ -108,7 +108,7 @@ class DatePickerControllerTest {
     assertThat(controller.monthGraph).isNotNull()
     assertThat(controller.selectedDate).isEqualTo(minDate)
 
-    verify(listener, never()).invoke(any())
+    verify(listener, never()).invoke(any(), any())
   }
 
   @Test fun `maybeInit - now is after max date`() {
@@ -124,7 +124,7 @@ class DatePickerControllerTest {
     assertThat(controller.monthGraph).isNotNull()
     assertThat(controller.selectedDate).isEqualTo(maxDate)
 
-    verify(listener, never()).invoke(any())
+    verify(listener, never()).invoke(any(), any())
   }
 
   @Test fun previousMonth() {
@@ -172,7 +172,7 @@ class DatePickerControllerTest {
 
     assertThat(controller.didInit).isTrue()
     assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
-    assertListenerGotDate(expectedDate)
+    assertListenerGotDate(now.snapshot(), expectedDate)
     assertSetCurrentMonth(MonthSnapshot(Calendar.JANUARY, 1995))
     assertRender(expectedDate.asCalendar(), expectedDate)
   }
@@ -185,7 +185,7 @@ class DatePickerControllerTest {
     val expectedDate = DateSnapshot(Calendar.JANUARY, 11, 1995)
     assertThat(controller.didInit).isTrue()
     assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
-    assertListenerGotDate(expectedDate)
+    assertListenerGotDate(now.snapshot(), expectedDate)
     assertSetCurrentMonth(MonthSnapshot(Calendar.JANUARY, 1995))
     assertRender(expectedDate.asCalendar(), expectedDate)
   }
@@ -201,7 +201,7 @@ class DatePickerControllerTest {
 
     assertThat(controller.didInit).isTrue()
     assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
-    assertListenerGotDate(expectedDate)
+    assertListenerGotDate(now.snapshot(), expectedDate)
     assertSetCurrentMonth(now.snapshotMonth())
     assertRender(expectedDate.asCalendar(), expectedDate)
   }
@@ -217,7 +217,7 @@ class DatePickerControllerTest {
 
     controller.setDayOfMonth(4)
     assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
-    assertListenerGotDate(expectedDate)
+    assertListenerGotDate(now.snapshot(), expectedDate)
     assertRender(expectedCalendar, expectedDate)
 
     verify(vibrator).vibrateForSelection()
@@ -227,7 +227,7 @@ class DatePickerControllerTest {
     val selectedDate = DateSnapshot(Calendar.JANUARY, 11, 1995)
     controller.selectedDate = selectedDate
     controller.setYear(2018)
-    assertListenerGotDate(selectedDate.copy(year = 2018))
+    assertListenerGotDate(selectedDate, selectedDate.copy(year = 2018))
     verify(switchToMonthMode, times(1)).invoke()
   }
 
@@ -269,18 +269,35 @@ class DatePickerControllerTest {
     )
   }
 
-  private fun assertListenerGotDate(date: DateSnapshot) {
-    val captor = argumentCaptor<Calendar>()
-    verify(listener).invoke(captor.capture())
-    val captured = captor.lastValue
-    assertWithMessage("Didn't get matching year in emission.")
-        .that(date.year)
-        .isEqualTo(captured.year)
-    assertWithMessage("Didn't get matching month in emission.")
-        .that(date.month)
-        .isEqualTo(captured.month)
-    assertWithMessage("Didn't get matching day in emission.")
-        .that(date.month)
-        .isEqualTo(captured.month)
+  private fun assertListenerGotDate(
+    oldDate: DateSnapshot,
+    newDate: DateSnapshot
+  ) {
+    val oldCaptor = argumentCaptor<Calendar>()
+    val newCaptor = argumentCaptor<Calendar>()
+
+    verify(listener).invoke(oldCaptor.capture(), newCaptor.capture())
+
+    val capturedOld = oldCaptor.allValues.single()
+    assertWithMessage("Didn't get matching old year in emission.")
+        .that(oldDate.year)
+        .isEqualTo(capturedOld.year)
+    assertWithMessage("Didn't get matching old month in emission.")
+        .that(oldDate.month)
+        .isEqualTo(capturedOld.month)
+    assertWithMessage("Didn't get matching old day in emission.")
+        .that(oldDate.month)
+        .isEqualTo(capturedOld.month)
+
+    val capturedNew = newCaptor.allValues.single()
+    assertWithMessage("Didn't get matching new year in emission.")
+        .that(newDate.year)
+        .isEqualTo(capturedNew.year)
+    assertWithMessage("Didn't get matching new month in emission.")
+        .that(newDate.month)
+        .isEqualTo(capturedNew.month)
+    assertWithMessage("Didn't get matching new day in emission.")
+        .that(newDate.month)
+        .isEqualTo(capturedNew.month)
   }
 }
