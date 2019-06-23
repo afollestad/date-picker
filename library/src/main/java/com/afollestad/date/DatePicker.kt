@@ -291,7 +291,7 @@ class DatePicker(
   }
 
   private fun switchToDaysOfMonthMode() {
-    if (yearsRecyclerView.isConcealed() && monthRecyclerView.isContextClickable) {
+    if (yearsRecyclerView.isConcealed() && monthRecyclerView.isConcealed()) {
       return
     }
     yearsRecyclerView.conceal()

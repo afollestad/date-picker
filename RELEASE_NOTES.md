@@ -1,5 +1,5 @@
-0.2.1
+0.3.0
 
-* Kotlin 1.3.40
-* Re-architected some internals to be less view-centric and more unit testable.
-* Min/max validation and other improvements to min/max support.
+* More internal re-architecting.
+* Calendar UI tweaks, and UI improvements in general.
+* Tapping the current month (e.g. "July 2019") will show a month list UI.
