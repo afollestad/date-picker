@@ -81,11 +81,11 @@
   </style>
 
   <style name="WeekRowView.WeekdayHeader.Start" parent="WeekRowView.WeekdayHeader">
-    <item name="layout_constraintStart_toStartOf">parent</item>
+    <item name="layout_constraintStart_toEndOf">@id/start_guideline</item>
   </style>
 
   <style name="WeekRowView.WeekdayHeader.End" parent="WeekRowView.WeekdayHeader">
-    <item name="layout_constraintEnd_toEndOf">parent</item>
+    <item name="layout_constraintEnd_toStartOf">@id/end_guideline</item>
   </style>
 
   <style name="WeekRowView.DayOfMonth">
@@ -99,11 +99,11 @@
   </style>
 
   <style name="WeekRowView.DayOfMonth.Start" parent="WeekRowView.DayOfMonth">
-    <item name="layout_constraintStart_toStartOf">parent</item>
+    <item name="layout_constraintStart_toEndOf">@id/start_guideline</item>
   </style>
 
   <style name="WeekRowView.DayOfMonth.End" parent="WeekRowView.DayOfMonth">
-    <item name="layout_constraintEnd_toEndOf">parent</item>
+    <item name="layout_constraintEnd_toStartOf">@id/end_guideline</item>
   </style>
 
   <style name="YearOrMonthList">

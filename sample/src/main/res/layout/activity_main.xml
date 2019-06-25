@@ -17,6 +17,7 @@
       app:date_picker_normal_font="@font/fira_sans_light"
       app:date_picker_selection_color="?colorAccent"
       app:date_picker_selection_vibrates="true"
+      app:date_picker_calendar_horizontal_padding="4dp"
       />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

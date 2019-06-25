@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <declare-styleable name="DatePicker">
-    <attr format="boolean" name="date_picker_selection_vibrates"/>
-    <attr format="color" name="date_picker_header_background_color"/>
-    <attr format="color" name="date_picker_selection_color"/>
-    <attr format="color" name="date_picker_disabled_background_color"/>
-    <attr format="reference" name="date_picker_normal_font"/>
-    <attr format="reference" name="date_picker_medium_font"/>
+    <attr name="date_picker_selection_vibrates" format="boolean"/>
+    <attr name="date_picker_header_background_color" format="color"/>
+    <attr name="date_picker_selection_color" format="color"/>
+    <attr name="date_picker_disabled_background_color" format="color"/>
+    <attr name="date_picker_normal_font" format="reference"/>
+    <attr name="date_picker_medium_font" format="reference"/>
+    <attr name="date_picker_calendar_horizontal_padding" format="dimension"/>
   </declare-styleable>
 </resources>
