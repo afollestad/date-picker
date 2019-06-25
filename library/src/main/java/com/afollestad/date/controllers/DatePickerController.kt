@@ -147,9 +147,9 @@ internal class DatePickerController(
 
   fun setYear(year: Int) {
     setFullDate(
-        month = selectedDate!!.month,
+        month = viewingMonth?.month ?: selectedDate!!.month,
         year = year,
-        selectedDate = selectedDate!!.day
+        selectedDate = selectedDate?.day
     )
     switchToDaysOfMonthMode()
   }

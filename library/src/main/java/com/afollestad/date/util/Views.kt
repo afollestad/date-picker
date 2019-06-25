@@ -23,16 +23,19 @@ import android.view.ViewGroup
 
 /** @author Aidan Follestad (@afollestad) */
 internal fun View.show() {
+  if (visibility == VISIBLE) return
   visibility = VISIBLE
 }
 
 /** @author Aidan Follestad (@afollestad) */
 internal fun View.hide() {
+  if (visibility == GONE) return
   visibility = GONE
 }
 
 /** @author Aidan Follestad (@afollestad) */
 internal fun View.conceal() {
+  if (visibility == INVISIBLE) return
   visibility = INVISIBLE
 }
 
