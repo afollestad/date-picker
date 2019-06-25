@@ -38,7 +38,7 @@ import java.util.Calendar
 internal class DatePickerController(
   private val vibrator: VibratorController,
   private val minMaxController: MinMaxController,
-  private val renderHeaders: (Calendar, DateSnapshot) -> Unit,
+  private val renderHeaders: (Calendar, Calendar) -> Unit,
   private val renderDaysOfWeek: (List<DayOfWeek>) -> Unit,
   private val renderDaysOfMonth: (List<DayOfMonth>) -> Unit,
   private val goBackVisibility: (visible: Boolean) -> Unit,
@@ -169,7 +169,7 @@ internal class DatePickerController(
   }
 
   private fun render(calendar: Calendar) {
-    renderHeaders(calendar, selectedDate!!)
+    renderHeaders(calendar, selectedDateCalendar!!)
     renderDaysOfMonth(monthGraph!!.getDaysOfMonth(selectedDate!!))
     goBackVisibility(minMaxController.canGoBack(calendar))
     goForwardVisibility(minMaxController.canGoForward(calendar))

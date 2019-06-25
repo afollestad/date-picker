@@ -14,7 +14,7 @@
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad:date-picker:0.3.1'
+  implementation 'com.afollestad:date-picker:0.4.0'
 }
 ```
 
@@ -72,6 +72,7 @@ You can configure basic theme properties from your layout:
     app:date_picker_normal_font="@font/some_normal_font"
     app:date_picker_disabled_background_color="@color/disabled_color"
     app:date_picker_selection_vibrates="true"
+    app:date_picker_calendar_horizontal_padding="4dp"
     />
 ```
 
@@ -85,10 +86,12 @@ declare the `VIBRATE` permission in its manifest.)*
 ```kotlin
 val datePicker: DatePicker = // ...
 
-// This appends an additional callback, it does not overwrite previous calls
-datePicker.onDateChanged { calendar ->
-  // use calendar - this library provides convenience extensions like month, year, and dayOfMonth too.
+datePicker.addOnDateChanged { previousDate, newDate->
+  // this library provides convenience extensions to Calendar like month, year, and dayOfMonth too.
 }
+
+// Removes all callbacks you've added previously with addOnDateChanged(...) 
+datePicker.clearOnDateChanged()
 ```
 
 ---

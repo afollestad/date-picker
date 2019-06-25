@@ -27,6 +27,7 @@ import android.widget.TextView
 import androidx.annotation.CheckResult
 import androidx.annotation.IntRange
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Guideline
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,7 +58,6 @@ import com.afollestad.date.util.showAll
 import com.afollestad.date.util.showOrConceal
 import com.afollestad.date.renderers.DayOfMonthRenderer
 import com.afollestad.date.renderers.WeekdayHeaderRenderer
-import com.afollestad.date.snapshot.DateSnapshot
 import com.afollestad.date.util.findViewsByTag
 import com.afollestad.date.view.DayOfMonthTextView
 import java.lang.Long.MAX_VALUE
@@ -98,6 +98,7 @@ class DatePicker(
   private val headerBackgroundColor: Int
   internal val normalFont: Typeface
   private val mediumFont: Typeface
+  private val calendarHorizontalPadding: Int
 
   init {
     inflate(context, R.layout.date_picker, this)
@@ -124,6 +125,8 @@ class DatePicker(
       mediumFont = ta.font(context, R.styleable.DatePicker_date_picker_medium_font) {
         TypefaceHelper.create("sans-serif-medium")
       }
+      calendarHorizontalPadding =
+        ta.getDimensionPixelSize(R.styleable.DatePicker_date_picker_calendar_horizontal_padding, 0)
 
       weekdayHeaderRenderer = WeekdayHeaderRenderer(normalFont)
       dayOfMonthRenderer = DayOfMonthRenderer(
@@ -268,6 +271,17 @@ class DatePicker(
       background = createCircularSelector(dayOfMonthRenderer.selectionColor)
       onClickDebounced { controller.nextMonth() }
     }
+
+    findViewById<Guideline>(R.id.start_guideline).apply {
+      layoutParams = (layoutParams as LayoutParams).apply {
+        guideBegin = calendarHorizontalPadding
+      }
+    }
+    findViewById<Guideline>(R.id.end_guideline).apply {
+      layoutParams = (layoutParams as LayoutParams).apply {
+        guideEnd = calendarHorizontalPadding
+      }
+    }
   }
 
   private fun switchToMonthMode() {
@@ -331,12 +345,11 @@ class DatePicker(
 
   private fun renderHeaders(
     currentMonth: Calendar,
-    selectedDate: DateSnapshot
+    selectedDate: Calendar
   ) {
     visibleMonthView.text = dateFormatter.monthAndYear(currentMonth)
-    val selectedCalendar = selectedDate.asCalendar()
-    selectedYearView.text = dateFormatter.year(selectedCalendar)
-    selectedDateView.text = dateFormatter.date(selectedCalendar)
+    selectedYearView.text = dateFormatter.year(selectedDate)
+    selectedDateView.text = dateFormatter.date(selectedDate)
   }
 
   private fun renderDaysOfWeek(daysOfWeek: List<DayOfWeek>) {

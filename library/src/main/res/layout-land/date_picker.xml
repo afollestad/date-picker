@@ -42,6 +42,21 @@
         android:layout_height="wrap_content"
         >
 
+      <androidx.constraintlayout.widget.Guideline
+          android:id="@+id/start_guideline"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:orientation="vertical"
+          app:layout_constraintGuide_begin="0dp"
+          />
+      <androidx.constraintlayout.widget.Guideline
+          android:id="@+id/end_guideline"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:orientation="vertical"
+          app:layout_constraintGuide_end="0dp"
+          />
+
       <!-- Current Month Header -->
       <com.afollestad.date.view.SquareImageView
           android:id="@+id/left_chevron"
