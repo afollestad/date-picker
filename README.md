@@ -23,7 +23,7 @@ dependencies {
 ### Why?
 
 Android includes a stock `DatePicker` in its framework, however this widget is very stubborn. It 
-does not adapt to different view widgets, making it difficult to use in modern UI. This library 
+does not adapt to different view widths, making it difficult to use in modern UI. This library 
 solves for that by creating a custom implementation, based on `ConstraintLayout`, and written 
 completely in Kotlin.
 
