@@ -11,7 +11,10 @@ android {
   compileOptions {
     sourceCompatibility 1.8
     targetCompatibility 1.8
-    kotlinOptions.freeCompilerArgs += ['-module-name', getPackage()]
+
+    def pkg = getPackage()
+    logger.warn('Package for current module: ' + pkg)
+    kotlinOptions.freeCompilerArgs += ['-module-name', pkg]
   }
 
   defaultConfig {
