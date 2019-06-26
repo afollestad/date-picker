@@ -14,7 +14,7 @@
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad:date-picker:0.4.1'
+  implementation 'com.afollestad:date-picker:0.4.2'
 }
 ```
 

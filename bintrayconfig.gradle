@@ -43,3 +43,14 @@ publish {
   website = 'https://github.com/afollestad/date-picker'
   dryRun = false
 }
+
+@SuppressWarnings("GrMethodMayBeStatic")
+def getPackage() {
+  def pkg = publish.groupId + '.' + publish.artifactId
+  if (pkg == null || pkg == '') {
+    throw new Error('Got an empty package!')
+  }
+  return pkg
+}
+
+ext.getPackage = this.&getPackage

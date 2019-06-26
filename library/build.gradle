@@ -11,6 +11,7 @@ android {
   compileOptions {
     sourceCompatibility 1.8
     targetCompatibility 1.8
+    kotlinOptions.freeCompilerArgs += ['-module-name', getPackage()]
   }
 
   defaultConfig {
