@@ -160,7 +160,7 @@ class DatePicker(
     notifyListeners: Boolean = true
   ) = controller.setFullDate(calendar, notifyListeners)
 
-  /** Sets the date and year displayed in the view, along with the selected selectedDate (optionally). */
+  /** Sets the date and year displayed in the view, along with the selected date (optionally). */
   fun setDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int? = null,
     month: Int,
