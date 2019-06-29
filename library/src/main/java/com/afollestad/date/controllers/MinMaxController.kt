@@ -85,7 +85,10 @@ internal class MinMaxController {
 
   @DrawableRes @CheckResult
   fun getOutOfMinRangeBackgroundRes(date: DateSnapshot): Int {
+    val calendar = date.asCalendar()
+    val isLastInMonth = calendar.dayOfMonth == calendar.totalDaysInMonth
     return when {
+      isLastInMonth -> R.drawable.ic_tube_end
       date.day == 1 -> R.drawable.ic_tube_start
       date.day == minDate!!.day - 1 &&
           date.month == minDate!!.month -> R.drawable.ic_tube_end
@@ -104,6 +107,7 @@ internal class MinMaxController {
     val isLastInMonth = calendar.dayOfMonth == calendar.totalDaysInMonth
     return when {
       isLastInMonth -> R.drawable.ic_tube_end
+      date.day == 1 -> R.drawable.ic_tube_start
       date.day == maxDate!!.day + 1 &&
           date.month == maxDate!!.month -> R.drawable.ic_tube_start
       else -> R.drawable.ic_tube_middle

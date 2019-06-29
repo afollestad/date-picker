@@ -10,8 +10,6 @@
   <dimen name="header_main_text_size_year">20sp</dimen>
   <dimen name="header_main_text_size_date">28sp</dimen>
 
-  <dimen name="week_day_row_disabled_background_inset">6dp</dimen>
-  <dimen name="week_day_row_disabled_background_height">20dp</dimen>
   <dimen name="week_day_row_height">32dp</dimen>
   <dimen name="week_day_row_column_text_size">12sp</dimen>
 
@@ -24,6 +22,5 @@
   <dimen name="divider_height">1dp</dimen>
 
   <item name="day_of_month_height_ratio" format="float" type="dimen">0.9</item>
-  <item name="month_sidebar_width_percent" format="float" type="dimen">1.0</item>
 
 </resources>

@@ -15,11 +15,13 @@
  */
 package com.afollestad.date.util
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 
 /** @author Aidan Follestad (@afollestad) */
 internal fun View.show() {
@@ -40,12 +42,6 @@ internal fun View.conceal() {
 }
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun List<View>.concealAll() = forEach { it.conceal() }
-
-/** @author Aidan Follestad (@afollestad) */
-internal fun List<View>.showAll() = forEach { it.show() }
-
-/** @author Aidan Follestad (@afollestad) */
 internal fun View.showOrHide(show: Boolean) = if (show) show() else hide()
 
 internal fun View.showOrConceal(show: Boolean) = if (show) show() else conceal()
@@ -57,16 +53,7 @@ internal fun View.isVisible(): Boolean = visibility == VISIBLE
 internal fun View.isConcealed(): Boolean = visibility == INVISIBLE
 
 /** @author Aidan Follestad (@afollestad) */
-@Suppress("UNCHECKED_CAST")
-internal fun <T : ViewGroup, VT : View> T.findViewsByTag(tag: String): List<VT> {
-  val result = mutableListOf<VT>()
-  for (index in 0 until childCount) {
-    val child = getChildAt(index) ?: break
-    if (child is ViewGroup) {
-      result.addAll(child.findViewsByTag(tag))
-    } else if (child.tag == tag) {
-      result.add(child as VT)
-    }
-  }
-  return result
+internal fun ViewGroup.inflate(@LayoutRes res: Int): View {
+  return LayoutInflater.from(context)
+      .inflate(res, this, false)
 }

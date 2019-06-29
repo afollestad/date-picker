@@ -56,17 +56,19 @@ class CalendarsTest {
   }
 
   @Test fun incrementMonth() {
-    calendar.incrementMonth()
-    assertThat(calendar.dayOfMonth).isEqualTo(1)
-    assertThat(calendar.month).isEqualTo(Calendar.AUGUST)
-    assertThat(calendar.year).isEqualTo(2019)
+    val result = calendar.incrementMonth()
+    assertThat(result).isNotSameInstanceAs(calendar)
+    assertThat(result.dayOfMonth).isEqualTo(1)
+    assertThat(result.month).isEqualTo(Calendar.AUGUST)
+    assertThat(result.year).isEqualTo(2019)
   }
 
   @Test fun decrementMonth() {
-    calendar.decrementMonth()
-    assertThat(calendar.dayOfMonth).isEqualTo(30)
-    assertThat(calendar.month).isEqualTo(Calendar.JUNE)
-    assertThat(calendar.year).isEqualTo(2019)
+    val result = calendar.decrementMonth()
+    assertThat(result).isNotSameInstanceAs(calendar)
+    assertThat(result.dayOfMonth).isEqualTo(30)
+    assertThat(result.month).isEqualTo(Calendar.JUNE)
+    assertThat(result.year).isEqualTo(2019)
   }
 
   @Test fun dayOfWeek() {

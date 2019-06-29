@@ -17,7 +17,6 @@ package com.afollestad.date.adapters
 
 import android.graphics.Typeface
 import android.util.TypedValue.COMPLEX_UNIT_PX
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -28,6 +27,7 @@ import com.afollestad.date.R
 import com.afollestad.date.internal.DateFormatter
 import com.afollestad.date.month
 import com.afollestad.date.util.Util.createTextSelector
+import com.afollestad.date.util.inflate
 import com.afollestad.date.util.onClickDebounced
 import java.util.Calendar
 
@@ -78,8 +78,7 @@ internal class MonthAdapter(
     viewType: Int
   ): MonthViewHolder {
     val context = parent.context
-    val view = LayoutInflater.from(context)
-        .inflate(R.layout.year_list_row, parent, false)
+    val view = parent.inflate(R.layout.year_list_row)
     return MonthViewHolder(view, this)
         .apply {
           textView.setTextColor(

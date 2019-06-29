@@ -22,6 +22,8 @@ import com.afollestad.date.internal.DayOfWeek.SUNDAY
 import com.afollestad.date.internal.DayOfWeek.THURSDAY
 import com.afollestad.date.internal.DayOfWeek.TUESDAY
 import com.afollestad.date.internal.DayOfWeek.WEDNESDAY
+import com.afollestad.date.internal.MonthItem.DayOfMonth
+import com.afollestad.date.internal.MonthItem.WeekHeader
 import com.afollestad.date.snapshot.snapshot
 import com.afollestad.date.snapshot.snapshotMonth
 import com.google.common.truth.Truth.assertThat
@@ -48,10 +50,17 @@ class MonthGraphTest {
     )
     assertThat(graph.daysInMonth).isEqualTo(31)
 
-    val days = graph.getDaysOfMonth(selectedDate)
+    val items = graph.getMonthItems(selectedDate)
 
-    assertThat(days).isEqualTo(
+    assertThat(items).isEqualTo(
         listOf(
+            WeekHeader(SUNDAY),
+            WeekHeader(MONDAY),
+            WeekHeader(TUESDAY),
+            WeekHeader(WEDNESDAY),
+            WeekHeader(THURSDAY),
+            WeekHeader(FRIDAY),
+            WeekHeader(SATURDAY),
             DayOfMonth(SUNDAY, month, NO_DATE),
             DayOfMonth(MONDAY, month, NO_DATE),
             DayOfMonth(TUESDAY, month, 1),
@@ -115,9 +124,17 @@ class MonthGraphTest {
     )
     assertThat(graph.daysInMonth).isEqualTo(28)
 
-    val days = graph.getDaysOfMonth(selectedDate)
-    assertThat(days).isEqualTo(
+    val items = graph.getMonthItems(selectedDate)
+
+    assertThat(items).isEqualTo(
         listOf(
+            WeekHeader(MONDAY),
+            WeekHeader(TUESDAY),
+            WeekHeader(WEDNESDAY),
+            WeekHeader(THURSDAY),
+            WeekHeader(FRIDAY),
+            WeekHeader(SATURDAY),
+            WeekHeader(SUNDAY),
             DayOfMonth(MONDAY, month, NO_DATE),
             DayOfMonth(TUESDAY, month, NO_DATE),
             DayOfMonth(WEDNESDAY, month, NO_DATE),
@@ -181,9 +198,17 @@ class MonthGraphTest {
     )
     assertThat(graph.daysInMonth).isEqualTo(30)
 
-    val days = graph.getDaysOfMonth(selectedDate)
-    assertThat(days).isEqualTo(
+    val items = graph.getMonthItems(selectedDate)
+
+    assertThat(items).isEqualTo(
         listOf(
+            WeekHeader(SUNDAY),
+            WeekHeader(MONDAY),
+            WeekHeader(TUESDAY),
+            WeekHeader(WEDNESDAY),
+            WeekHeader(THURSDAY),
+            WeekHeader(FRIDAY),
+            WeekHeader(SATURDAY),
             DayOfMonth(SUNDAY, month, NO_DATE),
             DayOfMonth(MONDAY, month, NO_DATE),
             DayOfMonth(TUESDAY, month, NO_DATE),
@@ -247,9 +272,17 @@ class MonthGraphTest {
     )
     assertThat(graph.daysInMonth).isEqualTo(31)
 
-    val days = graph.getDaysOfMonth(selectedDate)
-    assertThat(days).isEqualTo(
+    val items = graph.getMonthItems(selectedDate)
+
+    assertThat(items).isEqualTo(
         listOf(
+            WeekHeader(SUNDAY),
+            WeekHeader(MONDAY),
+            WeekHeader(TUESDAY),
+            WeekHeader(WEDNESDAY),
+            WeekHeader(THURSDAY),
+            WeekHeader(FRIDAY),
+            WeekHeader(SATURDAY),
             DayOfMonth(SUNDAY, month, NO_DATE),
             DayOfMonth(MONDAY, month, NO_DATE),
             DayOfMonth(TUESDAY, month, NO_DATE),

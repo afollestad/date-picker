@@ -10,7 +10,7 @@
     <item name="layout_constraintTop_toBottomOf">@+id/current_month</item>
   </style>
 
-  <style name="DatePicker"/>
+  <style name="DatePicker" />
 
   <style name="DatePicker.CurrentMonth">
     <item name="android:textColor">?android:textColorPrimary</item>
@@ -28,20 +28,19 @@
     <item name="android:layout_height">@dimen/current_month_header_height</item>
     <item name="android:scaleType">center</item>
     <item name="android:layout_marginTop">1dp</item>
+    <item name="layout_constraintTop_toBottomOf">@+id/current_date</item>
   </style>
 
   <style name="DatePicker.Chevron.Start" parent="DatePicker.Chevron">
     <item name="android:src">@drawable/ic_chevron_left</item>
     <item name="android:contentDescription">@string/previous_month</item>
-    <item name="layout_constraintEnd_toEndOf">@+id/weekday_header_1</item>
-    <item name="layout_constraintStart_toStartOf">@+id/weekday_header_1</item>
+    <item name="layout_constraintStart_toStartOf">parent</item>
   </style>
 
   <style name="DatePicker.Chevron.End" parent="DatePicker.Chevron">
     <item name="android:src">@drawable/ic_chevron_right</item>
     <item name="android:contentDescription">@string/next_month</item>
-    <item name="layout_constraintEnd_toEndOf">@+id/weekday_header_7</item>
-    <item name="layout_constraintStart_toStartOf">@+id/weekday_header_7</item>
+    <item name="layout_constraintEnd_toEndOf">parent</item>
   </style>
 
   <style name="DatePicker.HeaderYear">
@@ -63,47 +62,23 @@
     <item name="android:maxLines">2</item>
   </style>
 
-  <style name="WeekRowView">
+  <style name="DayOfMonthList">
+    <item name="android:scrollbars">none</item>
+    <item name="android:layout_width">0dp</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="layout_constraintStart_toStartOf">parent</item>
+    <item name="layout_constraintEnd_toEndOf">parent</item>
+    <item name="layout_constraintTop_toBottomOf">@+id/current_month</item>
+    <item name="android:clipToPadding">false</item>
+  </style>
+
+  <style name="DayOfMonthList.Item">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:gravity">center</item>
+    <item name="android:layout_gravity">center</item>
     <item name="android:minHeight">@dimen/week_day_row_height</item>
-  </style>
-
-  <style name="WeekRowView.WeekdayHeader">
-    <item name="android:layout_width">0dp</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:gravity">center</item>
     <item name="android:textSize">@dimen/week_day_row_column_text_size</item>
-    <item name="android:textColor">?android:textColorSecondary</item>
-    <item name="android:tag">weekday_header</item>
-    <item name="layout_constraintHorizontal_chainStyle">spread_inside</item>
-  </style>
-
-  <style name="WeekRowView.WeekdayHeader.Start" parent="WeekRowView.WeekdayHeader">
-    <item name="layout_constraintStart_toEndOf">@id/start_guideline</item>
-  </style>
-
-  <style name="WeekRowView.WeekdayHeader.End" parent="WeekRowView.WeekdayHeader">
-    <item name="layout_constraintEnd_toStartOf">@id/end_guideline</item>
-  </style>
-
-  <style name="WeekRowView.DayOfMonth">
-    <item name="android:layout_width">0dp</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:gravity">center</item>
-    <item name="android:textSize">@dimen/week_day_row_column_text_size</item>
-    <item name="android:textColor">?android:textColorPrimary</item>
-    <item name="android:tag">day_of_month</item>
-    <item name="layout_constraintHorizontal_chainStyle">spread_inside</item>
-  </style>
-
-  <style name="WeekRowView.DayOfMonth.Start" parent="WeekRowView.DayOfMonth">
-    <item name="layout_constraintStart_toEndOf">@id/start_guideline</item>
-  </style>
-
-  <style name="WeekRowView.DayOfMonth.End" parent="WeekRowView.DayOfMonth">
-    <item name="layout_constraintEnd_toStartOf">@id/end_guideline</item>
   </style>
 
   <style name="YearOrMonthList">
@@ -113,7 +88,7 @@
     <item name="android:visibility">invisible</item>
     <item name="layout_constraintStart_toStartOf">parent</item>
     <item name="layout_constraintEnd_toEndOf">parent</item>
-    <item name="layout_constraintBottom_toBottomOf">@id/row_6_col_1</item>
+    <item name="layout_constraintBottom_toBottomOf">@id/day_list</item>
     <item name="layout_constraintTop_toBottomOf">@+id/year_month_list_divider</item>
   </style>
 

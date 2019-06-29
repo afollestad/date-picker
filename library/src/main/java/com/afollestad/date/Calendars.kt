@@ -15,6 +15,7 @@
  */
 package com.afollestad.date
 
+import androidx.annotation.CheckResult
 import com.afollestad.date.internal.DayOfWeek
 import com.afollestad.date.internal.asDayOfWeek
 import java.util.Calendar
@@ -45,17 +46,19 @@ val Calendar.totalDaysInMonth: Int
   get() = getActualMaximum(Calendar.DAY_OF_MONTH)
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun Calendar.incrementMonth(): Calendar {
-  set(Calendar.DAY_OF_MONTH, 1)
-  add(Calendar.MONTH, 1)
-  return this
+@CheckResult internal fun Calendar.incrementMonth(): Calendar {
+  return (clone() as Calendar).apply {
+    add(Calendar.MONTH, 1)
+    set(Calendar.DAY_OF_MONTH, 1)
+  }
 }
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun Calendar.decrementMonth(): Calendar {
-  add(Calendar.MONTH, -1)
-  set(Calendar.DAY_OF_MONTH, totalDaysInMonth)
-  return this
+@CheckResult internal fun Calendar.decrementMonth(): Calendar {
+  return (clone() as Calendar).apply {
+    add(Calendar.MONTH, -1)
+    set(Calendar.DAY_OF_MONTH, totalDaysInMonth)
+  }
 }
 
 /** @author Aidan Follestad (@afollestad) */

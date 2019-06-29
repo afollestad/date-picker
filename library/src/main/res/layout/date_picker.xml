@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
@@ -49,7 +48,6 @@
   <com.afollestad.date.view.SquareImageView
       android:id="@+id/left_chevron"
       style="@style/DatePicker.Chevron.Start"
-      app:layout_constraintTop_toBottomOf="@+id/current_date"
       />
   <TextView
       android:id="@+id/current_month"
@@ -63,21 +61,19 @@
   <com.afollestad.date.view.SquareImageView
       android:id="@+id/right_chevron"
       style="@style/DatePicker.Chevron.End"
-      android:contentDescription="@string/next_month"
-      android:src="@drawable/ic_chevron_right"
-      app:layout_constraintEnd_toEndOf="@+id/weekday_header_7"
-      app:layout_constraintStart_toStartOf="@+id/weekday_header_7"
-      app:layout_constraintTop_toBottomOf="@+id/current_date"
       />
 
-  <include layout="@layout/include_weekday_headers"/>
-  <include layout="@layout/include_days_of_month"/>
+  <!-- Days of month grid -->
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/day_list"
+      style="@style/DayOfMonthList"
+      />
 
+  <!-- Months and years lists -->
   <View
       android:id="@+id/year_month_list_divider"
       style="@style/Divider"
       />
-
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/year_list"
       style="@style/YearOrMonthList"

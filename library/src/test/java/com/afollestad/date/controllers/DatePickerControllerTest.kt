@@ -15,23 +15,13 @@
  */
 package com.afollestad.date.controllers
 
-import com.afollestad.date.internal.DayOfMonth
-import com.afollestad.date.internal.DayOfWeek
-import com.afollestad.date.internal.DayOfWeek.FRIDAY
-import com.afollestad.date.internal.DayOfWeek.MONDAY
-import com.afollestad.date.internal.DayOfWeek.SATURDAY
-import com.afollestad.date.internal.DayOfWeek.SUNDAY
-import com.afollestad.date.internal.DayOfWeek.THURSDAY
-import com.afollestad.date.internal.DayOfWeek.TUESDAY
-import com.afollestad.date.internal.DayOfWeek.WEDNESDAY
 import com.afollestad.date.internal.MonthGraph
-import com.afollestad.date.month
+import com.afollestad.date.internal.MonthItem
 import com.afollestad.date.snapshot.DateSnapshot
 import com.afollestad.date.snapshot.MonthSnapshot
 import com.afollestad.date.snapshot.asCalendar
 import com.afollestad.date.snapshot.snapshot
 import com.afollestad.date.snapshot.snapshotMonth
-import com.afollestad.date.year
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import com.nhaarman.mockitokotlin2.any
@@ -57,8 +47,7 @@ class DatePickerControllerTest {
     on { canGoForward(any()) } doReturn true
   }
   private val renderHeaders = mock<(Calendar, Calendar) -> Unit>()
-  private val renderDaysOfWeek = mock<(List<DayOfWeek>) -> Unit>()
-  private val renderDaysOfMonth = mock<(List<DayOfMonth>) -> Unit>()
+  private val renderMonthItems = mock<(List<MonthItem>) -> Unit>()
   private val goBackVisibility = mock<(Boolean) -> Unit>()
   private val goForwardVisibility = mock<(Boolean) -> Unit>()
   private val switchToMonthMode = mock<() -> Unit>()
@@ -68,8 +57,7 @@ class DatePickerControllerTest {
       vibrator,
       minMaxController,
       renderHeaders,
-      renderDaysOfWeek,
-      renderDaysOfMonth,
+      renderMonthItems,
       goBackVisibility,
       goForwardVisibility,
       switchToMonthMode,
@@ -281,7 +269,7 @@ class DatePickerControllerTest {
         .that(selectedCaptured.snapshotMonth())
         .isEqualTo(selectedDate.snapshotMonth())
 
-    verify(renderDaysOfMonth, atLeast(1)).invoke(isA())
+    verify(renderMonthItems, atLeast(1)).invoke(isA())
     verify(goBackVisibility, atLeast(1)).invoke(canGoBack)
     verify(goForwardVisibility, atLeast(1)).invoke(canGoForward)
   }
@@ -289,9 +277,6 @@ class DatePickerControllerTest {
   private fun assertSetCurrentMonth(month: MonthSnapshot) {
     assertThat(controller.viewingMonth).isEqualTo(MonthSnapshot(month.month, month.year))
     assertThat(controller.monthGraph!!.calendar.snapshotMonth()).isEqualTo(month)
-
-    verify(renderDaysOfWeek, atLeast(1))
-        .invoke(listOf(SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY))
   }
 
   private fun assertListenerGotDate(

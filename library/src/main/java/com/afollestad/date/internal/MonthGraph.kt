@@ -19,25 +19,15 @@ import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.dayOfWeek
+import com.afollestad.date.internal.MonthItem.DayOfMonth
+import com.afollestad.date.internal.MonthItem.WeekHeader
 import com.afollestad.date.month
 import com.afollestad.date.snapshot.DateSnapshot
-import com.afollestad.date.snapshot.MonthSnapshot
 import com.afollestad.date.snapshot.snapshotMonth
 import com.afollestad.date.totalDaysInMonth
 import com.afollestad.date.year
 import java.util.Calendar
 import kotlin.properties.Delegates
-
-/** The date of an empty date, a placeholder in the graph. */
-internal const val NO_DATE: Int = -1
-
-/** @author Aidan Follestad (@afollestad) */
-internal data class DayOfMonth(
-  val dayOfWeek: DayOfWeek,
-  val month: MonthSnapshot,
-  val date: Int = NO_DATE,
-  val isSelected: Boolean = false
-)
 
 /** @author Aidan Follestad (@afollestad) */
 internal class MonthGraph(
@@ -56,9 +46,15 @@ internal class MonthGraph(
         .andTheRest()
   }
 
-  @CheckResult fun getDaysOfMonth(selectedDate: DateSnapshot): List<DayOfMonth> {
-    val daysOfMonth = mutableListOf<DayOfMonth>()
+  @CheckResult fun getMonthItems(selectedDate: DateSnapshot): List<MonthItem> {
+    val daysOfMonth = mutableListOf<MonthItem>()
     val month = calendar.snapshotMonth()
+
+    // Add weekday headers
+    daysOfMonth.addAll(
+        orderedWeekDays
+            .map { WeekHeader(it) }
+    )
 
     // Add prefix days first, days the lead up from last month to the first day of this
     daysOfMonth.addAll(
@@ -79,12 +75,12 @@ internal class MonthGraph(
       )
     }
 
-    if (daysOfMonth.size < TOTAL_DAYS_OF_MONTH) {
+    if (daysOfMonth.size < EXPECTED_SIZE) {
       // Fill in remaining days of week
       val loopTarget = orderedWeekDays.last()
           .nextDayOfWeek()
       daysOfMonth.addAll(
-          daysOfMonth.last()
+          (daysOfMonth.last() as DayOfMonth)
               .dayOfWeek
               .nextDayOfWeek()
               .andTheRest()
@@ -93,17 +89,17 @@ internal class MonthGraph(
       )
     }
     // Make sure we fill up 6 weeks worth of dates
-    while (daysOfMonth.size < TOTAL_DAYS_OF_MONTH) {
+    while (daysOfMonth.size < EXPECTED_SIZE) {
       daysOfMonth.addAll(orderedWeekDays.map { DayOfMonth(it, month, NO_DATE) })
     }
 
-    check(daysOfMonth.size == TOTAL_DAYS_OF_MONTH) {
-      "${daysOfMonth.size} must equal $TOTAL_DAYS_OF_MONTH"
+    check(daysOfMonth.size == EXPECTED_SIZE) {
+      "${daysOfMonth.size} must equal $EXPECTED_SIZE"
     }
     return daysOfMonth
   }
 
   private companion object {
-    const val TOTAL_DAYS_OF_MONTH: Int = 42
+    const val EXPECTED_SIZE: Int = 49
   }
 }

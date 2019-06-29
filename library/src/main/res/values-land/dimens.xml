@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
   <dimen name="header_main_padding_vertical_top">32dp</dimen>
   <dimen name="header_main_padding_vertical_bottom">8dp</dimen>
 
   <item name="day_of_month_height_ratio" format="float" type="dimen">0.6</item>
-  <item name="month_sidebar_width_percent" format="float" type="dimen">0.3</item>
 </resources>

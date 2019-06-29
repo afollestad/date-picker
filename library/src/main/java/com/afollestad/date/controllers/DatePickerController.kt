@@ -22,9 +22,8 @@ import com.afollestad.date.OnDateChanged
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.decrementMonth
 import com.afollestad.date.incrementMonth
-import com.afollestad.date.internal.DayOfMonth
-import com.afollestad.date.internal.DayOfWeek
 import com.afollestad.date.internal.MonthGraph
+import com.afollestad.date.internal.MonthItem
 import com.afollestad.date.month
 import com.afollestad.date.snapshot.DateSnapshot
 import com.afollestad.date.snapshot.MonthSnapshot
@@ -39,8 +38,7 @@ internal class DatePickerController(
   private val vibrator: VibratorController,
   private val minMaxController: MinMaxController,
   private val renderHeaders: (Calendar, Calendar) -> Unit,
-  private val renderDaysOfWeek: (List<DayOfWeek>) -> Unit,
-  private val renderDaysOfMonth: (List<DayOfMonth>) -> Unit,
+  private val renderMonthItems: (List<MonthItem>) -> Unit,
   private val goBackVisibility: (visible: Boolean) -> Unit,
   private val goForwardVisibility: (visible: Boolean) -> Unit,
   private val switchToDaysOfMonthMode: () -> Unit,
@@ -165,12 +163,11 @@ internal class DatePickerController(
   private fun updateCurrentMonth(calendar: Calendar) {
     viewingMonth = calendar.snapshotMonth()
     monthGraph = MonthGraph(calendar)
-    renderDaysOfWeek(monthGraph!!.orderedWeekDays)
   }
 
   private fun render(calendar: Calendar) {
     renderHeaders(calendar, selectedDateCalendar!!)
-    renderDaysOfMonth(monthGraph!!.getDaysOfMonth(selectedDate!!))
+    renderMonthItems(monthGraph!!.getMonthItems(selectedDate!!))
     goBackVisibility(minMaxController.canGoBack(calendar))
     goForwardVisibility(minMaxController.canGoForward(calendar))
   }

@@ -29,23 +29,24 @@ import androidx.annotation.IntRange
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.MonthAdapter
 import com.afollestad.date.internal.DateFormatter
 import com.afollestad.date.controllers.DatePickerController
 import com.afollestad.date.controllers.MinMaxController
 import com.afollestad.date.controllers.VibratorController
-import com.afollestad.date.internal.DayOfMonth
-import com.afollestad.date.internal.DayOfWeek
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.internal.DatePickerSavedState
+import com.afollestad.date.internal.MonthItem
+import com.afollestad.date.internal.MonthItem.DayOfMonth
 import com.afollestad.date.util.attachTopDivider
 import com.afollestad.date.util.color
 import com.afollestad.date.util.conceal
-import com.afollestad.date.util.concealAll
 import com.afollestad.date.util.font
 import com.afollestad.date.util.hide
 import com.afollestad.date.util.invalidateTopDividerNow
@@ -54,12 +55,8 @@ import com.afollestad.date.util.isVisible
 import com.afollestad.date.util.onClickDebounced
 import com.afollestad.date.util.resolveColor
 import com.afollestad.date.util.show
-import com.afollestad.date.util.showAll
 import com.afollestad.date.util.showOrConceal
-import com.afollestad.date.renderers.DayOfMonthRenderer
-import com.afollestad.date.renderers.WeekdayHeaderRenderer
-import com.afollestad.date.util.findViewsByTag
-import com.afollestad.date.view.DayOfMonthTextView
+import com.afollestad.date.renderers.MonthItemRenderer
 import java.lang.Long.MAX_VALUE
 import java.util.Calendar
 
@@ -77,10 +74,10 @@ class DatePicker(
 
   private val vibrator: VibratorController
   private val dateFormatter = DateFormatter()
+  private val monthItemAdapter: MonthItemAdapter
   private val yearAdapter: YearAdapter
   private val monthAdapter: MonthAdapter
-  private val weekdayHeaderRenderer: WeekdayHeaderRenderer
-  private val dayOfMonthRenderer: DayOfMonthRenderer
+  private val monthItemRenderer: MonthItemRenderer
 
   // Late inits
   private lateinit var selectedYearView: TextView
@@ -88,8 +85,8 @@ class DatePicker(
   private lateinit var visibleMonthView: TextView
   private lateinit var goPreviousMonthView: View
   private lateinit var goNextMonthView: View
-  private lateinit var weekdayHeaderViews: List<TextView>
-  private lateinit var dayOfMonthViews: List<DayOfMonthTextView>
+
+  private lateinit var daysRecyclerView: RecyclerView
   private lateinit var yearsRecyclerView: RecyclerView
   private lateinit var monthRecyclerView: RecyclerView
   private lateinit var listsDividerView: View
@@ -109,8 +106,7 @@ class DatePicker(
           vibrator = vibrator,
           minMaxController = minMaxController,
           renderHeaders = ::renderHeaders,
-          renderDaysOfWeek = ::renderDaysOfWeek,
-          renderDaysOfMonth = ::renderDaysOfMonth,
+          renderMonthItems = ::renderMonthItems,
           goBackVisibility = { goPreviousMonthView.showOrConceal(it) },
           goForwardVisibility = { goNextMonthView.showOrConceal(it) },
           switchToDaysOfMonthMode = ::switchToDaysOfMonthMode
@@ -128,8 +124,7 @@ class DatePicker(
       calendarHorizontalPadding =
         ta.getDimensionPixelSize(R.styleable.DatePicker_date_picker_calendar_horizontal_padding, 0)
 
-      weekdayHeaderRenderer = WeekdayHeaderRenderer(normalFont)
-      dayOfMonthRenderer = DayOfMonthRenderer(
+      monthItemRenderer = MonthItemRenderer(
           context = context,
           typedArray = ta,
           normalFont = normalFont,
@@ -139,16 +134,20 @@ class DatePicker(
       ta.recycle()
     }
 
+    monthItemAdapter = MonthItemAdapter(
+        itemRenderer = monthItemRenderer
+    ) { controller.setDayOfMonth(it.date) }
+
     yearAdapter = YearAdapter(
         normalFont = normalFont,
         mediumFont = mediumFont,
-        selectionColor = dayOfMonthRenderer.selectionColor
+        selectionColor = monthItemRenderer.selectionColor
     ) { controller.setYear(it) }
 
     monthAdapter = MonthAdapter(
         normalFont = normalFont,
         mediumFont = mediumFont,
-        selectionColor = dayOfMonthRenderer.selectionColor,
+        selectionColor = monthItemRenderer.selectionColor,
         dateFormatter = dateFormatter
     ) { controller.setMonth(it) }
   }
@@ -246,10 +245,13 @@ class DatePicker(
       onClickDebounced { switchToDaysOfMonthMode() }
     }
 
-    weekdayHeaderViews = findViewsByTag("weekday_header")
-    dayOfMonthViews = findViewsByTag("day_of_month")
-
     listsDividerView = findViewById(R.id.year_month_list_divider)
+
+    daysRecyclerView = findViewById<RecyclerView>(R.id.day_list).apply {
+      layoutManager = GridLayoutManager(context, resources.getInteger(R.integer.day_grid_span))
+      adapter = monthItemAdapter
+      attachTopDivider(listsDividerView)
+    }
     yearsRecyclerView = findViewById<RecyclerView>(R.id.year_list).apply {
       layoutManager = LinearLayoutManager(context)
       adapter = yearAdapter
@@ -264,11 +266,11 @@ class DatePicker(
     }
 
     goPreviousMonthView = findViewById<View>(R.id.left_chevron).apply {
-      background = createCircularSelector(dayOfMonthRenderer.selectionColor)
+      background = createCircularSelector(monthItemRenderer.selectionColor)
       onClickDebounced { controller.previousMonth() }
     }
     goNextMonthView = findViewById<View>(R.id.right_chevron).apply {
-      background = createCircularSelector(dayOfMonthRenderer.selectionColor)
+      background = createCircularSelector(monthItemRenderer.selectionColor)
       onClickDebounced { controller.nextMonth() }
     }
 
@@ -289,8 +291,7 @@ class DatePicker(
     monthRecyclerView.show()
     monthRecyclerView.invalidateTopDividerNow(listsDividerView)
     yearsRecyclerView.conceal()
-    weekdayHeaderViews.concealAll()
-    dayOfMonthViews.concealAll()
+    daysRecyclerView.conceal()
 
     selectedYearView.apply {
       setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
@@ -308,8 +309,7 @@ class DatePicker(
     yearsRecyclerView.show()
     yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
     monthRecyclerView.conceal()
-    weekdayHeaderViews.concealAll()
-    dayOfMonthViews.concealAll()
+    daysRecyclerView.conceal()
 
     selectedYearView.apply {
       setTextColor(context.resolveColor(android.R.attr.textColorPrimaryInverse))
@@ -328,8 +328,7 @@ class DatePicker(
     }
     yearsRecyclerView.conceal()
     monthRecyclerView.conceal()
-    weekdayHeaderViews.showAll()
-    dayOfMonthViews.showAll()
+    daysRecyclerView.show()
     listsDividerView.hide()
 
     selectedYearView.apply {
@@ -352,31 +351,20 @@ class DatePicker(
     selectedDateView.text = dateFormatter.date(selectedDate)
   }
 
-  private fun renderDaysOfWeek(daysOfWeek: List<DayOfWeek>) {
-    weekdayHeaderRenderer.renderAll(
-        daysOfWeek = daysOfWeek,
-        views = weekdayHeaderViews
-    )
-  }
-
-  private fun renderDaysOfMonth(days: List<DayOfMonth>) {
-    yearAdapter.selectedYear = days.first()
+  private fun renderMonthItems(days: List<MonthItem>) {
+    val firstDayOfMonth = days.first { it is DayOfMonth } as DayOfMonth
+    yearAdapter.selectedYear = firstDayOfMonth
         .month
         .year
     yearAdapter.getSelectedPosition()
         ?.let { yearsRecyclerView.scrollToPosition(it - 2) }
 
-    monthAdapter.selectedMonth = days.first()
+    monthAdapter.selectedMonth = firstDayOfMonth
         .month
         .month
     monthAdapter.selectedMonth
         ?.let { monthRecyclerView.scrollToPosition(it - 2) }
 
-    dayOfMonthRenderer.renderAll(
-        daysOfMonth = days,
-        views = dayOfMonthViews
-    ) {
-      controller.setDayOfMonth(it)
-    }
+    monthItemAdapter.items = days
   }
 }

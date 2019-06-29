@@ -19,24 +19,27 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.view.Gravity.CENTER
-import androidx.annotation.VisibleForTesting
+import android.view.View
+import android.widget.TextView
 import com.afollestad.date.R
 import com.afollestad.date.controllers.MinMaxController
-import com.afollestad.date.internal.DayOfMonth
+import com.afollestad.date.internal.DayOfWeek
+import com.afollestad.date.internal.MonthItem
+import com.afollestad.date.internal.MonthItem.DayOfMonth
+import com.afollestad.date.internal.MonthItem.WeekHeader
 import com.afollestad.date.internal.NO_DATE
 import com.afollestad.date.util.Util.coloredDrawable
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.Util.createTextSelector
 import com.afollestad.date.util.color
-import com.afollestad.date.util.onClickDebounced
 import com.afollestad.date.util.resolveColor
 import com.afollestad.date.util.withAlpha
 import com.afollestad.date.snapshot.DateSnapshot
-import com.afollestad.date.view.DayOfMonthTextView
+import com.afollestad.date.util.onClickDebounced
 
 // TODO write unit tests
 /** @author Aidan Follestad (@afollestad) */
-internal class DayOfMonthRenderer(
+internal class MonthItemRenderer(
   private val context: Context,
   typedArray: TypedArray,
   private val normalFont: Typeface,
@@ -52,21 +55,49 @@ internal class DayOfMonthRenderer(
           .withAlpha(DEFAULT_DISABLED_BACKGROUND_OPACITY)
     }
 
-  @VisibleForTesting fun render(
-    dayOfMonth: DayOfMonth,
-    textView: DayOfMonthTextView,
-    onSelection: (Int) -> Unit
+  fun render(
+    item: MonthItem,
+    rootView: View,
+    textView: TextView,
+    onSelection: (DayOfMonth) -> Unit
   ) {
-    textView.setTextColor(createTextSelector(context, selectionColor))
-    textView.text = dayOfMonth.date.positiveOrEmptyAsString()
-    textView.typeface = normalFont
-    textView.gravity = CENTER
+    when (item) {
+      is WeekHeader -> renderWeekHeader(item.dayOfWeek, textView)
+      is DayOfMonth -> renderDayOfMonth(item, rootView, textView, onSelection)
+    }
+  }
+
+  private fun renderWeekHeader(
+    dayOfWeek: DayOfWeek,
+    textView: TextView
+  ) {
+    textView.apply {
+      setTextColor(context.resolveColor(android.R.attr.textColorSecondary))
+      text = dayOfWeek.name.first()
+          .toString()
+      typeface = normalFont
+    }
+  }
+
+  private fun renderDayOfMonth(
+    dayOfMonth: DayOfMonth,
+    rootView: View,
+    textView: TextView,
+    onSelection: (DayOfMonth) -> Unit
+  ) {
+    rootView.background = null
+    textView.apply {
+      setTextColor(createTextSelector(context, selectionColor))
+      text = dayOfMonth.date.positiveOrEmptyAsString()
+      typeface = normalFont
+      gravity = CENTER
+      background = null
+      setOnClickListener(null)
+    }
 
     if (dayOfMonth.date == NO_DATE) {
-      textView.isEnabled = false
+      rootView.isEnabled = false
       textView.isSelected = false
-      textView.background = null
-      textView.skipInset = false
       return
     }
 
@@ -79,39 +110,27 @@ internal class DayOfMonthRenderer(
 
     when {
       minMaxController.isOutOfMinRange(currentDate) -> {
-        textView.skipInset = true
         val drawableRes = minMaxController.getOutOfMinRangeBackgroundRes(currentDate)
-        textView.background = coloredDrawable(context, drawableRes, disabledBackgroundColor)
-        textView.isEnabled = false
-      }
-      minMaxController.isOutOfMaxRange(currentDate) -> {
-        textView.skipInset = true
-        val drawable = minMaxController.getOutOfMaxRangeBackgroundRes(currentDate)
-        textView.background = coloredDrawable(context, drawable, disabledBackgroundColor)
-        textView.isEnabled = false
-      }
-      else -> {
-        textView.skipInset = false
-        textView.background = createCircularSelector(selectionColor)
-        textView.isEnabled = textView.text.toString()
-            .isNotEmpty()
-        textView.onClickDebounced {
-          onSelection(it.text.toString().toInt())
+        rootView.apply {
+          background = coloredDrawable(context, drawableRes, disabledBackgroundColor)
+          isEnabled = false
         }
       }
-    }
-  }
-
-  fun renderAll(
-    daysOfMonth: List<DayOfMonth>,
-    views: List<DayOfMonthTextView>,
-    onSelection: (Int) -> Unit
-  ) {
-    require(daysOfMonth.size == views.size) {
-      "Days of month size (${daysOfMonth.size}) should equal views size (${views.size})."
-    }
-    daysOfMonth.forEachIndexed { index, dayOfMonth ->
-      render(dayOfMonth, views[index], onSelection)
+      minMaxController.isOutOfMaxRange(currentDate) -> {
+        val drawable = minMaxController.getOutOfMaxRangeBackgroundRes(currentDate)
+        rootView.apply {
+          background = coloredDrawable(context, drawable, disabledBackgroundColor)
+          isEnabled = false
+        }
+      }
+      else -> {
+        rootView.isEnabled = textView.text.toString()
+            .isNotEmpty()
+        textView.apply {
+          background = createCircularSelector(selectionColor)
+          onClickDebounced { onSelection(dayOfMonth) }
+        }
+      }
     }
   }
 
