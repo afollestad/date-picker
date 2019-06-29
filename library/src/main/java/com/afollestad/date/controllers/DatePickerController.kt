@@ -125,7 +125,14 @@ internal class DatePickerController(
     }
   }, notifyListeners = notifyListeners)
 
-  @CheckResult fun getFullDate(): Calendar? = selectedDateCalendar
+  @CheckResult fun getFullDate(): Calendar? {
+    if (minMaxController.isOutOfMinRange(selectedDate) ||
+        minMaxController.isOutOfMaxRange(selectedDate)
+    ) {
+      return null
+    }
+    return selectedDateCalendar
+  }
 
   fun setDayOfMonth(day: Int) {
     if (!didInit) {
@@ -176,9 +183,18 @@ internal class DatePickerController(
     old: Calendar,
     block: () -> Calendar
   ) {
-    if (dateChangedListeners.isNotEmpty()) {
-      dateChangedListeners.forEach { it(old, block()) }
+    if (dateChangedListeners.isEmpty()) {
+      return
     }
+    val arg = block()
+    val argSnapshot = arg.snapshot()
+    if (minMaxController.isOutOfMinRange(argSnapshot) ||
+        minMaxController.isOutOfMaxRange(argSnapshot)
+    ) {
+      // Don't allow out-of-range dates to slip through.
+      return
+    }
+    dateChangedListeners.forEach { it(old, arg) }
   }
 
   private fun currentSelectedOrNow(): Calendar = selectedDateCalendar ?: getNow()

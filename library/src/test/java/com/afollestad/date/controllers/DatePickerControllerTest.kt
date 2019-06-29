@@ -28,6 +28,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.atLeast
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.isA
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
@@ -247,6 +248,40 @@ class DatePickerControllerTest {
     controller.setYear(2018)
     assertListenerGotDate(selectedDate, selectedDate.copy(year = 2018))
     verify(switchToMonthMode, times(1)).invoke()
+  }
+
+  @Test fun `getFullDate - is null if out of range`() {
+    val snapshot = now.snapshot()
+    controller.selectedDate = snapshot
+    assertThat(controller.getFullDate()!!.snapshot()).isEqualTo(snapshot)
+
+    whenever(minMaxController.isOutOfMinRange(eq(snapshot)))
+        .doReturn(true)
+    whenever(minMaxController.isOutOfMaxRange(eq(snapshot)))
+        .doReturn(true)
+    assertThat(controller.getFullDate()).isNull()
+  }
+
+  @Test fun `out of range dates do not go through listeners`() {
+    controller.didInit = false
+    controller.selectedDate = null
+
+    val expectedDate = DateSnapshot(Calendar.JANUARY, 11, 1995)
+    val expectedCalendar = expectedDate.asCalendar()
+
+    whenever(minMaxController.isOutOfMinRange(eq(expectedDate)))
+        .doReturn(true)
+    whenever(minMaxController.isOutOfMaxRange(eq(expectedDate)))
+        .doReturn(true)
+
+    controller.setFullDate(expectedCalendar)
+
+    assertThat(controller.didInit).isTrue()
+    assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
+    assertSetCurrentMonth(MonthSnapshot(Calendar.JANUARY, 1995))
+    assertRender(expectedCalendar, expectedCalendar)
+
+    verify(listener, never()).invoke(any(), any())
   }
 
   private fun assertRender(
