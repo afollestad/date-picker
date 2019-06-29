@@ -52,7 +52,7 @@
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/day_list"
       style="@style/DayOfMonthList"
-      app:layout_constraintStart_toEndOf="@id/current_year"
+      app:layout_constraintStart_toEndOf="@+id/current_year"
       app:layout_constraintStart_toStartOf="@null"
       />
 
@@ -60,19 +60,19 @@
   <View
       android:id="@+id/year_month_list_divider"
       style="@style/Divider"
-      app:layout_constraintStart_toEndOf="@id/current_year"
+      app:layout_constraintStart_toEndOf="@+id/current_year"
       app:layout_constraintStart_toStartOf="@null"
       />
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/year_list"
       style="@style/YearOrMonthList"
-      app:layout_constraintStart_toEndOf="@id/current_year"
+      app:layout_constraintStart_toEndOf="@+id/current_year"
       app:layout_constraintStart_toStartOf="@null"
       />
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/month_list"
       style="@style/YearOrMonthList"
-      app:layout_constraintStart_toEndOf="@id/current_year"
+      app:layout_constraintStart_toEndOf="@+id/current_year"
       app:layout_constraintStart_toStartOf="@null"
       />
 
