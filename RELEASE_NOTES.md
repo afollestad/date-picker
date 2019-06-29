@@ -1,3 +1,4 @@
-0.4.2
+0.5.0
 
-* Set the library module name for the Kotlin compiler, so it doesn't clash with other libraries (META_INF/* related build errors).
+* Switched to a RecyclerView-based method of rendering days of the month.
+* Other bug fixes.
