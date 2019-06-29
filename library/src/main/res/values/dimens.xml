@@ -22,5 +22,5 @@
   <dimen name="divider_height">1dp</dimen>
 
   <item name="day_of_month_height_ratio" format="float" type="dimen">0.9</item>
-
+  <item name="month_sidebar_width_percent" format="float" type="dimen">1.0</item>
 </resources>

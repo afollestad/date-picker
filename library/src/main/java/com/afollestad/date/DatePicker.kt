@@ -27,7 +27,6 @@ import android.widget.TextView
 import androidx.annotation.CheckResult
 import androidx.annotation.IntRange
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Guideline
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -57,6 +56,9 @@ import com.afollestad.date.util.resolveColor
 import com.afollestad.date.util.show
 import com.afollestad.date.util.showOrConceal
 import com.afollestad.date.renderers.MonthItemRenderer
+import com.afollestad.date.util.updateMargin
+import com.afollestad.date.util.updatePadding
+import com.afollestad.date.view.ChevronImageView
 import java.lang.Long.MAX_VALUE
 import java.util.Calendar
 
@@ -251,6 +253,10 @@ class DatePicker(
       layoutManager = GridLayoutManager(context, resources.getInteger(R.integer.day_grid_span))
       adapter = monthItemAdapter
       attachTopDivider(listsDividerView)
+      updatePadding(
+          left = calendarHorizontalPadding,
+          right = calendarHorizontalPadding
+      )
     }
     yearsRecyclerView = findViewById<RecyclerView>(R.id.year_list).apply {
       layoutManager = LinearLayoutManager(context)
@@ -265,24 +271,23 @@ class DatePicker(
       attachTopDivider(listsDividerView)
     }
 
-    goPreviousMonthView = findViewById<View>(R.id.left_chevron).apply {
+    goPreviousMonthView = findViewById<ChevronImageView>(R.id.left_chevron).apply {
       background = createCircularSelector(monthItemRenderer.selectionColor)
       onClickDebounced { controller.previousMonth() }
+      attach(daysRecyclerView)
+      updateMargin(
+          left = calendarHorizontalPadding,
+          right = calendarHorizontalPadding
+      )
     }
-    goNextMonthView = findViewById<View>(R.id.right_chevron).apply {
+    goNextMonthView = findViewById<ChevronImageView>(R.id.right_chevron).apply {
       background = createCircularSelector(monthItemRenderer.selectionColor)
       onClickDebounced { controller.nextMonth() }
-    }
-
-    findViewById<Guideline>(R.id.start_guideline).apply {
-      layoutParams = (layoutParams as LayoutParams).apply {
-        guideBegin = calendarHorizontalPadding
-      }
-    }
-    findViewById<Guideline>(R.id.end_guideline).apply {
-      layoutParams = (layoutParams as LayoutParams).apply {
-        guideEnd = calendarHorizontalPadding
-      }
+      attach(daysRecyclerView)
+      updateMargin(
+          left = calendarHorizontalPadding,
+          right = calendarHorizontalPadding
+      )
     }
   }
 

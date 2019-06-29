@@ -52,6 +52,6 @@ class VibratorController(
   }
 
   private companion object {
-    const val VIBRATION_DURATION: Long = 20L
+    const val VIBRATION_DURATION: Long = 15L
   }
 }

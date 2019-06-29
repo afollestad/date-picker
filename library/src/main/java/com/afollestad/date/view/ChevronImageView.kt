@@ -17,19 +17,37 @@ package com.afollestad.date.view
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
+import com.afollestad.date.util.waitForLayout
 
 /** @author Aidan Follestad (@afollestad) */
-internal class SquareImageView(
+internal class ChevronImageView(
   context: Context,
   attrs: AttributeSet?
 ) : AppCompatImageView(context, attrs) {
+  private var targetWidth: Int? = null
+
+  fun attach(view: View) {
+    view.waitForLayout { width ->
+      targetWidth = width / DAYS_IN_WEEK
+      requestLayout()
+    }
+  }
 
   override fun onMeasure(
     widthMeasureSpec: Int,
     heightMeasureSpec: Int
   ) {
+    if (targetWidth != null) {
+      setMeasuredDimension(targetWidth!!, targetWidth!!)
+      return
+    }
     val widthAndHeight = MeasureSpec.getSize(widthMeasureSpec)
     setMeasuredDimension(widthAndHeight, widthAndHeight)
+  }
+
+  private companion object {
+    const val DAYS_IN_WEEK = 7
   }
 }

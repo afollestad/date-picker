@@ -28,9 +28,7 @@ object TypefaceHelper {
    * repeated allocations.
    */
   @CheckResult fun create(familyName: String): Typeface {
-    return cache[familyName] ?: allocateAndCache(
-        familyName
-    )
+    return cache[familyName] ?: allocateAndCache(familyName)
   }
 
   private fun allocateAndCache(familyName: String): Typeface {
