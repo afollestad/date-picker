@@ -242,6 +242,7 @@ class DatePicker(
       onClickDebounced { switchToYearMode() }
     }
     selectedDateView = findViewById<TextView>(R.id.current_date).apply {
+      isSelected = true
       background = ColorDrawable(headerBackgroundColor)
       typeface = mediumFont
       onClickDebounced { switchToDaysOfMonthMode() }
@@ -299,11 +300,11 @@ class DatePicker(
     daysRecyclerView.conceal()
 
     selectedYearView.apply {
-      setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
+      isSelected = false
       typeface = mediumFont
     }
     selectedDateView.apply {
-      setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
+      isSelected = false
       typeface = normalFont
     }
     vibrator.vibrateForSelection()
@@ -317,11 +318,11 @@ class DatePicker(
     daysRecyclerView.conceal()
 
     selectedYearView.apply {
-      setTextColor(context.resolveColor(android.R.attr.textColorPrimaryInverse))
+      isSelected = true
       typeface = mediumFont
     }
     selectedDateView.apply {
-      setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
+      isSelected = false
       typeface = normalFont
     }
     vibrator.vibrateForSelection()
@@ -337,11 +338,11 @@ class DatePicker(
     listsDividerView.hide()
 
     selectedYearView.apply {
-      setTextColor(context.resolveColor(android.R.attr.textColorSecondaryInverse))
+      isSelected = false
       typeface = normalFont
     }
     selectedDateView.apply {
-      setTextColor(context.resolveColor(android.R.attr.textColorPrimaryInverse))
+      isSelected = true
       typeface = mediumFont
     }
     vibrator.vibrateForSelection()

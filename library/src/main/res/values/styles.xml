@@ -58,7 +58,7 @@
     <item name="android:paddingLeft">@dimen/header_main_padding_horizontal</item>
     <item name="android:paddingRight">@dimen/header_main_padding_horizontal</item>
     <item name="android:textSize">@dimen/header_main_text_size_year</item>
-    <item name="android:textColor">?android:textColorSecondaryInverse</item>
+    <item name="android:textColor">@color/headers_text_color</item>
     <item name="android:maxLines">1</item>
   </style>
 
@@ -67,7 +67,7 @@
     <item name="android:paddingLeft">@dimen/header_main_padding_horizontal</item>
     <item name="android:paddingRight">@dimen/header_main_padding_horizontal</item>
     <item name="android:textSize">@dimen/header_main_text_size_date</item>
-    <item name="android:textColor">?android:textColorPrimaryInverse</item>
+    <item name="android:textColor">@color/headers_text_color</item>
     <item name="android:maxLines">2</item>
   </style>
 
