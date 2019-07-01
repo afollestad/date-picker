@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.data
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.date.snapshot.MonthSnapshot
+import com.afollestad.date.data.snapshot.MonthSnapshot
 
 /** The date of an empty date, a placeholder in the graph. */
 internal const val NO_DATE: Int = -1

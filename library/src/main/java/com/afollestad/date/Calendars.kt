@@ -16,8 +16,8 @@
 package com.afollestad.date
 
 import androidx.annotation.CheckResult
-import com.afollestad.date.internal.DayOfWeek
-import com.afollestad.date.internal.asDayOfWeek
+import com.afollestad.date.data.DayOfWeek
+import com.afollestad.date.data.asDayOfWeek
 import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */

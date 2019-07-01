@@ -22,14 +22,14 @@ import com.afollestad.date.OnDateChanged
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.decrementMonth
 import com.afollestad.date.incrementMonth
-import com.afollestad.date.internal.MonthGraph
-import com.afollestad.date.internal.MonthItem
+import com.afollestad.date.data.MonthGraph
+import com.afollestad.date.data.MonthItem
 import com.afollestad.date.month
-import com.afollestad.date.snapshot.DateSnapshot
-import com.afollestad.date.snapshot.MonthSnapshot
-import com.afollestad.date.snapshot.asCalendar
-import com.afollestad.date.snapshot.snapshot
-import com.afollestad.date.snapshot.snapshotMonth
+import com.afollestad.date.data.snapshot.DateSnapshot
+import com.afollestad.date.data.snapshot.MonthSnapshot
+import com.afollestad.date.data.snapshot.asCalendar
+import com.afollestad.date.data.snapshot.snapshot
+import com.afollestad.date.data.snapshot.snapshotMonth
 import com.afollestad.date.year
 import java.util.Calendar
 

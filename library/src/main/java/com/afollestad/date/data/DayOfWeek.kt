@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.data
 
-import com.afollestad.date.internal.DayOfWeek.FRIDAY
-import com.afollestad.date.internal.DayOfWeek.MONDAY
-import com.afollestad.date.internal.DayOfWeek.SATURDAY
-import com.afollestad.date.internal.DayOfWeek.SUNDAY
-import com.afollestad.date.internal.DayOfWeek.THURSDAY
-import com.afollestad.date.internal.DayOfWeek.TUESDAY
-import com.afollestad.date.internal.DayOfWeek.WEDNESDAY
+import com.afollestad.date.data.DayOfWeek.FRIDAY
+import com.afollestad.date.data.DayOfWeek.MONDAY
+import com.afollestad.date.data.DayOfWeek.SATURDAY
+import com.afollestad.date.data.DayOfWeek.SUNDAY
+import com.afollestad.date.data.DayOfWeek.THURSDAY
+import com.afollestad.date.data.DayOfWeek.TUESDAY
+import com.afollestad.date.data.DayOfWeek.WEDNESDAY
 import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */

@@ -15,13 +15,13 @@
  */
 package com.afollestad.date.controllers
 
-import com.afollestad.date.internal.MonthGraph
-import com.afollestad.date.internal.MonthItem
-import com.afollestad.date.snapshot.DateSnapshot
-import com.afollestad.date.snapshot.MonthSnapshot
-import com.afollestad.date.snapshot.asCalendar
-import com.afollestad.date.snapshot.snapshot
-import com.afollestad.date.snapshot.snapshotMonth
+import com.afollestad.date.data.MonthGraph
+import com.afollestad.date.data.MonthItem
+import com.afollestad.date.data.snapshot.DateSnapshot
+import com.afollestad.date.data.snapshot.MonthSnapshot
+import com.afollestad.date.data.snapshot.asCalendar
+import com.afollestad.date.data.snapshot.snapshot
+import com.afollestad.date.data.snapshot.snapshotMonth
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import com.nhaarman.mockitokotlin2.any

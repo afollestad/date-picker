@@ -23,18 +23,18 @@ import android.view.View
 import android.widget.TextView
 import com.afollestad.date.R
 import com.afollestad.date.controllers.MinMaxController
-import com.afollestad.date.internal.DayOfWeek
-import com.afollestad.date.internal.MonthItem
-import com.afollestad.date.internal.MonthItem.DayOfMonth
-import com.afollestad.date.internal.MonthItem.WeekHeader
-import com.afollestad.date.internal.NO_DATE
+import com.afollestad.date.data.DayOfWeek
+import com.afollestad.date.data.MonthItem
+import com.afollestad.date.data.MonthItem.DayOfMonth
+import com.afollestad.date.data.MonthItem.WeekHeader
+import com.afollestad.date.data.NO_DATE
 import com.afollestad.date.util.Util.coloredDrawable
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.Util.createTextSelector
 import com.afollestad.date.util.color
 import com.afollestad.date.util.resolveColor
 import com.afollestad.date.util.withAlpha
-import com.afollestad.date.snapshot.DateSnapshot
+import com.afollestad.date.data.snapshot.DateSnapshot
 import com.afollestad.date.util.onClickDebounced
 
 // TODO write unit tests

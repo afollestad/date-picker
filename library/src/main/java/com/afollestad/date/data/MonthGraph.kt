@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.data
 
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.dayOfWeek
-import com.afollestad.date.internal.MonthItem.DayOfMonth
-import com.afollestad.date.internal.MonthItem.WeekHeader
+import com.afollestad.date.data.MonthItem.DayOfMonth
+import com.afollestad.date.data.MonthItem.WeekHeader
 import com.afollestad.date.month
-import com.afollestad.date.snapshot.DateSnapshot
-import com.afollestad.date.snapshot.snapshotMonth
+import com.afollestad.date.data.snapshot.DateSnapshot
+import com.afollestad.date.data.snapshot.snapshotMonth
 import com.afollestad.date.totalDaysInMonth
 import com.afollestad.date.year
 import java.util.Calendar
@@ -90,7 +90,9 @@ internal class MonthGraph(
     }
     // Make sure we fill up 6 weeks worth of dates
     while (daysOfMonth.size < EXPECTED_SIZE) {
-      daysOfMonth.addAll(orderedWeekDays.map { DayOfMonth(it, month, NO_DATE) })
+      daysOfMonth.addAll(orderedWeekDays.map { DayOfMonth(it, month,
+          NO_DATE
+      ) })
     }
 
     check(daysOfMonth.size == EXPECTED_SIZE) {

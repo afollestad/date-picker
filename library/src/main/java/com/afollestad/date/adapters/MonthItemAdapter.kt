@@ -21,10 +21,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.afollestad.date.R
-import com.afollestad.date.internal.MonthItem
-import com.afollestad.date.internal.MonthItem.DayOfMonth
-import com.afollestad.date.internal.MonthItem.WeekHeader
-import com.afollestad.date.internal.applyDiffTo
+import com.afollestad.date.data.MonthItem
+import com.afollestad.date.data.MonthItem.DayOfMonth
+import com.afollestad.date.data.MonthItem.WeekHeader
+import com.afollestad.date.data.applyDiffTo
 import com.afollestad.date.renderers.MonthItemRenderer
 import com.afollestad.date.util.inflate
 

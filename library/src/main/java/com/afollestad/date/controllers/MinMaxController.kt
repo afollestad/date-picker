@@ -22,8 +22,8 @@ import com.afollestad.date.R
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.decrementMonth
 import com.afollestad.date.incrementMonth
-import com.afollestad.date.snapshot.DateSnapshot
-import com.afollestad.date.snapshot.snapshot
+import com.afollestad.date.data.snapshot.DateSnapshot
+import com.afollestad.date.data.snapshot.snapshot
 import com.afollestad.date.totalDaysInMonth
 import java.util.Calendar
 

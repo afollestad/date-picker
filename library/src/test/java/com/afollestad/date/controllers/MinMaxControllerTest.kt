@@ -16,8 +16,8 @@
 package com.afollestad.date.controllers
 
 import com.afollestad.date.assertException
-import com.afollestad.date.snapshot.DateSnapshot
-import com.afollestad.date.snapshot.snapshot
+import com.afollestad.date.data.snapshot.DateSnapshot
+import com.afollestad.date.data.snapshot.snapshot
 import com.afollestad.date.totalDaysInMonth
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test

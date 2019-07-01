@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.data
 
 import androidx.recyclerview.widget.DiffUtil
-import com.afollestad.date.internal.MonthItem.DayOfMonth
-import com.afollestad.date.internal.MonthItem.WeekHeader
+import com.afollestad.date.data.MonthItem.DayOfMonth
+import com.afollestad.date.data.MonthItem.WeekHeader
 
 /** @author Aidan Follestad (@afollestad) */
 internal class MonthItemCallback(

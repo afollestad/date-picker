@@ -24,7 +24,7 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.afollestad.date.R
-import com.afollestad.date.internal.DateFormatter
+import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.month
 import com.afollestad.date.util.Util.createTextSelector
 import com.afollestad.date.util.inflate

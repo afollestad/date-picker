@@ -15,6 +15,10 @@
  */
 package com.afollestad.date.internal
 
+import com.afollestad.date.data.DayOfWeek
+import com.afollestad.date.data.andTheRest
+import com.afollestad.date.data.asDayOfWeek
+import com.afollestad.date.data.nextDayOfWeek
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.Calendar
@@ -85,12 +89,19 @@ class DayOfWeekTest {
   }
 
   @Test fun nextDayOfWeek() {
-    assertThat(DayOfWeek.SUNDAY.nextDayOfWeek()).isEqualTo(DayOfWeek.MONDAY)
-    assertThat(DayOfWeek.MONDAY.nextDayOfWeek()).isEqualTo(DayOfWeek.TUESDAY)
-    assertThat(DayOfWeek.TUESDAY.nextDayOfWeek()).isEqualTo(DayOfWeek.WEDNESDAY)
-    assertThat(DayOfWeek.WEDNESDAY.nextDayOfWeek()).isEqualTo(DayOfWeek.THURSDAY)
-    assertThat(DayOfWeek.THURSDAY.nextDayOfWeek()).isEqualTo(DayOfWeek.FRIDAY)
-    assertThat(DayOfWeek.FRIDAY.nextDayOfWeek()).isEqualTo(DayOfWeek.SATURDAY)
-    assertThat(DayOfWeek.SATURDAY.nextDayOfWeek()).isEqualTo(DayOfWeek.SUNDAY)
+    assertThat(DayOfWeek.SUNDAY.nextDayOfWeek()).isEqualTo(
+        DayOfWeek.MONDAY)
+    assertThat(DayOfWeek.MONDAY.nextDayOfWeek()).isEqualTo(
+        DayOfWeek.TUESDAY)
+    assertThat(DayOfWeek.TUESDAY.nextDayOfWeek()).isEqualTo(
+        DayOfWeek.WEDNESDAY)
+    assertThat(DayOfWeek.WEDNESDAY.nextDayOfWeek()).isEqualTo(
+        DayOfWeek.THURSDAY)
+    assertThat(DayOfWeek.THURSDAY.nextDayOfWeek()).isEqualTo(
+        DayOfWeek.FRIDAY)
+    assertThat(DayOfWeek.FRIDAY.nextDayOfWeek()).isEqualTo(
+        DayOfWeek.SATURDAY)
+    assertThat(DayOfWeek.SATURDAY.nextDayOfWeek()).isEqualTo(
+        DayOfWeek.SUNDAY)
   }
 }

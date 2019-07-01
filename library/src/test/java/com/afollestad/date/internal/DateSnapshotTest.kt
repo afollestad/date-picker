@@ -15,7 +15,7 @@
  */
 package com.afollestad.date.internal
 
-import com.afollestad.date.snapshot.DateSnapshot
+import com.afollestad.date.data.snapshot.DateSnapshot
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.Calendar

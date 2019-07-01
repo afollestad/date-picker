@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.snapshot
+package com.afollestad.date.data.snapshot
 
 import androidx.annotation.CheckResult
 import com.afollestad.date.dayOfMonth
