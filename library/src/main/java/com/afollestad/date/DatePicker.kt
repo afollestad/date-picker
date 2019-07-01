@@ -21,9 +21,9 @@ import android.content.Context
 import android.graphics.Typeface
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.view.ViewGroup
 import androidx.annotation.CheckResult
 import androidx.annotation.IntRange
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.afollestad.date.adapters.MonthAdapter
 import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.YearAdapter
@@ -48,7 +48,7 @@ typealias OnDateChanged = (previous: Calendar, date: Calendar) -> Unit
 class DatePicker(
   context: Context,
   attrs: AttributeSet?
-) : ConstraintLayout(context, attrs) {
+) : ViewGroup(context, attrs) {
 
   internal val controller: DatePickerController
   internal val minMaxController = MinMaxController()
@@ -187,10 +187,28 @@ class DatePicker(
 
   override fun onFinishInflate() {
     super.onFinishInflate()
-    layoutManager.onFinishInflate(
+    layoutManager.onNavigate(
         controller::previousMonth,
         controller::nextMonth
     )
+  }
+
+  override fun onMeasure(
+    widthMeasureSpec: Int,
+    heightMeasureSpec: Int
+  ) {
+    layoutManager.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        .let { (width, height) -> setMeasuredDimension(width, height) }
+  }
+
+  override fun onLayout(
+    changed: Boolean,
+    left: Int,
+    top: Int,
+    right: Int,
+    bottom: Int
+  ) {
+    layoutManager.onLayout(left = left, top = top, right = right)
   }
 
   private fun renderMonthItems(days: List<MonthItem>) {

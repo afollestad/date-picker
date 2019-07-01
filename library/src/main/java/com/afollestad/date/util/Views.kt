@@ -21,7 +21,6 @@ import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.annotation.LayoutRes
 
@@ -52,9 +51,6 @@ internal fun View.showOrConceal(show: Boolean) = if (show) show() else conceal()
 internal fun View.isVisible(): Boolean = visibility == VISIBLE
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun View.isConcealed(): Boolean = visibility == INVISIBLE
-
-/** @author Aidan Follestad (@afollestad) */
 internal fun ViewGroup.inflate(@LayoutRes res: Int): View {
   return LayoutInflater.from(context)
       .inflate(res, this, false)
@@ -71,31 +67,14 @@ internal fun View.updatePadding(
 }
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun View.updateMargin(
-  left: Int? = null,
-  top: Int? = null,
-  right: Int? = null,
-  bottom: Int? = null
-) {
-  layoutParams = (layoutParams as MarginLayoutParams).apply {
-    left?.let { leftMargin = it }
-    top?.let { topMargin = it }
-    right?.let { rightMargin = it }
-    bottom?.let { bottomMargin = it }
-  }
-}
-
-/** @author Aidan Follestad (@afollestad) */
-internal fun View.waitForLayout(block: (width: Int) -> Unit) {
-  viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-    var lastWidth: Int? = null
-
-    override fun onGlobalLayout() {
-      if (lastWidth != measuredWidth) {
-        lastWidth = measuredWidth
-        block(lastWidth!!)
-      }
-      viewTreeObserver.removeOnGlobalLayoutListener(this)
-    }
-  })
-}
+internal fun View.placeAt(
+  top: Int,
+  left: Int = 0,
+  rightOffset: Int = measuredWidth,
+  bottomOffset: Int = measuredHeight
+) = layout(
+    /* left=   */left,
+    /* top=    */top,
+    /* right=  */left + rightOffset,
+    /* bottom= */top + bottomOffset
+)

@@ -2,6 +2,7 @@
 <resources>
   <dimen name="current_month_header_height">48dp</dimen>
   <dimen name="current_month_header_padding_sides">24dp</dimen>
+  <dimen name="current_month_top_margin">1dp</dimen>
 
   <dimen name="header_main_padding_vertical_top">16dp</dimen>
   <dimen name="header_main_padding_vertical_bottom">0dp</dimen>
@@ -20,6 +21,7 @@
   <dimen name="year_month_list_text_size_selected">22sp</dimen>
 
   <dimen name="divider_height">1dp</dimen>
+  <dimen name="chevrons_top_margin">1dp</dimen>
 
   <item name="day_of_month_height_ratio" format="float" type="dimen">0.9</item>
   <item name="month_sidebar_width_percent" format="float" type="dimen">1.0</item>

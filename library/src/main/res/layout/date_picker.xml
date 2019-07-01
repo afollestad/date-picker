@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
+    tools:parentTag="com.afollestad.date.DatePicker"
     >
 
   <!-- Main Header -->
@@ -11,9 +10,6 @@
       style="@style/DatePicker.HeaderYear"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
       tools:background="#8E24AA"
       tools:text="1995"
       />
@@ -22,25 +18,21 @@
       style="@style/DatePicker.HeaderDate"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/current_year"
       tools:background="#8E24AA"
       tools:text="Fri, Jul 28"
       />
 
   <!-- Current Month Header -->
-  <com.afollestad.date.view.ChevronImageView
+  <androidx.appcompat.widget.AppCompatImageView
       android:id="@+id/left_chevron"
       style="@style/DatePicker.Chevron.Start"
       />
   <TextView
       android:id="@+id/current_month"
       style="@style/DatePicker.CurrentMonth"
-      app:layout_constraintTop_toBottomOf="@+id/current_date"
       tools:text="July 2019"
       />
-  <com.afollestad.date.view.ChevronImageView
+  <androidx.appcompat.widget.AppCompatImageView
       android:id="@+id/right_chevron"
       style="@style/DatePicker.Chevron.End"
       />
