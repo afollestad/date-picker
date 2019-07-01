@@ -14,7 +14,7 @@
 ```gradle
 dependencies {
   ...
-  implementation 'com.afollestad:date-picker:0.5.0'
+  implementation 'com.afollestad:date-picker:0.6.0'
 }
 ```
 
@@ -24,8 +24,7 @@ dependencies {
 
 Android includes a stock `DatePicker` in its framework, however this widget is very stubborn. It 
 does not adapt to different view widths, making it difficult to use in modern UI. This library 
-solves for that by creating a custom implementation, based on `ConstraintLayout`, and written 
-completely in Kotlin.
+solves for that by creating a custom implementation, written completely in Kotlin.
 
 ---
 
