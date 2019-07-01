@@ -21,7 +21,6 @@ import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.annotation.LayoutRes
 
 /** @author Aidan Follestad (@afollestad) */

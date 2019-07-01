@@ -111,7 +111,7 @@ internal class DatePickerLayoutManager(
 
   private val dateFormatter = DateFormatter()
   private val size = Size(0, 0)
-  private val orientation: Orientation = Orientation.get(context)
+  private val orientation = Orientation.get(context)
 
   init {
     setupHeaderViews()
