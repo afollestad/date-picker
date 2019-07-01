@@ -34,19 +34,17 @@ import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.controllers.VibratorController
 import com.afollestad.date.data.DateFormatter
+import com.afollestad.date.managers.DatePickerLayoutManager.Mode.CALENDAR
+import com.afollestad.date.managers.DatePickerLayoutManager.Mode.MONTH_LIST
+import com.afollestad.date.managers.DatePickerLayoutManager.Mode.YEAR_LIST
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.attachTopDivider
 import com.afollestad.date.util.color
-import com.afollestad.date.util.conceal
 import com.afollestad.date.util.font
-import com.afollestad.date.util.hide
 import com.afollestad.date.util.invalidateTopDividerNow
-import com.afollestad.date.util.isConcealed
-import com.afollestad.date.util.isVisible
 import com.afollestad.date.util.onClickDebounced
 import com.afollestad.date.util.resolveColor
-import com.afollestad.date.util.show
 import com.afollestad.date.util.showOrConceal
 import com.afollestad.date.util.updateMargin
 import com.afollestad.date.util.updatePadding
@@ -136,13 +134,13 @@ internal class DatePickerLayoutManager(
     selectedYearView.apply {
       background = ColorDrawable(headerBackgroundColor)
       typeface = normalFont
-      onClickDebounced { switchToYearMode() }
+      onClickDebounced { setMode(YEAR_LIST) }
     }
     selectedDateView.apply {
       isSelected = true
       background = ColorDrawable(headerBackgroundColor)
       typeface = mediumFont
-      onClickDebounced { switchToDaysOfMonthMode() }
+      onClickDebounced { setMode(CALENDAR) }
     }
   }
 
@@ -161,7 +159,7 @@ internal class DatePickerLayoutManager(
     }
     visibleMonthView.apply {
       typeface = mediumFont
-      onClickDebounced { switchToMonthMode() }
+      onClickDebounced { setMode(MONTH_LIST) }
     }
     goNextMonthView.apply {
       background = createCircularSelector(selectionColor)
@@ -195,60 +193,32 @@ internal class DatePickerLayoutManager(
     }
   }
 
-  fun switchToDaysOfMonthMode() {
-    if (yearsRecyclerView.isConcealed() && monthRecyclerView.isConcealed()) {
-      return
+  fun setMode(mode: Mode) {
+    daysRecyclerView.showOrConceal(mode == CALENDAR)
+    yearsRecyclerView.showOrConceal(mode == YEAR_LIST)
+    monthRecyclerView.showOrConceal(mode == MONTH_LIST)
+
+    when (mode) {
+      CALENDAR -> daysRecyclerView.invalidateTopDividerNow(listsDividerView)
+      MONTH_LIST -> monthRecyclerView.invalidateTopDividerNow(listsDividerView)
+      YEAR_LIST -> yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
     }
-    yearsRecyclerView.conceal()
-    monthRecyclerView.conceal()
-    daysRecyclerView.show()
-    listsDividerView.hide()
 
     selectedYearView.apply {
-      isSelected = false
-      typeface = normalFont
+      isSelected = mode == YEAR_LIST
+      typeface = if (mode == YEAR_LIST) mediumFont else normalFont
     }
     selectedDateView.apply {
-      isSelected = true
-      typeface = mediumFont
+      isSelected = mode == CALENDAR
+      typeface = if (mode == CALENDAR) mediumFont else normalFont
     }
     vibrator.vibrateForSelection()
   }
 
-  private fun switchToMonthMode() {
-    if (monthRecyclerView.isVisible()) return
-    monthRecyclerView.show()
-    monthRecyclerView.invalidateTopDividerNow(listsDividerView)
-    yearsRecyclerView.conceal()
-    daysRecyclerView.conceal()
-
-    selectedYearView.apply {
-      isSelected = false
-      typeface = mediumFont
-    }
-    selectedDateView.apply {
-      isSelected = false
-      typeface = normalFont
-    }
-    vibrator.vibrateForSelection()
-  }
-
-  private fun switchToYearMode() {
-    if (yearsRecyclerView.isVisible()) return
-    yearsRecyclerView.show()
-    yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
-    monthRecyclerView.conceal()
-    daysRecyclerView.conceal()
-
-    selectedYearView.apply {
-      isSelected = true
-      typeface = mediumFont
-    }
-    selectedDateView.apply {
-      isSelected = false
-      typeface = normalFont
-    }
-    vibrator.vibrateForSelection()
+  enum class Mode {
+    CALENDAR,
+    MONTH_LIST,
+    YEAR_LIST
   }
 
   companion object {

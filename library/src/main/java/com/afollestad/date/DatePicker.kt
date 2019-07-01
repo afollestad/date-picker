@@ -34,6 +34,7 @@ import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.MonthItem
 import com.afollestad.date.data.MonthItem.DayOfMonth
 import com.afollestad.date.managers.DatePickerLayoutManager
+import com.afollestad.date.managers.DatePickerLayoutManager.Mode.CALENDAR
 import com.afollestad.date.renderers.MonthItemRenderer
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.font
@@ -72,7 +73,7 @@ class DatePicker(
           renderMonthItems = ::renderMonthItems,
           goBackVisibility = layoutManager::showOrHideGoPrevious,
           goForwardVisibility = layoutManager::showOrHideGoNext,
-          switchToDaysOfMonthMode = layoutManager::switchToDaysOfMonthMode
+          switchToDaysOfMonthMode = { layoutManager.setMode(CALENDAR) }
       )
 
       mediumFont = ta.font(context, R.styleable.DatePicker_date_picker_medium_font) {
