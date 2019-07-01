@@ -19,46 +19,25 @@ package com.afollestad.date
 
 import android.content.Context
 import android.graphics.Typeface
-import android.graphics.drawable.ColorDrawable
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.view.View
-import android.widget.TextView
 import androidx.annotation.CheckResult
 import androidx.annotation.IntRange
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.MonthAdapter
-import com.afollestad.date.data.DateFormatter
+import com.afollestad.date.adapters.MonthItemAdapter
+import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.controllers.DatePickerController
 import com.afollestad.date.controllers.MinMaxController
 import com.afollestad.date.controllers.VibratorController
-import com.afollestad.date.util.TypefaceHelper
-import com.afollestad.date.util.Util.createCircularSelector
-import com.afollestad.date.adapters.YearAdapter
-import com.afollestad.date.view.DatePickerSavedState
+import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.MonthItem
 import com.afollestad.date.data.MonthItem.DayOfMonth
-import com.afollestad.date.util.attachTopDivider
-import com.afollestad.date.util.color
-import com.afollestad.date.util.conceal
-import com.afollestad.date.util.font
-import com.afollestad.date.util.hide
-import com.afollestad.date.util.invalidateTopDividerNow
-import com.afollestad.date.util.isConcealed
-import com.afollestad.date.util.isVisible
-import com.afollestad.date.util.onClickDebounced
-import com.afollestad.date.util.resolveColor
-import com.afollestad.date.util.show
-import com.afollestad.date.util.showOrConceal
+import com.afollestad.date.managers.DatePickerLayoutManager
 import com.afollestad.date.renderers.MonthItemRenderer
-import com.afollestad.date.util.updateMargin
-import com.afollestad.date.util.updatePadding
-import com.afollestad.date.view.ChevronImageView
+import com.afollestad.date.util.TypefaceHelper
+import com.afollestad.date.util.font
+import com.afollestad.date.view.DatePickerSavedState
 import java.lang.Long.MAX_VALUE
 import java.util.Calendar
 
@@ -70,62 +49,38 @@ class DatePicker(
   attrs: AttributeSet?
 ) : ConstraintLayout(context, attrs) {
 
-  // Non-nullables
   internal val controller: DatePickerController
   internal val minMaxController = MinMaxController()
+  private val layoutManager: DatePickerLayoutManager
 
-  private val vibrator: VibratorController
-  private val dateFormatter = DateFormatter()
   private val monthItemAdapter: MonthItemAdapter
   private val yearAdapter: YearAdapter
   private val monthAdapter: MonthAdapter
   private val monthItemRenderer: MonthItemRenderer
 
-  // Late inits
-  private lateinit var selectedYearView: TextView
-  private lateinit var selectedDateView: TextView
-  private lateinit var visibleMonthView: TextView
-  private lateinit var goPreviousMonthView: View
-  private lateinit var goNextMonthView: View
-
-  private lateinit var daysRecyclerView: RecyclerView
-  private lateinit var yearsRecyclerView: RecyclerView
-  private lateinit var monthRecyclerView: RecyclerView
-  private lateinit var listsDividerView: View
-
-  // Config properties
-  private val headerBackgroundColor: Int
-  internal val normalFont: Typeface
-  private val mediumFont: Typeface
-  private val calendarHorizontalPadding: Int
-
   init {
-    inflate(context, R.layout.date_picker, this)
     val ta = context.obtainStyledAttributes(attrs, R.styleable.DatePicker)
+    val normalFont: Typeface
+    val mediumFont: Typeface
+
     try {
-      vibrator = VibratorController(context, ta)
+      layoutManager = DatePickerLayoutManager.inflateInto(context, ta, this)
       controller = DatePickerController(
-          vibrator = vibrator,
+          vibrator = VibratorController(context, ta),
           minMaxController = minMaxController,
-          renderHeaders = ::renderHeaders,
+          renderHeaders = layoutManager::setHeadersContent,
           renderMonthItems = ::renderMonthItems,
-          goBackVisibility = { goPreviousMonthView.showOrConceal(it) },
-          goForwardVisibility = { goNextMonthView.showOrConceal(it) },
-          switchToDaysOfMonthMode = ::switchToDaysOfMonthMode
+          goBackVisibility = layoutManager::showOrHideGoPrevious,
+          goForwardVisibility = layoutManager::showOrHideGoNext,
+          switchToDaysOfMonthMode = layoutManager::switchToDaysOfMonthMode
       )
 
-      headerBackgroundColor = ta.color(R.styleable.DatePicker_date_picker_header_background_color) {
-        context.resolveColor(R.attr.colorAccent)
+      mediumFont = ta.font(context, R.styleable.DatePicker_date_picker_medium_font) {
+        TypefaceHelper.create("sans-serif-medium")
       }
       normalFont = ta.font(context, R.styleable.DatePicker_date_picker_normal_font) {
         TypefaceHelper.create("sans-serif")
       }
-      mediumFont = ta.font(context, R.styleable.DatePicker_date_picker_medium_font) {
-        TypefaceHelper.create("sans-serif-medium")
-      }
-      calendarHorizontalPadding =
-        ta.getDimensionPixelSize(R.styleable.DatePicker_date_picker_calendar_horizontal_padding, 0)
-
       monthItemRenderer = MonthItemRenderer(
           context = context,
           typedArray = ta,
@@ -139,19 +94,19 @@ class DatePicker(
     monthItemAdapter = MonthItemAdapter(
         itemRenderer = monthItemRenderer
     ) { controller.setDayOfMonth(it.date) }
-
     yearAdapter = YearAdapter(
         normalFont = normalFont,
         mediumFont = mediumFont,
-        selectionColor = monthItemRenderer.selectionColor
+        selectionColor = layoutManager.selectionColor
     ) { controller.setYear(it) }
-
     monthAdapter = MonthAdapter(
         normalFont = normalFont,
         mediumFont = mediumFont,
-        selectionColor = monthItemRenderer.selectionColor,
-        dateFormatter = dateFormatter
+        selectionColor = layoutManager.selectionColor,
+        dateFormatter = DateFormatter()
     ) { controller.setMonth(it) }
+
+    layoutManager.setAdapters(monthItemAdapter, yearAdapter, monthAdapter)
   }
 
   /** Sets the date displayed in the view, along with the selected date. */
@@ -163,7 +118,7 @@ class DatePicker(
   /** Sets the date and year displayed in the view, along with the selected date (optionally). */
   fun setDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int? = null,
-    month: Int,
+    @IntRange(from = MONTH_MIN, to = MONTH_MAX) month: Int,
     @IntRange(from = 1, to = 31) selectedDate: Int? = null,
     notifyListeners: Boolean = true
   ) = controller.setFullDate(
@@ -182,7 +137,7 @@ class DatePicker(
   /** Sets a min date. Dates before this are not selectable. */
   fun setMinDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int,
-    month: Int,
+    @IntRange(from = MONTH_MIN, to = MONTH_MAX) month: Int,
     @IntRange(from = 1, to = 31) dayOfMonth: Int
   ) = minMaxController.setMinDate(year = year, month = month, dayOfMonth = dayOfMonth)
 
@@ -195,7 +150,7 @@ class DatePicker(
   /** Sets a max date. Dates after this are not selectable. */
   fun setMaxDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int,
-    month: Int,
+    @IntRange(from = MONTH_MIN, to = MONTH_MAX) month: Int,
     @IntRange(from = 1, to = 31) dayOfMonth: Int
   ) = minMaxController.setMaxDate(year = year, month = month, dayOfMonth = dayOfMonth)
 
@@ -217,9 +172,8 @@ class DatePicker(
     controller.maybeInit()
   }
 
-  override fun onSaveInstanceState(): Parcelable? {
-    return DatePickerSavedState(getDate(), super.onSaveInstanceState())
-  }
+  override fun onSaveInstanceState(): Parcelable? =
+    DatePickerSavedState(getDate(), super.onSaveInstanceState())
 
   override fun onRestoreInstanceState(state: Parcelable?) {
     if (state is DatePickerSavedState) {
@@ -232,129 +186,10 @@ class DatePicker(
 
   override fun onFinishInflate() {
     super.onFinishInflate()
-    visibleMonthView = findViewById<TextView>(R.id.current_month).apply {
-      typeface = mediumFont
-      onClickDebounced { switchToMonthMode() }
-    }
-    selectedYearView = findViewById<TextView>(R.id.current_year).apply {
-      background = ColorDrawable(headerBackgroundColor)
-      typeface = normalFont
-      onClickDebounced { switchToYearMode() }
-    }
-    selectedDateView = findViewById<TextView>(R.id.current_date).apply {
-      isSelected = true
-      background = ColorDrawable(headerBackgroundColor)
-      typeface = mediumFont
-      onClickDebounced { switchToDaysOfMonthMode() }
-    }
-
-    listsDividerView = findViewById(R.id.year_month_list_divider)
-
-    daysRecyclerView = findViewById<RecyclerView>(R.id.day_list).apply {
-      layoutManager = GridLayoutManager(context, resources.getInteger(R.integer.day_grid_span))
-      adapter = monthItemAdapter
-      attachTopDivider(listsDividerView)
-      updatePadding(
-          left = calendarHorizontalPadding,
-          right = calendarHorizontalPadding
-      )
-    }
-    yearsRecyclerView = findViewById<RecyclerView>(R.id.year_list).apply {
-      layoutManager = LinearLayoutManager(context)
-      adapter = yearAdapter
-      addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-      attachTopDivider(listsDividerView)
-    }
-    monthRecyclerView = findViewById<RecyclerView>(R.id.month_list).apply {
-      layoutManager = LinearLayoutManager(context)
-      adapter = monthAdapter
-      addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-      attachTopDivider(listsDividerView)
-    }
-
-    goPreviousMonthView = findViewById<ChevronImageView>(R.id.left_chevron).apply {
-      background = createCircularSelector(monthItemRenderer.selectionColor)
-      onClickDebounced { controller.previousMonth() }
-      attach(daysRecyclerView)
-      updateMargin(
-          left = calendarHorizontalPadding,
-          right = calendarHorizontalPadding
-      )
-    }
-    goNextMonthView = findViewById<ChevronImageView>(R.id.right_chevron).apply {
-      background = createCircularSelector(monthItemRenderer.selectionColor)
-      onClickDebounced { controller.nextMonth() }
-      attach(daysRecyclerView)
-      updateMargin(
-          left = calendarHorizontalPadding,
-          right = calendarHorizontalPadding
-      )
-    }
-  }
-
-  private fun switchToMonthMode() {
-    if (monthRecyclerView.isVisible()) return
-    monthRecyclerView.show()
-    monthRecyclerView.invalidateTopDividerNow(listsDividerView)
-    yearsRecyclerView.conceal()
-    daysRecyclerView.conceal()
-
-    selectedYearView.apply {
-      isSelected = false
-      typeface = mediumFont
-    }
-    selectedDateView.apply {
-      isSelected = false
-      typeface = normalFont
-    }
-    vibrator.vibrateForSelection()
-  }
-
-  private fun switchToYearMode() {
-    if (yearsRecyclerView.isVisible()) return
-    yearsRecyclerView.show()
-    yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
-    monthRecyclerView.conceal()
-    daysRecyclerView.conceal()
-
-    selectedYearView.apply {
-      isSelected = true
-      typeface = mediumFont
-    }
-    selectedDateView.apply {
-      isSelected = false
-      typeface = normalFont
-    }
-    vibrator.vibrateForSelection()
-  }
-
-  private fun switchToDaysOfMonthMode() {
-    if (yearsRecyclerView.isConcealed() && monthRecyclerView.isConcealed()) {
-      return
-    }
-    yearsRecyclerView.conceal()
-    monthRecyclerView.conceal()
-    daysRecyclerView.show()
-    listsDividerView.hide()
-
-    selectedYearView.apply {
-      isSelected = false
-      typeface = normalFont
-    }
-    selectedDateView.apply {
-      isSelected = true
-      typeface = mediumFont
-    }
-    vibrator.vibrateForSelection()
-  }
-
-  private fun renderHeaders(
-    currentMonth: Calendar,
-    selectedDate: Calendar
-  ) {
-    visibleMonthView.text = dateFormatter.monthAndYear(currentMonth)
-    selectedYearView.text = dateFormatter.year(selectedDate)
-    selectedDateView.text = dateFormatter.date(selectedDate)
+    layoutManager.onFinishInflate(
+        controller::previousMonth,
+        controller::nextMonth
+    )
   }
 
   private fun renderMonthItems(days: List<MonthItem>) {
@@ -363,14 +198,17 @@ class DatePicker(
         .month
         .year
     yearAdapter.getSelectedPosition()
-        ?.let { yearsRecyclerView.scrollToPosition(it - 2) }
-
+        ?.let(layoutManager::scrollToYearPosition)
     monthAdapter.selectedMonth = firstDayOfMonth
         .month
         .month
     monthAdapter.selectedMonth
-        ?.let { monthRecyclerView.scrollToPosition(it - 2) }
-
+        ?.let(layoutManager::scrollToMonthPosition)
     monthItemAdapter.items = days
+  }
+
+  private companion object {
+    const val MONTH_MIN: Long = 0 // Calendar.JANUARY
+    const val MONTH_MAX: Long = 11 // Calendar.DECEMBER
   }
 }

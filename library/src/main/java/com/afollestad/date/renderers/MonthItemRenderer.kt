@@ -45,7 +45,7 @@ internal class MonthItemRenderer(
   private val normalFont: Typeface,
   private val minMaxController: MinMaxController
 ) {
-  internal val selectionColor: Int =
+  private val selectionColor: Int =
     typedArray.color(R.styleable.DatePicker_date_picker_selection_color) {
       context.resolveColor(R.attr.colorAccent)
     }
