@@ -106,10 +106,10 @@ internal class MinMaxController {
     val calendar = date.asCalendar()
     val isLastInMonth = calendar.dayOfMonth == calendar.totalDaysInMonth
     return when {
-      isLastInMonth -> R.drawable.ic_tube_end
       date.day == 1 -> R.drawable.ic_tube_start
       date.day == maxDate!!.day + 1 &&
           date.month == maxDate!!.month -> R.drawable.ic_tube_start
+      isLastInMonth -> R.drawable.ic_tube_end
       else -> R.drawable.ic_tube_middle
     }
   }
