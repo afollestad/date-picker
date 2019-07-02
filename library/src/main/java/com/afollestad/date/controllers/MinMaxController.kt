@@ -91,7 +91,8 @@ internal class MinMaxController {
       isLastInMonth -> R.drawable.ic_tube_end
       date.day == 1 -> R.drawable.ic_tube_start
       date.day == minDate!!.day - 1 &&
-          date.month == minDate!!.month -> R.drawable.ic_tube_end
+          date.month == minDate!!.month &&
+          date.year == minDate!!.year -> R.drawable.ic_tube_end
       else -> R.drawable.ic_tube_middle
     }
   }
@@ -108,7 +109,8 @@ internal class MinMaxController {
     return when {
       date.day == 1 -> R.drawable.ic_tube_start
       date.day == maxDate!!.day + 1 &&
-          date.month == maxDate!!.month -> R.drawable.ic_tube_start
+          date.month == maxDate!!.month &&
+          date.year == maxDate!!.year -> R.drawable.ic_tube_start
       isLastInMonth -> R.drawable.ic_tube_end
       else -> R.drawable.ic_tube_middle
     }
