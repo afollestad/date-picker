@@ -1,4 +1,3 @@
-0.6.0
+0.6.1
 
-* Got rid of internal ConstraintLayout usage, and opted to do custom view measuring and layout placement. Faster and works better in landscape when the calendar needs to be scrollable.
-
+* Fix min/max date rendering issues where we show the start/end tube background in wrong spots.
