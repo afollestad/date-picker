@@ -24,8 +24,10 @@ import com.afollestad.date.decrementMonth
 import com.afollestad.date.incrementMonth
 import com.afollestad.date.data.MonthGraph
 import com.afollestad.date.data.MonthItem
-import com.afollestad.date.month
+import com.afollestad.date.data.SelectedDate
+import com.afollestad.date.data.SelectionMode
 import com.afollestad.date.data.snapshot.DateSnapshot
+import com.afollestad.date.month
 import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
 import com.afollestad.date.data.snapshot.snapshot
@@ -46,15 +48,10 @@ internal class DatePickerController(
 ) {
   @VisibleForTesting var didInit: Boolean = false
   private val dateChangedListeners: MutableList<OnDateChanged> = mutableListOf()
+  @VisibleForTesting var selectedDate = SelectedDate()
 
   @VisibleForTesting var viewingMonth: MonthSnapshot? = null
   @VisibleForTesting var monthGraph: MonthGraph? = null
-  @VisibleForTesting var selectedDate: DateSnapshot? = null
-    set(value) {
-      field = value
-      selectedDateCalendar = value?.asCalendar()
-    }
-  private var selectedDateCalendar: Calendar? = null
 
   fun maybeInit() {
     if (!didInit) {
@@ -67,6 +64,10 @@ internal class DatePickerController(
       }
       setFullDate(now, notifyListeners = false)
     }
+  }
+
+  fun setMode(mode: SelectionMode) {
+    this.selectedDate.mode = mode
   }
 
   fun previousMonth() {
@@ -102,7 +103,7 @@ internal class DatePickerController(
   ) {
     val oldSelected: Calendar = currentSelectedOrNow()
     this.didInit = true
-    this.selectedDate = calendar.snapshot()
+    this.selectedDate.set(calendar.snapshot())
     if (notifyListeners) {
       notifyListeners(oldSelected) { calendar.clone() as Calendar }
     }
@@ -126,12 +127,13 @@ internal class DatePickerController(
   }, notifyListeners = notifyListeners)
 
   @CheckResult fun getFullDate(): Calendar? {
-    if (minMaxController.isOutOfMinRange(selectedDate) ||
-        minMaxController.isOutOfMaxRange(selectedDate)
+    val selectedDateSnapshot = selectedDate.get()
+    if (minMaxController.isOutOfMinRange(selectedDateSnapshot) ||
+        minMaxController.isOutOfMaxRange(selectedDateSnapshot)
     ) {
       return null
     }
-    return selectedDateCalendar
+    return selectedDate.getCalendar()
   }
 
   fun setDayOfMonth(day: Int) {
@@ -144,17 +146,18 @@ internal class DatePickerController(
 
     val oldSelected: Calendar = currentSelectedOrNow()
     val calendar = viewingMonth!!.asCalendar(day)
-    selectedDate = calendar.snapshot()
+    this.selectedDate.set(calendar.snapshot())
     vibrator.vibrateForSelection()
     notifyListeners(oldSelected) { calendar }
     render(calendar)
   }
 
   fun setYear(year: Int) {
+    val currentSelectedDate: DateSnapshot? = selectedDate.get()
     setFullDate(
-        month = viewingMonth?.month ?: selectedDate!!.month,
+        month = viewingMonth?.month ?: currentSelectedDate!!.month,
         year = year,
-        selectedDate = selectedDate?.day
+        selectedDate = currentSelectedDate?.day
     )
     switchToDaysOfMonthMode()
   }
@@ -173,8 +176,8 @@ internal class DatePickerController(
   }
 
   private fun render(calendar: Calendar) {
-    renderHeaders(calendar, selectedDateCalendar!!)
-    renderMonthItems(monthGraph!!.getMonthItems(selectedDate!!))
+    renderHeaders(calendar, selectedDate.getCalendar()!!)
+    renderMonthItems(monthGraph!!.getMonthItems(selectedDate.get()!!))
     goBackVisibility(minMaxController.canGoBack(calendar))
     goForwardVisibility(minMaxController.canGoForward(calendar))
   }
@@ -197,5 +200,5 @@ internal class DatePickerController(
     dateChangedListeners.forEach { it(old, arg) }
   }
 
-  private fun currentSelectedOrNow(): Calendar = selectedDateCalendar ?: getNow()
+  private fun currentSelectedOrNow(): Calendar = selectedDate.getCalendar() ?: getNow()
 }

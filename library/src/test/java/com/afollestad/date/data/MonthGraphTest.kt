@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date.data
 
 import com.afollestad.date.data.DayOfWeek.FRIDAY
 import com.afollestad.date.data.DayOfWeek.MONDAY
@@ -22,12 +22,10 @@ import com.afollestad.date.data.DayOfWeek.SUNDAY
 import com.afollestad.date.data.DayOfWeek.THURSDAY
 import com.afollestad.date.data.DayOfWeek.TUESDAY
 import com.afollestad.date.data.DayOfWeek.WEDNESDAY
-import com.afollestad.date.data.MonthGraph
 import com.afollestad.date.data.MonthItem.DayOfMonth
 import com.afollestad.date.data.MonthItem.WeekHeader
 import com.afollestad.date.data.snapshot.snapshot
 import com.afollestad.date.data.snapshot.snapshotMonth
-import com.afollestad.date.data.NO_DATE
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.Calendar

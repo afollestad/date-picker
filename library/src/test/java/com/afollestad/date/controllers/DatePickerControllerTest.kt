@@ -17,6 +17,8 @@ package com.afollestad.date.controllers
 
 import com.afollestad.date.data.MonthGraph
 import com.afollestad.date.data.MonthItem
+import com.afollestad.date.data.SelectionMode.RANGE
+import com.afollestad.date.data.SelectionMode.SINGLE
 import com.afollestad.date.data.snapshot.DateSnapshot
 import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
@@ -75,7 +77,7 @@ class DatePickerControllerTest {
     assertThat(controller.didInit).isTrue()
     assertThat(controller.viewingMonth).isEqualTo(MonthSnapshot(Calendar.JULY, 1995))
     assertThat(controller.monthGraph).isNotNull()
-    assertThat(controller.selectedDate).isEqualTo(selectedDate)
+    assertThat(controller.selectedDate.get()).isEqualTo(selectedDate)
 
     verify(listener, never()).invoke(any(), any())
   }
@@ -86,7 +88,7 @@ class DatePickerControllerTest {
 
     assertThat(controller.viewingMonth).isNull()
     assertThat(controller.monthGraph).isNull()
-    assertThat(controller.selectedDate).isNull()
+    assertThat(controller.selectedDate.get()).isNull()
 
     verify(listener, never()).invoke(any(), any())
   }
@@ -102,7 +104,7 @@ class DatePickerControllerTest {
     assertThat(controller.didInit).isTrue()
     assertThat(controller.viewingMonth).isEqualTo(MonthSnapshot(Calendar.AUGUST, 2016))
     assertThat(controller.monthGraph).isNotNull()
-    assertThat(controller.selectedDate).isEqualTo(minDate)
+    assertThat(controller.selectedDate.get()).isEqualTo(minDate)
 
     verify(listener, never()).invoke(any(), any())
   }
@@ -118,14 +120,14 @@ class DatePickerControllerTest {
     assertThat(controller.didInit).isTrue()
     assertThat(controller.viewingMonth).isEqualTo(MonthSnapshot(Calendar.JUNE, 1990))
     assertThat(controller.monthGraph).isNotNull()
-    assertThat(controller.selectedDate).isEqualTo(maxDate)
+    assertThat(controller.selectedDate.get()).isEqualTo(maxDate)
 
     verify(listener, never()).invoke(any(), any())
   }
 
   @Test fun previousMonth() {
     controller.viewingMonth = now.snapshotMonth()
-    controller.selectedDate = now.snapshot()
+    controller.selectedDate.set(now.snapshot())
     controller.previousMonth()
 
     val previousMonth = MonthSnapshot(Calendar.JUNE, 1995)
@@ -137,7 +139,7 @@ class DatePickerControllerTest {
 
   @Test fun nextMonth() {
     controller.viewingMonth = now.snapshotMonth()
-    controller.selectedDate = now.snapshot()
+    controller.selectedDate.set(now.snapshot())
     controller.nextMonth()
 
     val nextMonth = MonthSnapshot(Calendar.AUGUST, 1995)
@@ -149,7 +151,7 @@ class DatePickerControllerTest {
 
   @Test fun setMonth() {
     controller.viewingMonth = now.snapshotMonth()
-    controller.selectedDate = now.snapshot()
+    controller.selectedDate.set(now.snapshot())
     controller.setMonth(Calendar.DECEMBER)
 
     val expectedMonth = MonthSnapshot(Calendar.DECEMBER, 1995)
@@ -172,7 +174,7 @@ class DatePickerControllerTest {
     val expectedSelectedCalendar = expectedSelectedDate.asCalendar()
     val expectedOldDate = expectedSelectedDate.copy(day = 28)
 
-    assertThat(controller.selectedDate!!).isEqualTo(expectedSelectedDate)
+    assertThat(controller.selectedDate.get()).isEqualTo(expectedSelectedDate)
     assertSetCurrentMonth(MonthSnapshot(Calendar.AUGUST, 2017))
     assertListenerGotDate(expectedOldDate, expectedSelectedDate)
     assertRender(expectedSelectedCalendar, expectedSelectedCalendar)
@@ -180,14 +182,14 @@ class DatePickerControllerTest {
 
   @Test fun setFullDate() {
     controller.didInit = false
-    controller.selectedDate = null
+    controller.selectedDate.clear()
 
     val expectedDate = DateSnapshot(Calendar.JANUARY, 11, 1995)
     val expectedCalendar = expectedDate.asCalendar()
     controller.setFullDate(expectedCalendar)
 
     assertThat(controller.didInit).isTrue()
-    assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
+    assertThat(controller.selectedDate.get()).isEqualTo(expectedDate)
     assertListenerGotDate(now.snapshot(), expectedDate)
     assertSetCurrentMonth(MonthSnapshot(Calendar.JANUARY, 1995))
     assertRender(expectedCalendar, expectedCalendar)
@@ -195,14 +197,14 @@ class DatePickerControllerTest {
 
   @Test fun `setFullDate - manual`() {
     controller.didInit = false
-    controller.selectedDate = null
+    controller.selectedDate.clear()
     controller.setFullDate(1995, Calendar.JANUARY, 11)
 
     val expectedDate = DateSnapshot(Calendar.JANUARY, 11, 1995)
     val expectedCalendar = expectedDate.asCalendar()
 
     assertThat(controller.didInit).isTrue()
-    assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
+    assertThat(controller.selectedDate.get()).isEqualTo(expectedDate)
     assertListenerGotDate(now.snapshot(), expectedDate)
     assertSetCurrentMonth(MonthSnapshot(Calendar.JANUARY, 1995))
     assertRender(expectedCalendar, expectedCalendar)
@@ -211,7 +213,7 @@ class DatePickerControllerTest {
   @Test fun `setDayOfMonth - did not already init`() {
     controller.didInit = false
     controller.viewingMonth = null
-    controller.selectedDate = null
+    controller.selectedDate.clear()
     controller.setDayOfMonth(4)
 
     val expectedDate = now.snapshot()
@@ -219,7 +221,7 @@ class DatePickerControllerTest {
     val expectedCalendar = expectedDate.asCalendar()
 
     assertThat(controller.didInit).isTrue()
-    assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
+    assertThat(controller.selectedDate.get()).isEqualTo(expectedDate)
     assertListenerGotDate(now.snapshot(), expectedDate)
     assertSetCurrentMonth(now.snapshotMonth())
     assertRender(expectedCalendar, expectedCalendar)
@@ -232,10 +234,10 @@ class DatePickerControllerTest {
     controller.didInit = true
     controller.viewingMonth = MonthSnapshot(Calendar.AUGUST, 2016)
     controller.monthGraph = MonthGraph(expectedCalendar)
-    controller.selectedDate = null
+    controller.selectedDate.clear()
 
     controller.setDayOfMonth(4)
-    assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
+    assertThat(controller.selectedDate.get()).isEqualTo(expectedDate)
     assertListenerGotDate(now.snapshot(), expectedDate)
     assertRender(expectedCalendar, expectedCalendar)
 
@@ -244,7 +246,7 @@ class DatePickerControllerTest {
 
   @Test fun setYear() {
     val selectedDate = DateSnapshot(Calendar.JANUARY, 11, 1995)
-    controller.selectedDate = selectedDate
+    controller.selectedDate.set(selectedDate)
     controller.setYear(2018)
     assertListenerGotDate(selectedDate, selectedDate.copy(year = 2018))
     verify(switchToMonthMode, times(1)).invoke()
@@ -252,7 +254,7 @@ class DatePickerControllerTest {
 
   @Test fun `getFullDate - is null if out of range`() {
     val snapshot = now.snapshot()
-    controller.selectedDate = snapshot
+    controller.selectedDate.set(snapshot)
     assertThat(controller.getFullDate()!!.snapshot()).isEqualTo(snapshot)
 
     whenever(minMaxController.isOutOfMinRange(eq(snapshot)))
@@ -264,7 +266,7 @@ class DatePickerControllerTest {
 
   @Test fun `out of range dates do not go through listeners`() {
     controller.didInit = false
-    controller.selectedDate = null
+    controller.selectedDate.clear()
 
     val expectedDate = DateSnapshot(Calendar.JANUARY, 11, 1995)
     val expectedCalendar = expectedDate.asCalendar()
@@ -277,11 +279,19 @@ class DatePickerControllerTest {
     controller.setFullDate(expectedCalendar)
 
     assertThat(controller.didInit).isTrue()
-    assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
+    assertThat(controller.selectedDate.get()).isEqualTo(expectedDate)
     assertSetCurrentMonth(MonthSnapshot(Calendar.JANUARY, 1995))
     assertRender(expectedCalendar, expectedCalendar)
 
     verify(listener, never()).invoke(any(), any())
+  }
+
+  @Test fun `setMode - sets mode in selected date`() {
+    controller.setMode(RANGE)
+    assertThat(controller.selectedDate.mode).isEqualTo(RANGE)
+
+    controller.setMode(SINGLE)
+    assertThat(controller.selectedDate.mode).isEqualTo(SINGLE)
   }
 
   private fun assertRender(

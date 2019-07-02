@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.internal
+package com.afollestad.date
 
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.dayOfWeek
