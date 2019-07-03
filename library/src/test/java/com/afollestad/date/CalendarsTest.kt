@@ -15,14 +15,7 @@
  */
 package com.afollestad.date
 
-import com.afollestad.date.dayOfMonth
-import com.afollestad.date.dayOfWeek
-import com.afollestad.date.decrementMonth
-import com.afollestad.date.incrementMonth
-import com.afollestad.date.month
 import com.afollestad.date.data.DayOfWeek
-import com.afollestad.date.totalDaysInMonth
-import com.afollestad.date.year
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test

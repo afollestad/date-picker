@@ -15,10 +15,6 @@
  */
 package com.afollestad.date.data
 
-import com.afollestad.date.data.DayOfWeek
-import com.afollestad.date.data.andTheRest
-import com.afollestad.date.data.asDayOfWeek
-import com.afollestad.date.data.nextDayOfWeek
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import java.util.Calendar
