@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.managers
+package com.afollestad.date.layout
 
 import android.content.Context
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
@@ -30,6 +30,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.CheckResult
+import androidx.core.widget.AutoSizeableTextView
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,10 +41,10 @@ import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.controllers.VibratorController
 import com.afollestad.date.data.DateFormatter
-import com.afollestad.date.managers.DatePickerLayoutManager.Mode.CALENDAR
-import com.afollestad.date.managers.DatePickerLayoutManager.Mode.MONTH_LIST
-import com.afollestad.date.managers.DatePickerLayoutManager.Mode.YEAR_LIST
-import com.afollestad.date.managers.DatePickerLayoutManager.Orientation.PORTRAIT
+import com.afollestad.date.layout.DatePickerLayoutManager.Mode.CALENDAR
+import com.afollestad.date.layout.DatePickerLayoutManager.Mode.MONTH_LIST
+import com.afollestad.date.layout.DatePickerLayoutManager.Mode.YEAR_LIST
+import com.afollestad.date.layout.DatePickerLayoutManager.Orientation.PORTRAIT
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.attachTopDivider

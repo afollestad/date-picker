@@ -33,8 +33,8 @@ import com.afollestad.date.controllers.VibratorController
 import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.MonthItem
 import com.afollestad.date.data.MonthItem.DayOfMonth
-import com.afollestad.date.managers.DatePickerLayoutManager
-import com.afollestad.date.managers.DatePickerLayoutManager.Mode.CALENDAR
+import com.afollestad.date.layout.DatePickerLayoutManager
+import com.afollestad.date.layout.DatePickerLayoutManager.Mode.CALENDAR
 import com.afollestad.date.renderers.MonthItemRenderer
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.font
