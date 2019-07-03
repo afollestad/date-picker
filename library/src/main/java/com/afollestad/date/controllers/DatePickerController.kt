@@ -15,6 +15,7 @@
  */
 package com.afollestad.date.controllers
 
+import android.content.res.TypedArray
 import androidx.annotation.CheckResult
 import androidx.annotation.IntRange
 import androidx.annotation.VisibleForTesting
@@ -25,7 +26,6 @@ import com.afollestad.date.incrementMonth
 import com.afollestad.date.data.MonthGraph
 import com.afollestad.date.data.MonthItem
 import com.afollestad.date.data.SelectedDate
-import com.afollestad.date.data.SelectionMode
 import com.afollestad.date.data.snapshot.DateSnapshot
 import com.afollestad.date.month
 import com.afollestad.date.data.snapshot.MonthSnapshot
@@ -37,6 +37,7 @@ import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerController(
+  attrs: TypedArray,
   private val vibrator: VibratorController,
   private val minMaxController: MinMaxController,
   private val renderHeaders: (Calendar, Calendar) -> Unit,
@@ -48,7 +49,7 @@ internal class DatePickerController(
 ) {
   @VisibleForTesting var didInit: Boolean = false
   private val dateChangedListeners: MutableList<OnDateChanged> = mutableListOf()
-  @VisibleForTesting var selectedDate = SelectedDate()
+  @VisibleForTesting var selectedDate = SelectedDate(attrs)
 
   @VisibleForTesting var viewingMonth: MonthSnapshot? = null
   @VisibleForTesting var monthGraph: MonthGraph? = null
@@ -64,10 +65,6 @@ internal class DatePickerController(
       }
       setFullDate(now, notifyListeners = false)
     }
-  }
-
-  fun setMode(mode: SelectionMode) {
-    this.selectedDate.mode = mode
   }
 
   fun previousMonth() {

@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <declare-styleable name="DatePicker">
-    <attr name="date_picker_selection_vibrates" format="boolean"/>
-    <attr name="date_picker_header_background_color" format="color"/>
-    <attr name="date_picker_selection_color" format="color"/>
-    <attr name="date_picker_disabled_background_color" format="color"/>
-    <attr name="date_picker_normal_font" format="reference"/>
-    <attr name="date_picker_medium_font" format="reference"/>
-    <attr name="date_picker_calendar_horizontal_padding" format="dimension"/>
+    <attr name="date_picker_selection_vibrates" format="boolean" />
+    <attr name="date_picker_header_background_color" format="color" />
+    <attr name="date_picker_selection_color" format="color" />
+    <attr name="date_picker_disabled_background_color" format="color" />
+    <attr name="date_picker_normal_font" format="reference" />
+    <attr name="date_picker_medium_font" format="reference" />
+    <attr name="date_picker_calendar_horizontal_padding" format="dimension" />
+    <attr name="date_picker_mode" format="enum">
+      <enum name="single" value="1" />
+      <enum name="range" value="2" />
+    </attr>
   </declare-styleable>
 </resources>

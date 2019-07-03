@@ -52,6 +52,7 @@ class DatePicker(
 
   internal val controller: DatePickerController
   internal val minMaxController = MinMaxController()
+  internal val vibrationController: VibratorController
   private val layoutManager: DatePickerLayoutManager
 
   private val monthItemAdapter: MonthItemAdapter
@@ -65,9 +66,11 @@ class DatePicker(
     val mediumFont: Typeface
 
     try {
+      vibrationController = VibratorController(context, ta)
       layoutManager = DatePickerLayoutManager.inflateInto(context, ta, this)
       controller = DatePickerController(
-          vibrator = VibratorController(context, ta),
+          attrs = ta,
+          vibrator = vibrationController,
           minMaxController = minMaxController,
           renderHeaders = layoutManager::setHeadersContent,
           renderMonthItems = ::renderMonthItems,

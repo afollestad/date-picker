@@ -15,22 +15,29 @@
  */
 package com.afollestad.date.data
 
+import android.content.res.TypedArray
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
+import com.afollestad.date.R
 import com.afollestad.date.data.SelectionMode.SINGLE
 import com.afollestad.date.data.snapshot.DateSnapshot
 import org.jetbrains.annotations.TestOnly
 import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */
-enum class SelectionMode {
-  SINGLE,
-  RANGE
+enum class SelectionMode(internal val int: Int) {
+  SINGLE(1),
+  RANGE(2);
+
+  companion object {
+    @CheckResult
+    fun of(value: Int) = values().single { it.int == value }
+  }
 }
 
 /** @author Aidan Follestad (@afollestad) */
-internal class SelectedDate {
-  var mode: SelectionMode = SINGLE
+internal class SelectedDate(attrs: TypedArray) {
+  val mode = SelectionMode.of(attrs.getInt(R.styleable.DatePicker_date_picker_mode, SINGLE.int))
   var current: Int = CURRENT_IS_LOW
     set(value) {
       check(mode != SINGLE) { "Only use range functions in RANGE selection mode." }

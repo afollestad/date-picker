@@ -34,12 +34,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.date.DatePicker
 import com.afollestad.date.R
 import com.afollestad.date.adapters.MonthAdapter
 import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.controllers.VibratorController
 import com.afollestad.date.data.DateFormatter
+import com.afollestad.date.data.SelectedDate
 import com.afollestad.date.layout.DatePickerLayoutManager.Mode.CALENDAR
 import com.afollestad.date.layout.DatePickerLayoutManager.Mode.MONTH_LIST
 import com.afollestad.date.layout.DatePickerLayoutManager.Mode.YEAR_LIST
@@ -63,7 +65,8 @@ internal class DatePickerLayoutManager(
   context: Context,
   typedArray: TypedArray,
   root: ViewGroup,
-  private val vibrator: VibratorController
+  private val vibrator: VibratorController,
+  private val selectedDate: SelectedDate
 ) {
   val selectionColor: Int =
     typedArray.color(R.styleable.DatePicker_date_picker_selection_color) {
@@ -410,11 +413,16 @@ internal class DatePickerLayoutManager(
     @CheckResult fun inflateInto(
       context: Context,
       typedArray: TypedArray,
-      container: ViewGroup
+      container: DatePicker
     ): DatePickerLayoutManager {
       View.inflate(context, R.layout.date_picker, container)
-      val vibrator = VibratorController(context, typedArray)
-      return DatePickerLayoutManager(context, typedArray, container, vibrator)
+      return DatePickerLayoutManager(
+          context,
+          typedArray,
+          container,
+          container.vibrationController,
+          container.controller.selectedDate
+      )
     }
 
     private const val DAYS_IN_WEEK = 7

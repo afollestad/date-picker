@@ -15,10 +15,9 @@
  */
 package com.afollestad.date.controllers
 
+import android.content.res.TypedArray
 import com.afollestad.date.data.MonthGraph
 import com.afollestad.date.data.MonthItem
-import com.afollestad.date.data.SelectionMode.RANGE
-import com.afollestad.date.data.SelectionMode.SINGLE
 import com.afollestad.date.data.snapshot.DateSnapshot
 import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
@@ -43,6 +42,7 @@ import java.util.GregorianCalendar
 
 /** @author Aidan Follestad (@afollestad) */
 class DatePickerControllerTest {
+  private val attrs = mock<TypedArray>()
   private val now = GregorianCalendar(1995, Calendar.JULY, 28)
   private val vibrator = mock<VibratorController>()
   private val minMaxController = mock<MinMaxController> {
@@ -57,6 +57,7 @@ class DatePickerControllerTest {
   private val listener = mock<(Calendar, Calendar) -> Unit>()
 
   private val controller = DatePickerController(
+      attrs,
       vibrator,
       minMaxController,
       renderHeaders,
@@ -284,14 +285,6 @@ class DatePickerControllerTest {
     assertRender(expectedCalendar, expectedCalendar)
 
     verify(listener, never()).invoke(any(), any())
-  }
-
-  @Test fun `setMode - sets mode in selected date`() {
-    controller.setMode(RANGE)
-    assertThat(controller.selectedDate.mode).isEqualTo(RANGE)
-
-    controller.setMode(SINGLE)
-    assertThat(controller.selectedDate.mode).isEqualTo(SINGLE)
   }
 
   private fun assertRender(
