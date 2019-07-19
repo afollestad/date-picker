@@ -58,6 +58,7 @@ class DatePicker(
   private val yearAdapter: YearAdapter
   private val monthAdapter: MonthAdapter
   private val monthItemRenderer: MonthItemRenderer
+  private val dateFormatter: DateFormatter
 
   init {
     val ta = context.obtainStyledAttributes(attrs, R.styleable.DatePicker)
@@ -65,7 +66,8 @@ class DatePicker(
     val mediumFont: Typeface
 
     try {
-      layoutManager = DatePickerLayoutManager.inflateInto(context, ta, this)
+      dateFormatter = DateFormatter()
+      layoutManager = DatePickerLayoutManager.inflateInto(context, ta, this, dateFormatter)
       controller = DatePickerController(
           vibrator = VibratorController(context, ta),
           minMaxController = minMaxController,
@@ -86,7 +88,8 @@ class DatePicker(
           context = context,
           typedArray = ta,
           normalFont = normalFont,
-          minMaxController = minMaxController
+          minMaxController = minMaxController,
+          dateFormatter = dateFormatter
       )
     } finally {
       ta.recycle()

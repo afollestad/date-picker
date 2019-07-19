@@ -23,6 +23,7 @@ import android.view.View
 import android.widget.TextView
 import com.afollestad.date.R
 import com.afollestad.date.controllers.MinMaxController
+import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.DayOfWeek
 import com.afollestad.date.data.MonthItem
 import com.afollestad.date.data.MonthItem.DayOfMonth
@@ -35,7 +36,9 @@ import com.afollestad.date.util.color
 import com.afollestad.date.util.resolveColor
 import com.afollestad.date.util.withAlpha
 import com.afollestad.date.data.snapshot.DateSnapshot
+import com.afollestad.date.dayOfWeek
 import com.afollestad.date.util.onClickDebounced
+import java.util.Calendar
 
 // TODO write unit tests
 /** @author Aidan Follestad (@afollestad) */
@@ -43,7 +46,8 @@ internal class MonthItemRenderer(
   private val context: Context,
   typedArray: TypedArray,
   private val normalFont: Typeface,
-  private val minMaxController: MinMaxController
+  private val minMaxController: MinMaxController,
+  private val dateFormatter: DateFormatter
 ) {
   private val selectionColor: Int =
     typedArray.color(R.styleable.DatePicker_date_picker_selection_color) {
@@ -54,6 +58,7 @@ internal class MonthItemRenderer(
       context.resolveColor(android.R.attr.textColorSecondary)
           .withAlpha(DEFAULT_DISABLED_BACKGROUND_OPACITY)
     }
+  private val calendar = Calendar.getInstance()
 
   fun render(
     item: MonthItem,
@@ -73,8 +78,8 @@ internal class MonthItemRenderer(
   ) {
     textView.apply {
       setTextColor(context.resolveColor(android.R.attr.textColorSecondary))
-      text = dayOfWeek.name.first()
-          .toString()
+      calendar.dayOfWeek = dayOfWeek
+      text = dateFormatter.weekdayAbbreviation(calendar)
       typeface = normalFont
     }
   }

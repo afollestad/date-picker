@@ -63,7 +63,8 @@ internal class DatePickerLayoutManager(
   context: Context,
   typedArray: TypedArray,
   root: ViewGroup,
-  private val vibrator: VibratorController
+  private val vibrator: VibratorController,
+  private val dateFormatter: DateFormatter
 ) {
   val selectionColor: Int =
     typedArray.color(R.styleable.DatePicker_date_picker_selection_color) {
@@ -109,7 +110,6 @@ internal class DatePickerLayoutManager(
   private val headersWithFactor: Int =
     context.resources.getInteger(R.integer.headers_width_factor)
 
-  private val dateFormatter = DateFormatter()
   private val size = Size(0, 0)
   private val orientation = Orientation.get(context)
 
@@ -410,11 +410,12 @@ internal class DatePickerLayoutManager(
     @CheckResult fun inflateInto(
       context: Context,
       typedArray: TypedArray,
-      container: ViewGroup
+      container: ViewGroup,
+      dateFormatter: DateFormatter
     ): DatePickerLayoutManager {
       View.inflate(context, R.layout.date_picker, container)
       val vibrator = VibratorController(context, typedArray)
-      return DatePickerLayoutManager(context, typedArray, container, vibrator)
+      return DatePickerLayoutManager(context, typedArray, container, vibrator, dateFormatter)
     }
 
     private const val DAYS_IN_WEEK = 7

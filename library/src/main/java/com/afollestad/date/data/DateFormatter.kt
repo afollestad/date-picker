@@ -26,6 +26,7 @@ internal class DateFormatter {
   private val yearFormatter = SimpleDateFormat("yyyy", Locale.getDefault())
   private val dateFormatter = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
   private val monthFormatter = SimpleDateFormat("MMMM", Locale.getDefault())
+  private val weekdayFormatter = SimpleDateFormat("E", Locale.getDefault())
 
   /** July 1995 */
   @CheckResult fun monthAndYear(calendar: Calendar): String =
@@ -42,4 +43,8 @@ internal class DateFormatter {
   /** July */
   @CheckResult fun month(calendar: Calendar): String =
     monthFormatter.format(calendar.time)
+
+  /** F */
+  @CheckResult fun weekdayAbbreviation(calendar: Calendar): String =
+    weekdayFormatter.format(calendar.time).first().toString()
 }

@@ -62,5 +62,6 @@ val Calendar.totalDaysInMonth: Int
 }
 
 /** @author Aidan Follestad (@afollestad) */
-internal val Calendar.dayOfWeek: DayOfWeek
+internal var Calendar.dayOfWeek: DayOfWeek
   get() = get(Calendar.DAY_OF_WEEK).asDayOfWeek()
+  set(value) = set(Calendar.DAY_OF_WEEK, value.rawValue)
