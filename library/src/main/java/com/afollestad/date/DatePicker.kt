@@ -136,27 +136,39 @@ class DatePicker(
   fun getMinDate(): Calendar? = minMaxController.getMinDate()
 
   /** Sets a min date. Dates before this are not selectable. */
-  fun setMinDate(calendar: Calendar) = minMaxController.setMinDate(calendar)
+  fun setMinDate(calendar: Calendar) {
+      minMaxController.setMinDate(calendar)
+      controller.render()
+  }
 
   /** Sets a min date. Dates before this are not selectable. */
   fun setMinDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int,
     @IntRange(from = MONTH_MIN, to = MONTH_MAX) month: Int,
     @IntRange(from = 1, to = 31) dayOfMonth: Int
-  ) = minMaxController.setMinDate(year = year, month = month, dayOfMonth = dayOfMonth)
+  ) {
+      minMaxController.setMinDate(year = year, month = month, dayOfMonth = dayOfMonth)
+      controller.render()
+  }
 
   /** Gets the max date, if any. */
   fun getMaxDate(): Calendar? = minMaxController.getMaxDate()
 
   /** Sets a max date. Dates after this are not selectable. */
-  fun setMaxDate(calendar: Calendar) = minMaxController.setMaxDate(calendar)
+  fun setMaxDate(calendar: Calendar) {
+      minMaxController.setMaxDate(calendar)
+      controller.render()
+  }
 
   /** Sets a max date. Dates after this are not selectable. */
   fun setMaxDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int,
     @IntRange(from = MONTH_MIN, to = MONTH_MAX) month: Int,
     @IntRange(from = 1, to = 31) dayOfMonth: Int
-  ) = minMaxController.setMaxDate(year = year, month = month, dayOfMonth = dayOfMonth)
+  ) {
+      minMaxController.setMaxDate(year = year, month = month, dayOfMonth = dayOfMonth)
+      controller.render()
+  }
 
   @Deprecated(
       message = "Use addOnDateChanged instead.",
