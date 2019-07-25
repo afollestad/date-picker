@@ -118,8 +118,8 @@ internal class MinMaxController {
 
   private fun validateMinAndMax() {
     if (minDate != null && maxDate != null) {
-      check(minDate!! < maxDate!!) {
-        "Min date must be less than max date."
+      check(minDate!! <= maxDate!!) {
+        "Min date must be at most max date."
       }
     }
   }

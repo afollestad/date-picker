@@ -39,11 +39,18 @@ class MinMaxControllerTest {
     assertThat(controller.getMinDate()!!.snapshot()).isEqualTo(snapshot)
   }
 
-  @Test fun `setMinDate - with date that is greater than or equal to max date`() {
+  @Test fun `setMinDate - with date that is greater than max date`() {
     controller.setMaxDate(1995, Calendar.JULY, 28)
     assertException(IllegalStateException::class) {
       controller.setMinDate(1995, Calendar.JULY, 29)
     }
+  }
+
+  @Test fun `setMinDate - with date that is equal to max date`() {
+    val snapshot = DateSnapshot(Calendar.JULY, 28, 1995)
+    controller.setMaxDate(snapshot.year, snapshot.month, snapshot.day)
+    controller.setMinDate(snapshot.year, snapshot.month, snapshot.day)
+    assertThat(controller.getMinDate()!!.snapshot()).isEqualTo(snapshot)
   }
 
   @Test fun setMaxDate() {
