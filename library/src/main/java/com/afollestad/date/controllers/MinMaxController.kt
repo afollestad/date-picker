@@ -87,12 +87,15 @@ internal class MinMaxController {
   fun getOutOfMinRangeBackgroundRes(date: DateSnapshot): Int {
     val calendar = date.asCalendar()
     val isLastInMonth = calendar.dayOfMonth == calendar.totalDaysInMonth
+
+    val isFirstInMonth = date.day == 1
+    val isLastDayOutOfRange = date == minDate!!.addDays(-1)
+
     return when {
+      isLastDayOutOfRange && isFirstInMonth -> R.drawable.ic_tube_start_end
+      isFirstInMonth -> R.drawable.ic_tube_start
       isLastInMonth -> R.drawable.ic_tube_end
-      date.day == 1 -> R.drawable.ic_tube_start
-      date.day == minDate!!.day - 1 &&
-          date.month == minDate!!.month &&
-          date.year == minDate!!.year -> R.drawable.ic_tube_end
+      isLastDayOutOfRange -> R.drawable.ic_tube_end
       else -> R.drawable.ic_tube_middle
     }
   }
@@ -106,12 +109,15 @@ internal class MinMaxController {
   fun getOutOfMaxRangeBackgroundRes(date: DateSnapshot): Int {
     val calendar = date.asCalendar()
     val isLastInMonth = calendar.dayOfMonth == calendar.totalDaysInMonth
+
+    val isFirstInMonth = date.day == 1
+    val isFirstDayOutOfRange = date == maxDate!!.addDays(1)
+
     return when {
-      date.day == 1 -> R.drawable.ic_tube_start
-      date.day == maxDate!!.day + 1 &&
-          date.month == maxDate!!.month &&
-          date.year == maxDate!!.year -> R.drawable.ic_tube_start
+      isFirstInMonth -> R.drawable.ic_tube_start
+      isFirstDayOutOfRange && isLastInMonth -> R.drawable.ic_tube_start_end
       isLastInMonth -> R.drawable.ic_tube_end
+      isFirstDayOutOfRange -> R.drawable.ic_tube_start
       else -> R.drawable.ic_tube_middle
     }
   }
