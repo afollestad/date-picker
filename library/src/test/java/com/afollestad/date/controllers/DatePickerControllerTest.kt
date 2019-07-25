@@ -19,7 +19,6 @@ import com.afollestad.date.data.MonthGraph
 import com.afollestad.date.data.MonthItem
 import com.afollestad.date.data.snapshot.DateSnapshot
 import com.afollestad.date.data.snapshot.MonthSnapshot
-import com.afollestad.date.data.snapshot.asCalendar
 import com.afollestad.date.data.snapshot.snapshot
 import com.afollestad.date.data.snapshot.snapshotMonth
 import com.google.common.truth.Truth.assertThat
@@ -47,7 +46,7 @@ class DatePickerControllerTest {
     on { canGoBack(any()) } doReturn true
     on { canGoForward(any()) } doReturn true
   }
-  private val renderHeaders = mock<(Calendar, Calendar) -> Unit>()
+  private val renderHeaders = mock<(MonthSnapshot, Calendar) -> Unit>()
   private val renderMonthItems = mock<(List<MonthItem>) -> Unit>()
   private val goBackVisibility = mock<(Boolean) -> Unit>()
   private val goForwardVisibility = mock<(Boolean) -> Unit>()
@@ -130,7 +129,7 @@ class DatePickerControllerTest {
 
     val previousMonth = MonthSnapshot(Calendar.JUNE, 1995)
     assertSetCurrentMonth(previousMonth)
-    assertRender(previousMonth.asCalendar(1), now)
+    assertRender(previousMonth, now)
     verify(vibrator).vibrateForSelection()
     verify(switchToMonthMode).invoke()
   }
@@ -142,7 +141,7 @@ class DatePickerControllerTest {
 
     val nextMonth = MonthSnapshot(Calendar.AUGUST, 1995)
     assertSetCurrentMonth(nextMonth)
-    assertRender(nextMonth.asCalendar(1), now)
+    assertRender(nextMonth, now)
     verify(vibrator).vibrateForSelection()
     verify(switchToMonthMode).invoke()
   }
@@ -154,7 +153,7 @@ class DatePickerControllerTest {
 
     val expectedMonth = MonthSnapshot(Calendar.DECEMBER, 1995)
     assertSetCurrentMonth(expectedMonth)
-    assertRender(expectedMonth.asCalendar(1), now)
+    assertRender(expectedMonth, now)
     verify(vibrator).vibrateForSelection()
     verify(switchToMonthMode).invoke()
   }
@@ -171,11 +170,12 @@ class DatePickerControllerTest {
     val expectedSelectedDate = DateSnapshot(Calendar.AUGUST, 7, 2017)
     val expectedSelectedCalendar = expectedSelectedDate.asCalendar()
     val expectedOldDate = expectedSelectedDate.copy(day = 28)
+    val expectedMonthSnapshot = MonthSnapshot(Calendar.AUGUST, 2017)
 
     assertThat(controller.selectedDate!!).isEqualTo(expectedSelectedDate)
-    assertSetCurrentMonth(MonthSnapshot(Calendar.AUGUST, 2017))
+    assertSetCurrentMonth(expectedMonthSnapshot)
     assertListenerGotDate(expectedOldDate, expectedSelectedDate)
-    assertRender(expectedSelectedCalendar, expectedSelectedCalendar)
+    assertRender(expectedMonthSnapshot, expectedSelectedCalendar)
   }
 
   @Test fun setFullDate() {
@@ -184,13 +184,15 @@ class DatePickerControllerTest {
 
     val expectedDate = DateSnapshot(Calendar.JANUARY, 11, 1995)
     val expectedCalendar = expectedDate.asCalendar()
+    val expectedMonthSnapshot = MonthSnapshot(Calendar.JANUARY, 1995)
+
     controller.setFullDate(expectedCalendar)
 
     assertThat(controller.didInit).isTrue()
     assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
     assertListenerGotDate(now.snapshot(), expectedDate)
-    assertSetCurrentMonth(MonthSnapshot(Calendar.JANUARY, 1995))
-    assertRender(expectedCalendar, expectedCalendar)
+    assertSetCurrentMonth(expectedMonthSnapshot)
+    assertRender(expectedMonthSnapshot, expectedCalendar)
   }
 
   @Test fun `setFullDate - manual`() {
@@ -200,12 +202,13 @@ class DatePickerControllerTest {
 
     val expectedDate = DateSnapshot(Calendar.JANUARY, 11, 1995)
     val expectedCalendar = expectedDate.asCalendar()
+    val expectedMonthSnapshot = MonthSnapshot(Calendar.JANUARY, 1995)
 
     assertThat(controller.didInit).isTrue()
     assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
     assertListenerGotDate(now.snapshot(), expectedDate)
-    assertSetCurrentMonth(MonthSnapshot(Calendar.JANUARY, 1995))
-    assertRender(expectedCalendar, expectedCalendar)
+    assertSetCurrentMonth(expectedMonthSnapshot)
+    assertRender(expectedMonthSnapshot, expectedCalendar)
   }
 
   @Test fun `setDayOfMonth - did not already init`() {
@@ -222,7 +225,7 @@ class DatePickerControllerTest {
     assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
     assertListenerGotDate(now.snapshot(), expectedDate)
     assertSetCurrentMonth(now.snapshotMonth())
-    assertRender(expectedCalendar, expectedCalendar)
+    assertRender(now.snapshotMonth(), expectedCalendar)
   }
 
   @Test fun `setDayOfMonth - did already init`() {
@@ -237,7 +240,7 @@ class DatePickerControllerTest {
     controller.setDayOfMonth(4)
     assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
     assertListenerGotDate(now.snapshot(), expectedDate)
-    assertRender(expectedCalendar, expectedCalendar)
+    assertRender(MonthSnapshot(Calendar.AUGUST, 2016), expectedCalendar)
 
     verify(vibrator).vibrateForSelection()
   }
@@ -268,6 +271,7 @@ class DatePickerControllerTest {
 
     val expectedDate = DateSnapshot(Calendar.JANUARY, 11, 1995)
     val expectedCalendar = expectedDate.asCalendar()
+    val expectedCurrentMonth = MonthSnapshot(Calendar.JANUARY, 1995)
 
     whenever(minMaxController.isOutOfMinRange(eq(expectedDate)))
         .doReturn(true)
@@ -278,26 +282,26 @@ class DatePickerControllerTest {
 
     assertThat(controller.didInit).isTrue()
     assertThat(controller.selectedDate!!).isEqualTo(expectedDate)
-    assertSetCurrentMonth(MonthSnapshot(Calendar.JANUARY, 1995))
-    assertRender(expectedCalendar, expectedCalendar)
+    assertSetCurrentMonth(expectedCurrentMonth)
+    assertRender(expectedCurrentMonth, expectedCalendar)
 
     verify(listener, never()).invoke(any(), any())
   }
 
   private fun assertRender(
-    calendar: Calendar,
+    currentMonth: MonthSnapshot,
     selectedDate: Calendar,
     canGoBack: Boolean = true,
     canGoForward: Boolean = true
   ) {
-    val calendarCaptor = argumentCaptor<Calendar>()
+    val monthSnapshotCaptor = argumentCaptor<MonthSnapshot>()
     val selectedDateCaptor = argumentCaptor<Calendar>()
-    verify(renderHeaders, atLeast(1)).invoke(calendarCaptor.capture(), selectedDateCaptor.capture())
+    verify(renderHeaders, atLeast(1)).invoke(monthSnapshotCaptor.capture(), selectedDateCaptor.capture())
 
-    val captured1 = calendarCaptor.lastValue
+    val captured1 = monthSnapshotCaptor.lastValue
     assertWithMessage("Viewing months should be equal.")
-        .that(captured1.snapshotMonth())
-        .isEqualTo(calendar.snapshotMonth())
+        .that(captured1)
+        .isEqualTo(currentMonth)
 
     val selectedCaptured = selectedDateCaptor.lastValue
     assertWithMessage("Selected dates should be equal.")

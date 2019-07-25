@@ -23,6 +23,8 @@ import com.afollestad.date.dayOfMonth
 import com.afollestad.date.decrementMonth
 import com.afollestad.date.incrementMonth
 import com.afollestad.date.data.snapshot.DateSnapshot
+import com.afollestad.date.data.snapshot.MonthSnapshot
+import com.afollestad.date.data.snapshot.asCalendar
 import com.afollestad.date.data.snapshot.snapshot
 import com.afollestad.date.totalDaysInMonth
 import java.util.Calendar
@@ -64,16 +66,16 @@ internal class MinMaxController {
     validateMinAndMax()
   }
 
-  @CheckResult fun canGoBack(from: Calendar): Boolean {
+  @CheckResult fun canGoBack(from: MonthSnapshot): Boolean {
     if (minDate == null) return true
-    val lastMonth = from.decrementMonth()
+    val lastMonth = from.asCalendar(1).decrementMonth()
         .snapshot()
     return !isOutOfMinRange(lastMonth)
   }
 
-  @CheckResult fun canGoForward(from: Calendar): Boolean {
+  @CheckResult fun canGoForward(from: MonthSnapshot): Boolean {
     if (maxDate == null) return true
-    val nextMonth = from.incrementMonth()
+    val nextMonth = from.asCalendar(1).incrementMonth()
         .snapshot()
     return !isOutOfMaxRange(nextMonth)
   }

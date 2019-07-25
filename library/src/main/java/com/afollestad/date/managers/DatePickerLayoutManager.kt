@@ -40,6 +40,8 @@ import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.controllers.VibratorController
 import com.afollestad.date.data.DateFormatter
+import com.afollestad.date.data.snapshot.MonthSnapshot
+import com.afollestad.date.data.snapshot.asCalendar
 import com.afollestad.date.managers.DatePickerLayoutManager.Mode.CALENDAR
 import com.afollestad.date.managers.DatePickerLayoutManager.Mode.MONTH_LIST
 import com.afollestad.date.managers.DatePickerLayoutManager.Mode.YEAR_LIST
@@ -294,10 +296,10 @@ internal class DatePickerLayoutManager(
   fun showOrHideGoNext(show: Boolean) = goNextMonthView.showOrConceal(show)
 
   fun setHeadersContent(
-    currentMonth: Calendar,
+    currentMonth: MonthSnapshot,
     selectedDate: Calendar
   ) {
-    visibleMonthView.text = dateFormatter.monthAndYear(currentMonth)
+    visibleMonthView.text = dateFormatter.monthAndYear(currentMonth.asCalendar(1))
     selectedYearView.text = dateFormatter.year(selectedDate)
     selectedDateView.text = dateFormatter.date(selectedDate)
   }

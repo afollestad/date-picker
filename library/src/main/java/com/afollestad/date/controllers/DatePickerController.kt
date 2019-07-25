@@ -37,7 +37,7 @@ import java.util.Calendar
 internal class DatePickerController(
   private val vibrator: VibratorController,
   private val minMaxController: MinMaxController,
-  private val renderHeaders: (Calendar, Calendar) -> Unit,
+  private val renderHeaders: (MonthSnapshot, Calendar) -> Unit,
   private val renderMonthItems: (List<MonthItem>) -> Unit,
   private val goBackVisibility: (visible: Boolean) -> Unit,
   private val goForwardVisibility: (visible: Boolean) -> Unit,
@@ -74,7 +74,7 @@ internal class DatePickerController(
     val calendar = viewingMonth!!.asCalendar(1)
         .decrementMonth()
     updateCurrentMonth(calendar)
-    render(calendar)
+    render()
     vibrator.vibrateForSelection()
   }
 
@@ -83,7 +83,7 @@ internal class DatePickerController(
     val calendar = viewingMonth!!.asCalendar(1)
         .incrementMonth()
     updateCurrentMonth(calendar)
-    render(calendar)
+    render()
     vibrator.vibrateForSelection()
   }
 
@@ -92,7 +92,7 @@ internal class DatePickerController(
     val calendar = viewingMonth!!.asCalendar(1)
         .apply { this.month = month }
     updateCurrentMonth(calendar)
-    render(calendar)
+    render()
     vibrator.vibrateForSelection()
   }
 
@@ -107,7 +107,7 @@ internal class DatePickerController(
       notifyListeners(oldSelected) { calendar.clone() as Calendar }
     }
     updateCurrentMonth(calendar)
-    render(calendar)
+    render()
   }
 
   fun setFullDate(
@@ -147,7 +147,7 @@ internal class DatePickerController(
     selectedDate = calendar.snapshot()
     vibrator.vibrateForSelection()
     notifyListeners(oldSelected) { calendar }
-    render(calendar)
+    render()
   }
 
   fun setYear(year: Int) {
@@ -167,16 +167,16 @@ internal class DatePickerController(
     dateChangedListeners.clear()
   }
 
+  internal fun render() {
+    renderHeaders(viewingMonth!!, selectedDateCalendar!!)
+    renderMonthItems(monthGraph!!.getMonthItems(selectedDate!!))
+    goBackVisibility(minMaxController.canGoBack(viewingMonth!!))
+    goForwardVisibility(minMaxController.canGoForward(viewingMonth!!))
+  }
+
   private fun updateCurrentMonth(calendar: Calendar) {
     viewingMonth = calendar.snapshotMonth()
     monthGraph = MonthGraph(calendar)
-  }
-
-  private fun render(calendar: Calendar) {
-    renderHeaders(calendar, selectedDateCalendar!!)
-    renderMonthItems(monthGraph!!.getMonthItems(selectedDate!!))
-    goBackVisibility(minMaxController.canGoBack(calendar))
-    goForwardVisibility(minMaxController.canGoForward(calendar))
   }
 
   private fun notifyListeners(
