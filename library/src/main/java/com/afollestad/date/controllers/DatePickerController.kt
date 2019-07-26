@@ -168,10 +168,10 @@ internal class DatePickerController(
   }
 
   internal fun render() {
-    renderHeaders(viewingMonth!!, selectedDateCalendar!!)
-    renderMonthItems(monthGraph!!.getMonthItems(selectedDate!!))
-    goBackVisibility(minMaxController.canGoBack(viewingMonth!!))
-    goForwardVisibility(minMaxController.canGoForward(viewingMonth!!))
+    viewingMonth?.let { renderHeaders(it, selectedDateCalendar!!) }
+    selectedDate?.let { monthGraph!!.getMonthItems(it) }?.let { renderMonthItems(it) }
+    viewingMonth?.let { minMaxController.canGoBack(it) }?.let { goBackVisibility(it) }
+    viewingMonth?.let { minMaxController.canGoForward(it) }?.let { goForwardVisibility(it) }
   }
 
   private fun updateCurrentMonth(calendar: Calendar) {
