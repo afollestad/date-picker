@@ -29,6 +29,7 @@ import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import com.afollestad.date.R
 
 /** @author Aidan Follestad (@afollestad) */
 internal object Util {
@@ -60,15 +61,22 @@ internal object Util {
 
   /** @author Aidan Follestad (@afollestad) */
   @CheckResult fun createCircularSelector(
+    context: Context,
     @ColorInt selectedColor: Int
   ): Drawable {
-    val selected: Drawable = circleShape(selectedColor)
+    val selected: Drawable = circleShape(context, selectedColor)
+    val activated: Drawable = circleShape(
+        context = context,
+        color = context.resolveColor(android.R.attr.textColorPrimary),
+        outlineOnly = true
+    )
 
     if (Build.VERSION.SDK_INT >= 21) {
       return RippleDrawable(
           ColorStateList.valueOf(selectedColor),
           StateListDrawable().apply {
             addState(intArrayOf(android.R.attr.state_selected), selected)
+            addState(intArrayOf(android.R.attr.state_activated), activated)
           },
           selected
       )
@@ -81,6 +89,7 @@ internal object Util {
             alpha = (255 * 0.3).toInt()
           })
       addState(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected), selected)
+      addState(intArrayOf(android.R.attr.state_activated), activated)
     }
   }
 
@@ -97,10 +106,17 @@ internal object Util {
     }
   }
 
-  private fun circleShape(@ColorInt color: Int): Drawable {
+  private fun circleShape(
+    context: Context,
+    @ColorInt color: Int,
+    outlineOnly: Boolean = false
+  ): Drawable {
     return GradientDrawable().apply {
       shape = OVAL
-      colors = intArrayOf(color, color)
+      setStroke(context.dimenPx(R.dimen.day_of_month_today_border_width), color)
+      if (!outlineOnly) {
+        colors = intArrayOf(color, color)
+      }
     }
   }
 }

@@ -23,6 +23,7 @@ import com.afollestad.date.data.MonthItem.DayOfMonth
 import com.afollestad.date.data.MonthItem.WeekHeader
 import com.afollestad.date.month
 import com.afollestad.date.data.snapshot.DateSnapshot
+import com.afollestad.date.data.snapshot.snapshot
 import com.afollestad.date.data.snapshot.snapshotMonth
 import com.afollestad.date.totalDaysInMonth
 import com.afollestad.date.year
@@ -31,8 +32,10 @@ import kotlin.properties.Delegates
 
 /** @author Aidan Follestad (@afollestad) */
 internal class MonthGraph(
-  @VisibleForTesting val calendar: Calendar
+  @VisibleForTesting val calendar: Calendar,
+  @VisibleForTesting today: Calendar = Calendar.getInstance()
 ) {
+  private val today: DateSnapshot = today.snapshot()
   @VisibleForTesting var daysInMonth: Int by Delegates.notNull()
   @VisibleForTesting var firstWeekDayInMonth: DayOfWeek
   var orderedWeekDays: List<DayOfWeek>
@@ -60,17 +63,19 @@ internal class MonthGraph(
     daysOfMonth.addAll(
         orderedWeekDays
             .takeWhile { it != firstWeekDayInMonth }
-            .map { DayOfMonth(it, month) }
+            .map { DayOfMonth(it, month, isToday = false) }
     )
 
     for (date in 1..daysInMonth) {
       calendar.dayOfMonth = date
+      val dateSnapshot = DateSnapshot(calendar.month, date, calendar.year)
       daysOfMonth.add(
           DayOfMonth(
               dayOfWeek = calendar.dayOfWeek,
               month = month,
               date = date,
-              isSelected = selectedDate == DateSnapshot(calendar.month, date, calendar.year)
+              isToday = dateSnapshot == today,
+              isSelected = selectedDate == dateSnapshot
           )
       )
     }
@@ -85,16 +90,13 @@ internal class MonthGraph(
               .nextDayOfWeek()
               .andTheRest()
               .takeWhile { it != loopTarget }
-              .map { DayOfMonth(it, month) }
+              .map { DayOfMonth(it, month, isToday = false) }
       )
     }
     // Make sure we fill up 6 weeks worth of dates
     while (daysOfMonth.size < EXPECTED_SIZE) {
       daysOfMonth.addAll(orderedWeekDays.map {
-        DayOfMonth(
-            it, month,
-            NO_DATE
-        )
+        DayOfMonth(it, month, isToday = false)
       })
     }
 

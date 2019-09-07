@@ -20,9 +20,10 @@ import androidx.annotation.AttrRes
 import androidx.annotation.CheckResult
 import android.util.TypedValue
 import androidx.annotation.DimenRes
+import androidx.annotation.Px
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun Context.resolveColor(
+@CheckResult internal fun Context.resolveColor(
   @AttrRes attr: Int,
   fallback: (() -> Int)? = null
 ): Int {
@@ -36,6 +37,11 @@ internal fun Context.resolveColor(
   } finally {
     a.recycle()
   }
+}
+
+/** @author Aidan Follestad (@afollestad) */
+@CheckResult @Px internal fun Context.dimenPx(@DimenRes dimen: Int): Int {
+  return resources.getDimensionPixelSize(dimen)
 }
 
 /** @author Aidan Follestad (@afollestad) */

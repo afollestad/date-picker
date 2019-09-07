@@ -50,6 +50,7 @@ import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.attachTopDivider
 import com.afollestad.date.util.color
+import com.afollestad.date.util.dimenPx
 import com.afollestad.date.util.font
 import com.afollestad.date.util.invalidateTopDividerNow
 import com.afollestad.date.util.onClickDebounced
@@ -62,7 +63,7 @@ import java.util.Calendar
 // TODO write unit tests
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerLayoutManager(
-  context: Context,
+  private val context: Context,
   typedArray: TypedArray,
   root: ViewGroup,
   private val vibrator: VibratorController,
@@ -102,13 +103,13 @@ internal class DatePickerLayoutManager(
   private var monthRecyclerView: RecyclerView = root.findViewById(R.id.month_list)
 
   private val currentMonthTopMargin: Int =
-    context.resources.getDimensionPixelSize(R.dimen.current_month_top_margin)
+    context.dimenPx(R.dimen.current_month_top_margin)
   private val chevronsTopMargin: Int =
-    context.resources.getDimensionPixelSize(R.dimen.chevrons_top_margin)
+    context.dimenPx(R.dimen.chevrons_top_margin)
   private val currentMonthHeight: Int =
-    context.resources.getDimensionPixelSize(R.dimen.current_month_header_height)
+    context.dimenPx(R.dimen.current_month_header_height)
   private val dividerHeight: Int =
-    context.resources.getDimensionPixelSize(R.dimen.divider_height)
+    context.dimenPx(R.dimen.divider_height)
   private val headersWithFactor: Int =
     context.resources.getInteger(R.integer.headers_width_factor)
 
@@ -331,12 +332,12 @@ internal class DatePickerLayoutManager(
   }
 
   private fun setupNavigationViews() {
-    goPreviousMonthView.background = createCircularSelector(selectionColor)
+    goPreviousMonthView.background = createCircularSelector(context, selectionColor)
     visibleMonthView.apply {
       typeface = mediumFont
       onClickDebounced { setMode(MONTH_LIST) }
     }
-    goNextMonthView.background = createCircularSelector(selectionColor)
+    goNextMonthView.background = createCircularSelector(context, selectionColor)
   }
 
   private fun setupListViews() {

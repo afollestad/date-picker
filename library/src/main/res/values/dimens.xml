@@ -23,6 +23,9 @@
   <dimen name="divider_height">1dp</dimen>
   <dimen name="chevrons_top_margin">1dp</dimen>
 
+  <dimen name="day_of_month_today_border_width">2dp</dimen>
+  <dimen name="day_of_month_circle_inset">6dp</dimen>
+
   <item name="day_of_month_height_ratio" format="float" type="dimen">0.9</item>
   <item name="month_sidebar_width_percent" format="float" type="dimen">1.0</item>
 </resources>

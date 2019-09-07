@@ -21,6 +21,7 @@ import android.view.View.MeasureSpec.EXACTLY
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.afollestad.date.R
+import com.afollestad.date.util.dimenPx
 import com.afollestad.date.util.getFloat
 
 /** @author Aidan Follestad (@afollestad) */
@@ -29,6 +30,7 @@ internal class DayOfMonthRootView(
   attrs: AttributeSet?
 ) : FrameLayout(context, attrs) {
   private val ratio: Float = context.getFloat(R.dimen.day_of_month_height_ratio)
+  private val circleInset: Int = context.dimenPx(R.dimen.day_of_month_circle_inset)
   private lateinit var textView: TextView
 
   override fun onFinishInflate() {
@@ -44,9 +46,10 @@ internal class DayOfMonthRootView(
     val height = (width * ratio).toInt()
     setMeasuredDimension(width, height)
 
+    val circleSize = height - (circleInset * 2)
     textView.measure(
-        MeasureSpec.makeMeasureSpec(height, EXACTLY),
-        MeasureSpec.makeMeasureSpec(height, EXACTLY)
+        MeasureSpec.makeMeasureSpec(circleSize, EXACTLY),
+        MeasureSpec.makeMeasureSpec(circleSize, EXACTLY)
     )
   }
 

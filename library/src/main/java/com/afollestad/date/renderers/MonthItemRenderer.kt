@@ -103,6 +103,7 @@ internal class MonthItemRenderer(
     if (dayOfMonth.date == NO_DATE) {
       rootView.isEnabled = false
       textView.isSelected = false
+      textView.isActivated = false
       return
     }
 
@@ -112,6 +113,7 @@ internal class MonthItemRenderer(
         day = dayOfMonth.date
     )
     textView.isSelected = dayOfMonth.isSelected
+    textView.isActivated = dayOfMonth.isToday
 
     when {
       minMaxController.isOutOfMinRange(currentDate) -> {
@@ -132,7 +134,7 @@ internal class MonthItemRenderer(
         rootView.isEnabled = textView.text.toString()
             .isNotEmpty()
         textView.apply {
-          background = createCircularSelector(selectionColor)
+          background = createCircularSelector(context, selectionColor)
           onClickDebounced { onSelection(dayOfMonth) }
         }
       }
