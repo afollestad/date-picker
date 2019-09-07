@@ -13,11 +13,11 @@
       app:layout_constraintRight_toRightOf="parent"
       app:layout_constraintTop_toTopOf="parent"
       app:date_picker_header_background_color="?colorAccent"
-      app:date_picker_medium_font="@font/fira_sans_medium"
-      app:date_picker_normal_font="@font/fira_sans_light"
       app:date_picker_selection_color="?colorAccent"
       app:date_picker_selection_vibrates="true"
       app:date_picker_calendar_horizontal_padding="4dp"
       />
+  <!--      app:date_picker_medium_font="@font/fira_sans_medium"-->
+  <!--      app:date_picker_normal_font="@font/fira_sans_light"-->
 </androidx.constraintlayout.widget.ConstraintLayout>
 

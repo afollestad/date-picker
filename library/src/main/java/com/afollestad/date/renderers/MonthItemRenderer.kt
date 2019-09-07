@@ -58,6 +58,10 @@ internal class MonthItemRenderer(
       context.resolveColor(android.R.attr.textColorSecondary)
           .withAlpha(DEFAULT_DISABLED_BACKGROUND_OPACITY)
     }
+  private val todayStrokeColor: Int =
+    typedArray.color(R.styleable.DatePicker_date_picker_calendar_today_stroke_color) {
+      context.resolveColor(android.R.attr.textColorPrimary)
+    }
   private val calendar = Calendar.getInstance()
 
   fun render(
@@ -134,7 +138,11 @@ internal class MonthItemRenderer(
         rootView.isEnabled = textView.text.toString()
             .isNotEmpty()
         textView.apply {
-          background = createCircularSelector(context, selectionColor)
+          background = createCircularSelector(
+              context = context,
+              selectedColor = selectionColor,
+              todayStrokeColor = todayStrokeColor
+          )
           onClickDebounced { onSelection(dayOfMonth) }
         }
       }

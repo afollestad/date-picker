@@ -42,10 +42,10 @@ import com.afollestad.date.controllers.VibratorController
 import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
-import com.afollestad.date.managers.DatePickerLayoutManager.Mode.CALENDAR
-import com.afollestad.date.managers.DatePickerLayoutManager.Mode.MONTH_LIST
-import com.afollestad.date.managers.DatePickerLayoutManager.Mode.YEAR_LIST
-import com.afollestad.date.managers.DatePickerLayoutManager.Orientation.PORTRAIT
+import com.afollestad.date.managers.DatePickerLayoutRunner.Mode.CALENDAR
+import com.afollestad.date.managers.DatePickerLayoutRunner.Mode.MONTH_LIST
+import com.afollestad.date.managers.DatePickerLayoutRunner.Mode.YEAR_LIST
+import com.afollestad.date.managers.DatePickerLayoutRunner.Orientation.PORTRAIT
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.attachTopDivider
@@ -57,12 +57,13 @@ import com.afollestad.date.util.onClickDebounced
 import com.afollestad.date.util.placeAt
 import com.afollestad.date.util.resolveColor
 import com.afollestad.date.util.showOrConceal
+import com.afollestad.date.util.string
 import com.afollestad.date.util.updatePadding
 import java.util.Calendar
 
 // TODO write unit tests
 /** @author Aidan Follestad (@afollestad) */
-internal class DatePickerLayoutManager(
+internal class DatePickerLayoutRunner(
   private val context: Context,
   typedArray: TypedArray,
   root: ViewGroup,
@@ -89,8 +90,12 @@ internal class DatePickerLayoutManager(
     typedArray.getDimensionPixelSize(
         R.styleable.DatePicker_date_picker_calendar_horizontal_padding, 0
     )
+  private val pickerTitle: String =
+    typedArray.string(context, R.styleable.DatePicker_date_picker_title) {
+      context.getString(R.string.select_date)
+    }
 
-  private var selectedYearView: TextView = root.findViewById(R.id.current_year)
+  private var pickerTitleView: TextView = root.findViewById(R.id.picker_title)
   private var selectedDateView: TextView = root.findViewById(R.id.current_date)
 
   private var goPreviousMonthView: ImageView = root.findViewById(R.id.left_chevron)
@@ -122,6 +127,10 @@ internal class DatePickerLayoutManager(
     setupListViews()
   }
 
+  fun setTitle(title: CharSequence?) {
+    pickerTitleView.text = title
+  }
+
   @CheckResult fun onMeasure(
     widthMeasureSpec: Int,
     heightMeasureSpec: Int
@@ -131,16 +140,18 @@ internal class DatePickerLayoutManager(
 
     // First header views
     val headersWidth: Int = (parentWidth / headersWithFactor)
-    selectedYearView.measure(
-        makeMeasureSpec(headersWidth, EXACTLY),
-        makeMeasureSpec(0, UNSPECIFIED)
-    )
+    if (!pickerTitleView.text.isNullOrBlank()) {
+      pickerTitleView.measure(
+          makeMeasureSpec(headersWidth, EXACTLY),
+          makeMeasureSpec(0, UNSPECIFIED)
+      )
+    }
     selectedDateView.measure(
         makeMeasureSpec(headersWidth, EXACTLY),
         if (parentHeight <= 0 || orientation == PORTRAIT) {
           makeMeasureSpec(0, UNSPECIFIED)
         } else {
-          makeMeasureSpec(parentHeight - selectedYearView.measuredHeight, EXACTLY)
+          makeMeasureSpec(parentHeight - pickerTitleView.measuredHeight, EXACTLY)
         }
     )
 
@@ -163,7 +174,7 @@ internal class DatePickerLayoutManager(
 
     // Then the calendar recycler view
     val heightSoFar = if (orientation == PORTRAIT) {
-      selectedYearView.measuredHeight +
+      pickerTitleView.measuredHeight +
           selectedDateView.measuredHeight +
           visibleMonthView.measuredHeight +
           listsDividerView.measuredHeight
@@ -219,20 +230,21 @@ internal class DatePickerLayoutManager(
     right: Int
   ) {
     // First header views
-    selectedYearView.placeAt(top = top)
-    selectedDateView.placeAt(top = selectedYearView.bottom)
+    if (!pickerTitleView.text.isNullOrBlank()) {
+      pickerTitleView.placeAt(top = top)
+      selectedDateView.placeAt(top = pickerTitleView.bottom)
+    } else {
+      selectedDateView.placeAt(top = top)
+    }
 
     val nonHeaderLeft = if (orientation == PORTRAIT) {
       left
     } else {
       selectedDateView.right
     }
-    val nonHeaderWidth = right - nonHeaderLeft
 
     // And the current month
-    val middleX = (right - (nonHeaderWidth / 2))
     visibleMonthView.placeAt(
-        left = (middleX - (visibleMonthView.measuredWidth / 2)),
         top = if (orientation == PORTRAIT) {
           selectedDateView.bottom + currentMonthTopMargin
         } else {
@@ -256,14 +268,14 @@ internal class DatePickerLayoutManager(
     val chevronsMiddleY = (visibleMonthView.bottom - (visibleMonthView.measuredHeight / 2))
     val chevronsTop =
       ((chevronsMiddleY - (goPreviousMonthView.measuredHeight / 2)) + chevronsTopMargin)
-    goPreviousMonthView.placeAt(
-        left = (daysRecyclerView.left + calendarHorizontalPadding),
-        top = chevronsTop
-    )
     goNextMonthView.placeAt(
         left = (daysRecyclerView.right -
             goNextMonthView.measuredWidth -
             calendarHorizontalPadding),
+        top = chevronsTop
+    )
+    goPreviousMonthView.placeAt(
+        left = (goNextMonthView.left - goNextMonthView.measuredWidth),
         top = chevronsTop
     )
 
@@ -301,7 +313,6 @@ internal class DatePickerLayoutManager(
     selectedDate: Calendar
   ) {
     visibleMonthView.text = dateFormatter.monthAndYear(currentMonth.asCalendar(1))
-    selectedYearView.text = dateFormatter.year(selectedDate)
     selectedDateView.text = dateFormatter.date(selectedDate)
   }
 
@@ -318,26 +329,27 @@ internal class DatePickerLayoutManager(
   }
 
   private fun setupHeaderViews() {
-    selectedYearView.apply {
+    pickerTitleView.apply {
       background = ColorDrawable(headerBackgroundColor)
       typeface = normalFont
       onClickDebounced { setMode(YEAR_LIST) }
+      text = pickerTitle
     }
     selectedDateView.apply {
       isSelected = true
       background = ColorDrawable(headerBackgroundColor)
-      typeface = mediumFont
+      typeface = normalFont
       onClickDebounced { setMode(CALENDAR) }
     }
   }
 
   private fun setupNavigationViews() {
-    goPreviousMonthView.background = createCircularSelector(context, selectionColor)
+    goPreviousMonthView.background = createCircularSelector(context, selectionColor, inset = true)
     visibleMonthView.apply {
       typeface = mediumFont
       onClickDebounced { setMode(MONTH_LIST) }
     }
-    goNextMonthView.background = createCircularSelector(context, selectionColor)
+    goNextMonthView.background = createCircularSelector(context, selectionColor, inset = true)
   }
 
   private fun setupListViews() {
@@ -372,7 +384,7 @@ internal class DatePickerLayoutManager(
       YEAR_LIST -> yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
     }
 
-    selectedYearView.apply {
+    pickerTitleView.apply {
       isSelected = mode == YEAR_LIST
       typeface = if (mode == YEAR_LIST) mediumFont else normalFont
     }
@@ -415,10 +427,10 @@ internal class DatePickerLayoutManager(
       typedArray: TypedArray,
       container: ViewGroup,
       dateFormatter: DateFormatter
-    ): DatePickerLayoutManager {
+    ): DatePickerLayoutRunner {
       View.inflate(context, R.layout.date_picker, container)
       val vibrator = VibratorController(context, typedArray)
-      return DatePickerLayoutManager(context, typedArray, container, vibrator, dateFormatter)
+      return DatePickerLayoutRunner(context, typedArray, container, vibrator, dateFormatter)
     }
 
     private const val DAYS_IN_WEEK = 7

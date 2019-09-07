@@ -10,7 +10,7 @@
   <style name="DatePicker" />
 
   <style name="DatePicker.CurrentMonth">
-    <item name="android:textColor">?android:textColorPrimary</item>
+    <item name="android:textColor">?android:textColorSecondary</item>
     <item name="android:gravity">center</item>
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
@@ -36,18 +36,19 @@
     <item name="android:contentDescription">@string/next_month</item>
   </style>
 
-  <style name="DatePicker.HeaderYear">
-    <item name="android:paddingTop">@dimen/header_main_padding_vertical_top</item>
-    <item name="android:paddingBottom">@dimen/header_main_padding_vertical_bottom</item>
+  <style name="DatePicker.HeaderTitle">
+    <item name="android:paddingTop">@dimen/header_main_title_margin_top</item>
     <item name="android:paddingLeft">@dimen/header_main_padding_horizontal</item>
     <item name="android:paddingRight">@dimen/header_main_padding_horizontal</item>
-    <item name="android:textSize">@dimen/header_main_text_size_year</item>
+    <item name="android:textSize">@dimen/header_main_text_size_title</item>
     <item name="android:textColor">@color/headers_text_color</item>
     <item name="android:maxLines">1</item>
+    <item name="android:textAllCaps">true</item>
   </style>
 
   <style name="DatePicker.HeaderDate">
-    <item name="android:paddingBottom">@dimen/header_main_padding_vertical_top</item>
+    <item name="android:paddingTop">@dimen/header_main_title_margin_bottom</item>
+    <item name="android:paddingBottom">@dimen/header_main_date_margin_bottom</item>
     <item name="android:paddingLeft">@dimen/header_main_padding_horizontal</item>
     <item name="android:paddingRight">@dimen/header_main_padding_horizontal</item>
     <item name="android:textSize">@dimen/header_main_text_size_date</item>

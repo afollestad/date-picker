@@ -6,8 +6,8 @@
 
   <!-- Main Header -->
   <TextView
-      android:id="@+id/current_year"
-      style="@style/DatePicker.HeaderYear"
+      android:id="@+id/picker_title"
+      style="@style/DatePicker.HeaderTitle"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       tools:background="#8E24AA"
@@ -23,14 +23,14 @@
       />
 
   <!-- Current Month Header -->
-  <androidx.appcompat.widget.AppCompatImageView
-      android:id="@+id/left_chevron"
-      style="@style/DatePicker.Chevron.Start"
-      />
   <TextView
       android:id="@+id/current_month"
       style="@style/DatePicker.CurrentMonth"
       tools:text="July 2019"
+      />
+  <androidx.appcompat.widget.AppCompatImageView
+      android:id="@+id/left_chevron"
+      style="@style/DatePicker.Chevron.Start"
       />
   <androidx.appcompat.widget.AppCompatImageView
       android:id="@+id/right_chevron"

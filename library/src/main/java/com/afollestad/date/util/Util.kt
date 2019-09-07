@@ -22,6 +22,7 @@ import android.graphics.PorterDuff.Mode.SRC_IN
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.GradientDrawable.OVAL
+import android.graphics.drawable.InsetDrawable
 import android.graphics.drawable.RippleDrawable
 import android.graphics.drawable.StateListDrawable
 import android.os.Build
@@ -62,35 +63,52 @@ internal object Util {
   /** @author Aidan Follestad (@afollestad) */
   @CheckResult fun createCircularSelector(
     context: Context,
-    @ColorInt selectedColor: Int
+    @ColorInt selectedColor: Int,
+    @ColorInt todayStrokeColor: Int? = null,
+    inset: Boolean = false
   ): Drawable {
     val selected: Drawable = circleShape(context, selectedColor)
-    val activated: Drawable = circleShape(
-        context = context,
-        color = context.resolveColor(android.R.attr.textColorPrimary),
-        outlineOnly = true
-    )
-
-    if (Build.VERSION.SDK_INT >= 21) {
-      return RippleDrawable(
-          ColorStateList.valueOf(selectedColor),
-          StateListDrawable().apply {
-            addState(intArrayOf(android.R.attr.state_selected), selected)
-            addState(intArrayOf(android.R.attr.state_activated), activated)
-          },
-          selected
+    val activated: Drawable? = todayStrokeColor?.let {
+      circleShape(
+          context = context,
+          color = it,
+          outlineOnly = true
       )
     }
 
-    return StateListDrawable().apply {
+    if (Build.VERSION.SDK_INT >= 21) {
+      return context.maybeInset(
+          RippleDrawable(
+              ColorStateList.valueOf(selectedColor),
+              StateListDrawable().apply {
+                addState(intArrayOf(android.R.attr.state_selected), selected)
+                activated?.let { addState(intArrayOf(android.R.attr.state_activated), it) }
+              },
+              selected
+          ), inset
+      )
+    }
+
+    val result = StateListDrawable().apply {
       addState(
           intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed),
           selected.mutate().apply {
             alpha = (255 * 0.3).toInt()
           })
       addState(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected), selected)
-      addState(intArrayOf(android.R.attr.state_activated), activated)
+      activated?.let { addState(intArrayOf(android.R.attr.state_activated), it) }
     }
+
+    return context.maybeInset(result, inset)
+  }
+
+  private fun Context.maybeInset(
+    drawable: Drawable,
+    inset: Boolean
+  ): Drawable {
+    if (!inset) return drawable
+    return dimenPx(R.dimen.day_of_month_circle_inset)
+        .let { InsetDrawable(drawable, it, it, it, it) }
   }
 
   /** @author Aidan Follestad (@afollestad) */

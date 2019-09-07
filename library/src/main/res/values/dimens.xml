@@ -4,12 +4,13 @@
   <dimen name="current_month_header_padding_sides">24dp</dimen>
   <dimen name="current_month_top_margin">1dp</dimen>
 
-  <dimen name="header_main_padding_vertical_top">16dp</dimen>
-  <dimen name="header_main_padding_vertical_bottom">0dp</dimen>
+  <dimen name="header_main_date_margin_bottom">16dp</dimen>
+  <dimen name="header_main_title_margin_top">16dp</dimen>
+  <dimen name="header_main_title_margin_bottom">24dp</dimen>
 
   <dimen name="header_main_padding_horizontal">24dp</dimen>
-  <dimen name="header_main_text_size_year">20sp</dimen>
-  <dimen name="header_main_text_size_date">28sp</dimen>
+  <dimen name="header_main_text_size_title">12sp</dimen>
+  <dimen name="header_main_text_size_date">36sp</dimen>
 
   <dimen name="week_day_row_height">32dp</dimen>
   <dimen name="week_day_row_column_text_size">12sp</dimen>

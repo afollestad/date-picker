@@ -44,3 +44,17 @@ internal fun TypedArray.font(
     ResourcesCompat.getFont(context, resId) ?: fallback()
   }
 }
+
+/** @author Aidan Follestad (@afollestad) */
+internal fun TypedArray.string(
+  context: Context,
+  @StyleableRes attr: Int,
+  fallback: () -> String
+): String {
+  val resId = getResourceId(attr, 0)
+  return if (resId == 0) {
+    fallback()
+  } else {
+    context.resources.getString(resId)
+  }
+}
