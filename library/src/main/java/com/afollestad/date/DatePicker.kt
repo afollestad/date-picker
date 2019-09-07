@@ -137,8 +137,8 @@ class DatePicker(
 
   /** Sets a min date. Dates before this are not selectable. */
   fun setMinDate(calendar: Calendar) {
-      minMaxController.setMinDate(calendar)
-      controller.render()
+    minMaxController.setMinDate(calendar)
+    controller.render()
   }
 
   /** Sets a min date. Dates before this are not selectable. */
@@ -147,8 +147,8 @@ class DatePicker(
     @IntRange(from = MONTH_MIN, to = MONTH_MAX) month: Int,
     @IntRange(from = 1, to = 31) dayOfMonth: Int
   ) {
-      minMaxController.setMinDate(year = year, month = month, dayOfMonth = dayOfMonth)
-      controller.render()
+    minMaxController.setMinDate(year = year, month = month, dayOfMonth = dayOfMonth)
+    controller.render()
   }
 
   /** Gets the max date, if any. */
@@ -156,8 +156,8 @@ class DatePicker(
 
   /** Sets a max date. Dates after this are not selectable. */
   fun setMaxDate(calendar: Calendar) {
-      minMaxController.setMaxDate(calendar)
-      controller.render()
+    minMaxController.setMaxDate(calendar)
+    controller.render()
   }
 
   /** Sets a max date. Dates after this are not selectable. */
@@ -166,8 +166,8 @@ class DatePicker(
     @IntRange(from = MONTH_MIN, to = MONTH_MAX) month: Int,
     @IntRange(from = 1, to = 31) dayOfMonth: Int
   ) {
-      minMaxController.setMaxDate(year = year, month = month, dayOfMonth = dayOfMonth)
-      controller.render()
+    minMaxController.setMaxDate(year = year, month = month, dayOfMonth = dayOfMonth)
+    controller.render()
   }
 
   @Deprecated(

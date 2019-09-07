@@ -80,10 +80,10 @@ internal class YearAdapter(
     val view = parent.inflate(R.layout.year_list_row)
     return YearViewHolder(view, this)
         .apply {
-      textView.setTextColor(
-          createTextSelector(context, selectionColor, overColoredBackground = false)
-      )
-    }
+          textView.setTextColor(
+              createTextSelector(context, selectionColor, overColoredBackground = false)
+          )
+        }
   }
 
   override fun getItemCount(): Int = yearRange.second - yearRange.first

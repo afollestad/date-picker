@@ -68,14 +68,16 @@ internal class MinMaxController {
 
   @CheckResult fun canGoBack(from: MonthSnapshot): Boolean {
     if (minDate == null) return true
-    val lastMonth = from.asCalendar(1).decrementMonth()
+    val lastMonth = from.asCalendar(1)
+        .decrementMonth()
         .snapshot()
     return !isOutOfMinRange(lastMonth)
   }
 
   @CheckResult fun canGoForward(from: MonthSnapshot): Boolean {
     if (maxDate == null) return true
-    val nextMonth = from.asCalendar(1).incrementMonth()
+    val nextMonth = from.asCalendar(1)
+        .incrementMonth()
         .snapshot()
     return !isOutOfMaxRange(nextMonth)
   }

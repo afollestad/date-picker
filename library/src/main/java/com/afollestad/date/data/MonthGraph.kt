@@ -90,9 +90,12 @@ internal class MonthGraph(
     }
     // Make sure we fill up 6 weeks worth of dates
     while (daysOfMonth.size < EXPECTED_SIZE) {
-      daysOfMonth.addAll(orderedWeekDays.map { DayOfMonth(it, month,
-          NO_DATE
-      ) })
+      daysOfMonth.addAll(orderedWeekDays.map {
+        DayOfMonth(
+            it, month,
+            NO_DATE
+        )
+      })
     }
 
     check(daysOfMonth.size == EXPECTED_SIZE) {
