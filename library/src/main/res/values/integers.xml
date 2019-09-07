@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <integer name="day_grid_span">7</integer>
+  <integer name="year_grid_span">3</integer>
   <integer name="headers_width_factor">1</integer>
 </resources>

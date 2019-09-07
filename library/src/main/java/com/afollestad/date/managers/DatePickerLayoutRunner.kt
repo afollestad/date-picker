@@ -30,12 +30,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.CheckResult
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.date.R
-import com.afollestad.date.adapters.MonthAdapter
 import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.controllers.VibratorController
@@ -43,7 +40,6 @@ import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
 import com.afollestad.date.managers.DatePickerLayoutRunner.Mode.CALENDAR
-import com.afollestad.date.managers.DatePickerLayoutRunner.Mode.MONTH_LIST
 import com.afollestad.date.managers.DatePickerLayoutRunner.Mode.YEAR_LIST
 import com.afollestad.date.managers.DatePickerLayoutRunner.Orientation.PORTRAIT
 import com.afollestad.date.util.TypefaceHelper
@@ -51,11 +47,14 @@ import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.attachTopDivider
 import com.afollestad.date.util.color
 import com.afollestad.date.util.dimenPx
+import com.afollestad.date.util.drawable
 import com.afollestad.date.util.font
 import com.afollestad.date.util.invalidateTopDividerNow
+import com.afollestad.date.util.isVisible
 import com.afollestad.date.util.onClickDebounced
 import com.afollestad.date.util.placeAt
 import com.afollestad.date.util.resolveColor
+import com.afollestad.date.util.setCompoundDrawablesCompat
 import com.afollestad.date.util.showOrConceal
 import com.afollestad.date.util.string
 import com.afollestad.date.util.updatePadding
@@ -95,17 +94,16 @@ internal class DatePickerLayoutRunner(
       context.getString(R.string.select_date)
     }
 
-  private var pickerTitleView: TextView = root.findViewById(R.id.picker_title)
-  private var selectedDateView: TextView = root.findViewById(R.id.current_date)
+  private val pickerTitleView: TextView = root.findViewById(R.id.picker_title)
+  private val selectedDateView: TextView = root.findViewById(R.id.current_date)
 
-  private var goPreviousMonthView: ImageView = root.findViewById(R.id.left_chevron)
-  private var visibleMonthView: TextView = root.findViewById(R.id.current_month)
-  private var goNextMonthView: ImageView = root.findViewById(R.id.right_chevron)
+  private val goPreviousMonthView: ImageView = root.findViewById(R.id.left_chevron)
+  private val visibleMonthView: TextView = root.findViewById(R.id.current_month)
+  private val goNextMonthView: ImageView = root.findViewById(R.id.right_chevron)
 
-  private var listsDividerView: View = root.findViewById(R.id.year_month_list_divider)
-  private var daysRecyclerView: RecyclerView = root.findViewById(R.id.day_list)
-  private var yearsRecyclerView: RecyclerView = root.findViewById(R.id.year_list)
-  private var monthRecyclerView: RecyclerView = root.findViewById(R.id.month_list)
+  private val listsDividerView: View = root.findViewById(R.id.year_month_list_divider)
+  private val daysRecyclerView: RecyclerView = root.findViewById(R.id.day_list)
+  private val yearsRecyclerView: RecyclerView = root.findViewById(R.id.year_list)
 
   private val currentMonthTopMargin: Int =
     context.dimenPx(R.dimen.current_month_top_margin)
@@ -208,10 +206,6 @@ internal class DatePickerLayoutRunner(
         makeMeasureSpec(daysRecyclerView.measuredWidth, EXACTLY),
         makeMeasureSpec(daysRecyclerView.measuredHeight, EXACTLY)
     )
-    monthRecyclerView.measure(
-        makeMeasureSpec(daysRecyclerView.measuredWidth, EXACTLY),
-        makeMeasureSpec(daysRecyclerView.measuredHeight, EXACTLY)
-    )
 
     // Calculate a total
     return size.apply {
@@ -226,8 +220,7 @@ internal class DatePickerLayoutRunner(
 
   fun onLayout(
     left: Int,
-    top: Int,
-    right: Int
+    top: Int
   ) {
     // First header views
     if (!pickerTitleView.text.isNullOrBlank()) {
@@ -286,22 +279,14 @@ internal class DatePickerLayoutRunner(
         /* right  = */daysRecyclerView.right,
         /* bottom = */daysRecyclerView.bottom
     )
-    monthRecyclerView.layout(
-        /* left   = */daysRecyclerView.left,
-        /* top    = */daysRecyclerView.top,
-        /* right  = */daysRecyclerView.right,
-        /* bottom = */daysRecyclerView.bottom
-    )
   }
 
   fun setAdapters(
     monthItemAdapter: MonthItemAdapter,
-    yearAdapter: YearAdapter,
-    monthAdapter: MonthAdapter
+    yearAdapter: YearAdapter
   ) {
     daysRecyclerView.adapter = monthItemAdapter
     yearsRecyclerView.adapter = yearAdapter
-    monthRecyclerView.adapter = monthAdapter
   }
 
   fun showOrHideGoPrevious(show: Boolean) = goPreviousMonthView.showOrConceal(show)
@@ -318,8 +303,6 @@ internal class DatePickerLayoutRunner(
 
   fun scrollToYearPosition(pos: Int) = yearsRecyclerView.scrollToPosition(pos - 2)
 
-  fun scrollToMonthPosition(pos: Int) = monthRecyclerView.scrollToPosition(pos - 2)
-
   fun onNavigate(
     onGoToPrevious: () -> Unit,
     onGoToNext: () -> Unit
@@ -332,7 +315,6 @@ internal class DatePickerLayoutRunner(
     pickerTitleView.apply {
       background = ColorDrawable(headerBackgroundColor)
       typeface = normalFont
-      onClickDebounced { setMode(YEAR_LIST) }
       text = pickerTitle
     }
     selectedDateView.apply {
@@ -344,12 +326,13 @@ internal class DatePickerLayoutRunner(
   }
 
   private fun setupNavigationViews() {
-    goPreviousMonthView.background = createCircularSelector(context, selectionColor, inset = true)
+    goPreviousMonthView.background = createCircularSelector(context, selectionColor)
     visibleMonthView.apply {
       typeface = mediumFont
-      onClickDebounced { setMode(MONTH_LIST) }
+      onClickDebounced { toggleMode() }
     }
-    goNextMonthView.background = createCircularSelector(context, selectionColor, inset = true)
+    invalidateCurrentMonthChevron()
+    goNextMonthView.background = createCircularSelector(context, selectionColor)
   }
 
   private fun setupListViews() {
@@ -362,13 +345,7 @@ internal class DatePickerLayoutRunner(
       )
     }
     yearsRecyclerView.apply {
-      layoutManager = LinearLayoutManager(context)
-      addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-      attachTopDivider(listsDividerView)
-    }
-    monthRecyclerView.apply {
-      layoutManager = LinearLayoutManager(context)
-      addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+      layoutManager = GridLayoutManager(context, resources.getInteger(R.integer.year_grid_span))
       attachTopDivider(listsDividerView)
     }
   }
@@ -376,28 +353,37 @@ internal class DatePickerLayoutRunner(
   fun setMode(mode: Mode) {
     daysRecyclerView.showOrConceal(mode == CALENDAR)
     yearsRecyclerView.showOrConceal(mode == YEAR_LIST)
-    monthRecyclerView.showOrConceal(mode == MONTH_LIST)
+    invalidateCurrentMonthChevron()
 
     when (mode) {
       CALENDAR -> daysRecyclerView.invalidateTopDividerNow(listsDividerView)
-      MONTH_LIST -> monthRecyclerView.invalidateTopDividerNow(listsDividerView)
       YEAR_LIST -> yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
     }
 
-    pickerTitleView.apply {
-      isSelected = mode == YEAR_LIST
-      typeface = if (mode == YEAR_LIST) mediumFont else normalFont
-    }
-    selectedDateView.apply {
-      isSelected = mode == CALENDAR
-      typeface = if (mode == CALENDAR) mediumFont else normalFont
-    }
+    pickerTitleView.isSelected = mode == YEAR_LIST
+    selectedDateView.isSelected = mode == CALENDAR
     vibrator.vibrateForSelection()
+  }
+
+  private fun toggleMode() {
+    if (daysRecyclerView.isVisible()) {
+      setMode(YEAR_LIST)
+    } else {
+      setMode(CALENDAR)
+    }
+  }
+
+  private fun invalidateCurrentMonthChevron() {
+    val expanded = yearsRecyclerView.isVisible()
+    val currentMonthChevronDrawable = context.drawable(
+        if (expanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down,
+        context.resolveColor(android.R.attr.textColorSecondary)
+    )
+    visibleMonthView.setCompoundDrawablesCompat(end = currentMonthChevronDrawable)
   }
 
   enum class Mode {
     CALENDAR,
-    MONTH_LIST,
     YEAR_LIST
   }
 

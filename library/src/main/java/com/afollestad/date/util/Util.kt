@@ -22,6 +22,7 @@ import android.graphics.PorterDuff.Mode.SRC_IN
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.GradientDrawable.OVAL
+import android.graphics.drawable.GradientDrawable.RECTANGLE
 import android.graphics.drawable.InsetDrawable
 import android.graphics.drawable.RippleDrawable
 import android.graphics.drawable.StateListDrawable
@@ -64,8 +65,7 @@ internal object Util {
   @CheckResult fun createCircularSelector(
     context: Context,
     @ColorInt selectedColor: Int,
-    @ColorInt todayStrokeColor: Int? = null,
-    inset: Boolean = false
+    @ColorInt todayStrokeColor: Int? = null
   ): Drawable {
     val selected: Drawable = circleShape(context, selectedColor)
     val activated: Drawable? = todayStrokeColor?.let {
@@ -77,19 +77,17 @@ internal object Util {
     }
 
     if (Build.VERSION.SDK_INT >= 21) {
-      return context.maybeInset(
-          RippleDrawable(
-              ColorStateList.valueOf(selectedColor),
-              StateListDrawable().apply {
-                addState(intArrayOf(android.R.attr.state_selected), selected)
-                activated?.let { addState(intArrayOf(android.R.attr.state_activated), it) }
-              },
-              selected
-          ), inset
+      return RippleDrawable(
+          ColorStateList.valueOf(selectedColor),
+          StateListDrawable().apply {
+            addState(intArrayOf(android.R.attr.state_selected), selected)
+            activated?.let { addState(intArrayOf(android.R.attr.state_activated), it) }
+          },
+          activated ?: selected
       )
     }
 
-    val result = StateListDrawable().apply {
+    return StateListDrawable().apply {
       addState(
           intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed),
           selected.mutate().apply {
@@ -98,17 +96,33 @@ internal object Util {
       addState(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected), selected)
       activated?.let { addState(intArrayOf(android.R.attr.state_activated), it) }
     }
-
-    return context.maybeInset(result, inset)
   }
 
-  private fun Context.maybeInset(
-    drawable: Drawable,
-    inset: Boolean
+  /** @author Aidan Follestad (@afollestad) */
+  @CheckResult fun createRoundedRectangleSelector(
+    context: Context,
+    @ColorInt selectedColor: Int
   ): Drawable {
-    if (!inset) return drawable
-    return dimenPx(R.dimen.day_of_month_circle_inset)
-        .let { InsetDrawable(drawable, it, it, it, it) }
+    val selected: Drawable = roundedRectangleShape(context, selectedColor)
+
+    if (Build.VERSION.SDK_INT >= 21) {
+      return RippleDrawable(
+          ColorStateList.valueOf(selectedColor),
+          StateListDrawable().apply {
+            addState(intArrayOf(android.R.attr.state_selected), selected)
+          },
+          selected
+      )
+    }
+
+    return StateListDrawable().apply {
+      addState(
+          intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed),
+          selected.mutate().apply {
+            alpha = (255 * 0.3).toInt()
+          })
+      addState(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected), selected)
+    }
   }
 
   /** @author Aidan Follestad (@afollestad) */
@@ -129,12 +143,29 @@ internal object Util {
     @ColorInt color: Int,
     outlineOnly: Boolean = false
   ): Drawable {
-    return GradientDrawable().apply {
+    val result = GradientDrawable().apply {
       shape = OVAL
       setStroke(context.dimenPx(R.dimen.day_of_month_today_border_width), color)
       if (!outlineOnly) {
         colors = intArrayOf(color, color)
       }
+    }
+    return if (outlineOnly) {
+      val inset = (context.dimenPx(R.dimen.day_of_month_circle_inset) * 0.25f).toInt()
+      InsetDrawable(result, inset, inset, inset, inset)
+    } else {
+      result
+    }
+  }
+
+  private fun roundedRectangleShape(
+    context: Context,
+    @ColorInt color: Int
+  ): Drawable {
+    return GradientDrawable().apply {
+      shape = RECTANGLE
+      colors = intArrayOf(color, color)
+      cornerRadius = context.resources.getDimension(R.dimen.rounded_rectangle_radius)
     }
   }
 }

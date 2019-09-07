@@ -26,6 +26,7 @@
   <TextView
       android:id="@+id/current_month"
       style="@style/DatePicker.CurrentMonth"
+      tools:drawableEnd="@drawable/ic_chevron_down"
       tools:text="July 2019"
       />
   <androidx.appcompat.widget.AppCompatImageView
@@ -50,11 +51,7 @@
       />
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/year_list"
-      style="@style/YearOrMonthList"
-      />
-  <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/month_list"
-      style="@style/YearOrMonthList"
+      style="@style/YearList"
       />
 
 </merge>

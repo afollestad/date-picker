@@ -61,6 +61,7 @@ internal class MonthItemRenderer(
   private val todayStrokeColor: Int =
     typedArray.color(R.styleable.DatePicker_date_picker_calendar_today_stroke_color) {
       context.resolveColor(android.R.attr.textColorPrimary)
+          .withAlpha(DEFAULT_TODAY_STROKE_OPACITY)
     }
   private val calendar = Calendar.getInstance()
 
@@ -155,5 +156,6 @@ internal class MonthItemRenderer(
 
   private companion object {
     const val DEFAULT_DISABLED_BACKGROUND_OPACITY: Float = 0.3f
+    const val DEFAULT_TODAY_STROKE_OPACITY: Float = 0.6f
   }
 }

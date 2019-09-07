@@ -15,18 +15,18 @@
   <dimen name="week_day_row_height">32dp</dimen>
   <dimen name="week_day_row_column_text_size">12sp</dimen>
 
-  <dimen name="year_list_row_height">52dp</dimen>
-  <dimen name="year_list_row_padding">12dp</dimen>
-
-  <dimen name="year_month_list_text_size">18sp</dimen>
-  <dimen name="year_month_list_text_size_selected">22sp</dimen>
+  <dimen name="year_list_top_padding">12dp</dimen>
+  <dimen name="year_list_text_padding_horizontal">24dp</dimen>
+  <dimen name="year_list_text_padding_vertical">10dp</dimen>
+  <dimen name="year_list_text_size">18sp</dimen>
 
   <dimen name="divider_height">1dp</dimen>
   <dimen name="chevrons_top_margin">1dp</dimen>
+  <dimen name="rounded_rectangle_radius">24dp</dimen>
 
   <dimen name="day_of_month_today_border_width">2dp</dimen>
-  <dimen name="day_of_month_circle_inset">6dp</dimen>
+  <dimen name="day_of_month_circle_inset">4dp</dimen>
 
-  <item name="day_of_month_height_ratio" format="float" type="dimen">0.9</item>
+  <item name="day_of_month_height_ratio" format="float" type="dimen">1.0</item>
   <item name="month_sidebar_width_percent" format="float" type="dimen">1.0</item>
 </resources>

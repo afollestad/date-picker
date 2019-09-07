@@ -16,15 +16,13 @@
 package com.afollestad.date.adapters
 
 import android.graphics.Typeface
-import android.util.TypedValue.COMPLEX_UNIT_PX
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.afollestad.date.R
-import com.afollestad.date.util.Util.createTextSelector
+import com.afollestad.date.util.Util.createRoundedRectangleSelector
 import com.afollestad.date.util.inflate
 import com.afollestad.date.util.onClickDebounced
 import com.afollestad.date.year
@@ -32,10 +30,10 @@ import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */
 internal class YearViewHolder(
-  itemView: View,
+  itemView: ViewGroup,
   private val adapter: YearAdapter
 ) : ViewHolder(itemView) {
-  val textView = itemView as TextView
+  val textView = itemView.getChildAt(0) as TextView
 
   init {
     itemView.onClickDebounced {
@@ -47,10 +45,10 @@ internal class YearViewHolder(
 /** @author Aidan Follestad (@afollestad) */
 internal class YearAdapter(
   private val normalFont: Typeface,
-  private val mediumFont: Typeface,
   @ColorInt private val selectionColor: Int,
   private val onSelection: (year: Int) -> Unit
 ) : RecyclerView.Adapter<YearViewHolder>() {
+
   var selectedYear: Int? = null
     set(value) {
       val lastSelectedYear = field
@@ -77,13 +75,9 @@ internal class YearAdapter(
     viewType: Int
   ): YearViewHolder {
     val context = parent.context
-    val view = parent.inflate(R.layout.year_list_row)
+    val view = parent.inflate<ViewGroup>(R.layout.year_list_row)
     return YearViewHolder(view, this)
-        .apply {
-          textView.setTextColor(
-              createTextSelector(context, selectionColor, overColoredBackground = false)
-          )
-        }
+        .apply { textView.background = createRoundedRectangleSelector(context, selectionColor) }
   }
 
   override fun getItemCount(): Int = yearRange.second - yearRange.first
@@ -94,25 +88,10 @@ internal class YearAdapter(
   ) {
     val currentYear = position.asYear()
     val isSelected = currentYear == selectedYear
-    val res = holder.itemView.context.resources
 
+    holder.itemView.isSelected = isSelected
     holder.textView.text = currentYear.toString()
-    holder.textView.isSelected = isSelected
-    holder.textView.setTextSize(
-        COMPLEX_UNIT_PX,
-        res.getDimension(
-            if (isSelected) {
-              R.dimen.year_month_list_text_size_selected
-            } else {
-              R.dimen.year_month_list_text_size
-            }
-        )
-    )
-    holder.textView.typeface = if (isSelected) {
-      mediumFont
-    } else {
-      normalFont
-    }
+    holder.textView.typeface = normalFont
   }
 
   fun getSelectedPosition(): Int? = selectedYear?.asPosition()

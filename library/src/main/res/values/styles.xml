@@ -41,7 +41,7 @@
     <item name="android:paddingLeft">@dimen/header_main_padding_horizontal</item>
     <item name="android:paddingRight">@dimen/header_main_padding_horizontal</item>
     <item name="android:textSize">@dimen/header_main_text_size_title</item>
-    <item name="android:textColor">@color/headers_text_color</item>
+    <item name="android:textColor">?android:textColorPrimaryInverse</item>
     <item name="android:maxLines">1</item>
     <item name="android:textAllCaps">true</item>
   </style>
@@ -52,7 +52,7 @@
     <item name="android:paddingLeft">@dimen/header_main_padding_horizontal</item>
     <item name="android:paddingRight">@dimen/header_main_padding_horizontal</item>
     <item name="android:textSize">@dimen/header_main_text_size_date</item>
-    <item name="android:textColor">@color/headers_text_color</item>
+    <item name="android:textColor">?android:textColorPrimaryInverse</item>
     <item name="android:maxLines">2</item>
   </style>
 
@@ -72,22 +72,35 @@
     <item name="android:textSize">@dimen/week_day_row_column_text_size</item>
   </style>
 
-  <style name="YearOrMonthList">
+  <style name="YearList">
     <item name="android:scrollbars">vertical</item>
     <item name="android:layout_width">0dp</item>
     <item name="android:layout_height">0dp</item>
     <item name="android:visibility">invisible</item>
+    <item name="android:clipToPadding">false</item>
+    <item name="android:paddingTop">@dimen/year_list_top_padding</item>
   </style>
 
-  <style name="YearOrMonthList.Row">
+  <style name="YearList.Row">
+    <item name="android:scrollbars">none</item>
     <item name="android:layout_width">match_parent</item>
-    <item name="android:layout_height">@dimen/year_list_row_height</item>
-    <item name="android:gravity">center</item>
-    <item name="android:background">?selectableItemBackground</item>
-    <item name="android:textSize">@dimen/year_month_list_text_size</item>
-    <item name="android:padding">@dimen/year_list_row_padding</item>
+    <item name="android:layout_height">wrap_content</item>
     <item name="android:visibility">visible</item>
-    <item name="android:clipToPadding">false</item>
+  </style>
+
+  <style name="YearList.RowText">
+    <item name="android:scrollbars">none</item>
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">match_parent</item>
+    <item name="android:gravity">center</item>
+    <item name="android:layout_gravity">center</item>
+    <item name="android:textSize">@dimen/year_list_text_size</item>
+    <item name="android:textColor">@color/year_list_row_text_color</item>
+    <item name="android:paddingLeft">@dimen/year_list_text_padding_horizontal</item>
+    <item name="android:paddingRight">@dimen/year_list_text_padding_horizontal</item>
+    <item name="android:paddingTop">@dimen/year_list_text_padding_vertical</item>
+    <item name="android:paddingBottom">@dimen/year_list_text_padding_vertical</item>
+    <item name="android:visibility">visible</item>
   </style>
 
 </resources>

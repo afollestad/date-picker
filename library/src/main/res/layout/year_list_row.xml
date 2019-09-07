@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.AppCompatTextView style="@style/YearOrMonthList.Row"/>
+<FrameLayout style="@style/YearList.Row">
+  <androidx.appcompat.widget.AppCompatTextView style="@style/YearList.RowText" />
+</FrameLayout>

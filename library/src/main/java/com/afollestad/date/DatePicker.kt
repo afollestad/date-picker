@@ -25,7 +25,6 @@ import android.view.ViewGroup
 import androidx.annotation.CheckResult
 import androidx.annotation.IntRange
 import androidx.annotation.StringRes
-import com.afollestad.date.adapters.MonthAdapter
 import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.controllers.DatePickerController
@@ -57,14 +56,12 @@ class DatePicker(
 
   private val monthItemAdapter: MonthItemAdapter
   private val yearAdapter: YearAdapter
-  private val monthAdapter: MonthAdapter
   private val monthItemRenderer: MonthItemRenderer
   private val dateFormatter: DateFormatter
 
   init {
     val ta = context.obtainStyledAttributes(attrs, R.styleable.DatePicker)
     val normalFont: Typeface
-    val mediumFont: Typeface
 
     try {
       dateFormatter = DateFormatter()
@@ -79,9 +76,6 @@ class DatePicker(
           switchToDaysOfMonthMode = { layoutRunner.setMode(CALENDAR) }
       )
 
-      mediumFont = ta.font(context, R.styleable.DatePicker_date_picker_medium_font) {
-        TypefaceHelper.create("sans-serif-medium")
-      }
       normalFont = ta.font(context, R.styleable.DatePicker_date_picker_normal_font) {
         TypefaceHelper.create("sans-serif")
       }
@@ -101,17 +95,10 @@ class DatePicker(
     ) { controller.setDayOfMonth(it.date) }
     yearAdapter = YearAdapter(
         normalFont = normalFont,
-        mediumFont = mediumFont,
         selectionColor = layoutRunner.selectionColor
     ) { controller.setYear(it) }
-    monthAdapter = MonthAdapter(
-        normalFont = normalFont,
-        mediumFont = mediumFont,
-        selectionColor = layoutRunner.selectionColor,
-        dateFormatter = DateFormatter()
-    ) { controller.setMonth(it) }
 
-    layoutRunner.setAdapters(monthItemAdapter, yearAdapter, monthAdapter)
+    layoutRunner.setAdapters(monthItemAdapter, yearAdapter)
   }
 
   /** Sets the date displayed in the view, along with the selected date. */
@@ -232,7 +219,7 @@ class DatePicker(
     right: Int,
     bottom: Int
   ) {
-    layoutRunner.onLayout(left = left, top = top, right = right)
+    layoutRunner.onLayout(left = left, top = top)
   }
 
   private fun renderMonthItems(days: List<MonthItem>) {
@@ -242,11 +229,6 @@ class DatePicker(
         .year
     yearAdapter.getSelectedPosition()
         ?.let(layoutRunner::scrollToYearPosition)
-    monthAdapter.selectedMonth = firstDayOfMonth
-        .month
-        .month
-    monthAdapter.selectedMonth
-        ?.let(layoutRunner::scrollToMonthPosition)
     monthItemAdapter.items = days
   }
 
