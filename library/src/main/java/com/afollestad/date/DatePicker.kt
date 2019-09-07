@@ -24,7 +24,6 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 import androidx.annotation.CheckResult
 import androidx.annotation.IntRange
-import androidx.annotation.StringRes
 import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.controllers.DatePickerController
@@ -170,14 +169,6 @@ class DatePicker(
 
   /** Clears all listeners added via [addOnDateChanged]. */
   fun clearOnDateChanged() = controller.clearDateChangedListeners()
-
-  /** Sets the title displayed at the very top of the picker. */
-  fun setTitle(title: CharSequence?) = layoutRunner.setTitle(title)
-
-  /** Sets the title displayed at the very top of the picker. */
-  fun setTitle(@StringRes title: Int) {
-    layoutRunner.setTitle(context.resources.getString(title))
-  }
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()

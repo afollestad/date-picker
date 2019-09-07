@@ -125,10 +125,6 @@ internal class DatePickerLayoutRunner(
     setupListViews()
   }
 
-  fun setTitle(title: CharSequence?) {
-    pickerTitleView.text = title
-  }
-
   @CheckResult fun onMeasure(
     widthMeasureSpec: Int,
     heightMeasureSpec: Int
