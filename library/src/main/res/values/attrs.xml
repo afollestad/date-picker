@@ -10,5 +10,11 @@
     <attr name="date_picker_calendar_horizontal_padding" format="dimension" />
     <attr name="date_picker_calendar_today_stroke_color" format="color" />
     <attr name="date_picker_title" format="string" />
+    <attr name="date_picker_manual_input_label" format="string" />
+    <attr name="date_picker_default_mode" format="enum">
+      <enum name="calendar" value="1" />
+      <enum name="year_list" value="2" />
+      <enum name="input_edit" value="3" />
+    </attr>
   </declare-styleable>
 </resources>

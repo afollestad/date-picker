@@ -69,8 +69,7 @@ class DatePicker(
           typedArray = ta,
           container = this,
           dateFormatter = dateFormatter,
-          onDateInput = ::maybeSetDateFromInput,
-          triggerRender = ::triggerRender
+          onDateInput = ::maybeSetDateFromInput
       )
       controller = DatePickerController(
           vibrator = VibratorController(context, ta),
@@ -231,10 +230,6 @@ class DatePicker(
 
   private fun maybeSetDateFromInput(input: CharSequence) {
     controller.maybeSetDateFromInput(input)
-  }
-
-  private fun triggerRender(fromUserEditInput: Boolean) {
-    controller.render(fromUserEditInput)
   }
 
   private companion object {

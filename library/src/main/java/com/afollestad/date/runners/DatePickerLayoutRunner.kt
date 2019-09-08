@@ -73,8 +73,7 @@ internal class DatePickerLayoutRunner(
   root: ViewGroup,
   private val vibrator: VibratorController,
   private val dateFormatter: DateFormatter,
-  private val onDateInput: (CharSequence) -> Unit,
-  private val triggerRender: (fromUserEditInput: Boolean) -> Unit
+  private val onDateInput: (CharSequence) -> Unit
 ) {
   val selectionColor: Int =
     typedArray.color(R.styleable.DatePicker_date_picker_selection_color) {
@@ -99,6 +98,10 @@ internal class DatePickerLayoutRunner(
   private val pickerTitle: String =
     typedArray.string(context, R.styleable.DatePicker_date_picker_title) {
       context.getString(R.string.select_date)
+    }
+  private val manualInputLabel: String =
+    typedArray.string(context, R.styleable.DatePicker_date_picker_manual_input_label) {
+      context.getString(R.string.enter_date)
     }
 
   private val pickerTitleView: TextView = root.findViewById(R.id.picker_title)
@@ -133,6 +136,9 @@ internal class DatePickerLayoutRunner(
     setupHeaderViews()
     setupNavigationViews()
     setupListViews()
+    typedArray.getInt(R.styleable.DatePicker_date_picker_default_mode, CALENDAR.rawValue)
+        .let { Mode.fromRawValue(it) }
+        .let { if (it != CALENDAR) setMode(it) }
   }
 
   @CheckResult fun onMeasure(
@@ -377,8 +383,11 @@ internal class DatePickerLayoutRunner(
       )
       onClickDebounced { toggleMode(INPUT_EDIT) }
     }
-    editModeInput.editText?.hint = dateFormatter.dateInputFormatter.toLocalizedPattern()
-    editModeInput.editText?.onTextChanged { onDateInput(it) }
+    editModeInput.hint = manualInputLabel
+    editModeInput.editText?.apply {
+      hint = dateFormatter.dateInputFormatter.toLocalizedPattern()
+      onTextChanged { onDateInput(it) }
+    }
   }
 
   private fun setupNavigationViews() {
@@ -407,9 +416,6 @@ internal class DatePickerLayoutRunner(
   }
 
   fun setMode(mode: Mode) {
-    if (INPUT_EDIT == lastMode && mode != INPUT_EDIT) {
-      triggerRender(false)
-    }
     invalidateCurrentMonthChevron()
 
     when (mode) {
@@ -474,10 +480,16 @@ internal class DatePickerLayoutRunner(
     visibleMonthView.setCompoundDrawablesCompat(end = currentMonthChevronDrawable)
   }
 
-  enum class Mode {
-    CALENDAR,
-    YEAR_LIST,
-    INPUT_EDIT
+  enum class Mode(val rawValue: Int) {
+    CALENDAR(1),
+    YEAR_LIST(2),
+    INPUT_EDIT(3);
+
+    companion object {
+      fun fromRawValue(value: Int): Mode {
+        return values().single { it.rawValue == value }
+      }
+    }
   }
 
   enum class Orientation {
@@ -506,13 +518,12 @@ internal class DatePickerLayoutRunner(
       typedArray: TypedArray,
       container: ViewGroup,
       dateFormatter: DateFormatter,
-      onDateInput: (CharSequence) -> Unit,
-      triggerRender: (fromUserEditInput: Boolean) -> Unit
+      onDateInput: (CharSequence) -> Unit
     ): DatePickerLayoutRunner {
       View.inflate(context, R.layout.date_picker, container)
       val vibrator = VibratorController(context, typedArray)
       return DatePickerLayoutRunner(
-          context, typedArray, container, vibrator, dateFormatter, onDateInput, triggerRender
+          context, typedArray, container, vibrator, dateFormatter, onDateInput
       )
     }
 
