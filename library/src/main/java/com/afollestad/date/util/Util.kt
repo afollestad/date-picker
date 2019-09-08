@@ -18,7 +18,6 @@ package com.afollestad.date.util
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.PorterDuff.Mode.SRC_IN
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.GradientDrawable.OVAL
@@ -29,8 +28,6 @@ import android.graphics.drawable.StateListDrawable
 import android.os.Build
 import androidx.annotation.CheckResult
 import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
 import com.afollestad.date.R
 
 /** @author Aidan Follestad (@afollestad) */
@@ -122,19 +119,6 @@ internal object Util {
             alpha = (255 * 0.3).toInt()
           })
       addState(intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected), selected)
-    }
-  }
-
-  /** @author Aidan Follestad (@afollestad) */
-  @CheckResult fun coloredDrawable(
-    context: Context,
-    @DrawableRes shapeRes: Int,
-    @ColorInt color: Int
-  ): Drawable {
-    return ContextCompat.getDrawable(context, shapeRes)!!.apply {
-      @Suppress("DEPRECATION")
-      setColorFilter(color, SRC_IN)
-      alpha = Color.alpha(color)
     }
   }
 

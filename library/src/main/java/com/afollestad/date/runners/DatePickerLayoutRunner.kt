@@ -65,7 +65,6 @@ import com.afollestad.date.util.string
 import com.afollestad.date.util.updatePadding
 import com.google.android.material.textfield.TextInputLayout
 
-// TODO write unit tests
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerLayoutRunner(
   private val context: Context,
@@ -326,16 +325,6 @@ internal class DatePickerLayoutRunner(
   ) {
     daysRecyclerView.adapter = monthItemAdapter
     yearsRecyclerView.adapter = yearAdapter
-  }
-
-  fun showOrHideGoPrevious(show: Boolean) {
-    if (INPUT_EDIT == lastMode) return
-    goPreviousMonthView.showOrConceal(show)
-  }
-
-  fun showOrHideGoNext(show: Boolean) {
-    if (INPUT_EDIT == lastMode) return
-    goNextMonthView.showOrConceal(show)
   }
 
   fun setHeadersContent(

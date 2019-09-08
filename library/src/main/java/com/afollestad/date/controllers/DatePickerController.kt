@@ -39,11 +39,8 @@ import java.util.Calendar
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerController(
   private val vibrator: VibratorController,
-  private val minMaxController: MinMaxController,
   private val renderHeaders: (MonthSnapshot, DateSnapshot, Boolean) -> Unit,
   private val renderMonthItems: (List<MonthItem>) -> Unit,
-  private val goBackVisibility: (visible: Boolean) -> Unit,
-  private val goForwardVisibility: (visible: Boolean) -> Unit,
   private val switchToDaysOfMonthMode: () -> Unit,
   private val getNow: () -> Calendar = { Calendar.getInstance() },
   private val dateFormatter: DateFormatter
@@ -62,14 +59,7 @@ internal class DatePickerController(
 
   fun maybeInit() {
     if (!didInit) {
-      var now = getNow()
-      val nowSnapshot = now.snapshot()
-      if (minMaxController.isOutOfMaxRange(nowSnapshot)) {
-        now = minMaxController.getMaxDate()!!
-      } else if (minMaxController.isOutOfMinRange(nowSnapshot)) {
-        now = minMaxController.getMinDate()!!
-      }
-      setFullDate(now, notifyListeners = false)
+      setFullDate(getNow(), notifyListeners = false)
     }
   }
 
@@ -139,14 +129,7 @@ internal class DatePickerController(
     }
   }
 
-  @CheckResult fun getFullDate(): Calendar? {
-    if (minMaxController.isOutOfMinRange(selectedDate) ||
-        minMaxController.isOutOfMaxRange(selectedDate)
-    ) {
-      return null
-    }
-    return selectedDateCalendar
-  }
+  @CheckResult fun getFullDate(): Calendar? = selectedDateCalendar
 
   fun setDayOfMonth(day: Int) {
     if (!didInit) {
@@ -171,22 +154,14 @@ internal class DatePickerController(
     switchToDaysOfMonthMode()
   }
 
-  fun addDateChangedListener(listener: OnDateChanged) {
-    dateChangedListeners.add(listener)
-  }
+  fun addDateChangedListener(listener: OnDateChanged) = dateChangedListeners.add(listener)
 
-  fun clearDateChangedListeners() {
-    dateChangedListeners.clear()
-  }
+  fun clearDateChangedListeners() = dateChangedListeners.clear()
 
-  internal fun render(fromUserEditInput: Boolean = false) {
+  private fun render(fromUserEditInput: Boolean = false) {
     viewingMonth?.let { renderHeaders(it, selectedDate!!, fromUserEditInput) }
     selectedDate?.let { monthGraph!!.getMonthItems(it) }
         ?.let { renderMonthItems(it) }
-    viewingMonth?.let { minMaxController.canGoBack(it) }
-        ?.let { goBackVisibility(it) }
-    viewingMonth?.let { minMaxController.canGoForward(it) }
-        ?.let { goForwardVisibility(it) }
   }
 
   private fun updateCurrentMonth(calendar: Calendar) {
@@ -198,18 +173,8 @@ internal class DatePickerController(
     old: Calendar,
     block: () -> Calendar
   ) {
-    if (dateChangedListeners.isEmpty()) {
-      return
-    }
-    val arg = block()
-    val argSnapshot = arg.snapshot()
-    if (minMaxController.isOutOfMinRange(argSnapshot) ||
-        minMaxController.isOutOfMaxRange(argSnapshot)
-    ) {
-      // Don't allow out-of-range dates to slip through.
-      return
-    }
-    dateChangedListeners.forEach { it(old, arg) }
+    if (dateChangedListeners.isEmpty()) return
+    dateChangedListeners.forEach { it(old, block()) }
   }
 
   private fun currentSelectedOrNow(): Calendar = selectedDateCalendar ?: getNow()

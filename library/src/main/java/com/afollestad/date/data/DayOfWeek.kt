@@ -42,6 +42,7 @@ internal fun Int.asDayOfWeek(): DayOfWeek {
 }
 
 /** @author Aidan Follestad (@afollestad) */
+@Suppress("RemoveRedundantQualifierName")
 internal fun DayOfWeek.andTheRest(): List<DayOfWeek> {
   return mutableListOf<DayOfWeek>().apply {
     for (value in rawValue..SATURDAY.rawValue) {

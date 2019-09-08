@@ -47,8 +47,6 @@ internal data class DateSnapshot(
     if (year == other.year && month == other.month && day < other.day) return -1
     return 1
   }
-
-  fun addDays(days: Int) = asCalendar().apply { add(Calendar.DAY_OF_MONTH, days) }.snapshot()
 }
 
 /** @author Aidan Follestad (@afollestad) */

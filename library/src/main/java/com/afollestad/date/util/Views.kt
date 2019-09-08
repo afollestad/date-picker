@@ -50,9 +50,6 @@ internal fun View.showOrConceal(show: Boolean) = if (show) show() else conceal()
 internal fun View.isVisible(): Boolean = visibility == VISIBLE
 
 /** @author Aidan Follestad (@afollestad) */
-internal fun View.isGone(): Boolean = visibility == GONE
-
-/** @author Aidan Follestad (@afollestad) */
 internal inline fun <reified T> ViewGroup.inflate(@LayoutRes res: Int): T {
   return LayoutInflater.from(context).inflate(res, this, false) as T
 }

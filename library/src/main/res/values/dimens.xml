@@ -33,5 +33,4 @@
   <dimen name="day_of_month_circle_inset">4dp</dimen>
 
   <item name="day_of_month_height_ratio" format="float" type="dimen">0.95</item>
-  <item name="month_sidebar_width_percent" format="float" type="dimen">1.0</item>
 </resources>

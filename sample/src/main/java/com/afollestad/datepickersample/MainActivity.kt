@@ -18,7 +18,6 @@ package com.afollestad.datepickersample
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.afollestad.date.DatePicker
-import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
   private lateinit var datePicker: DatePicker
@@ -26,13 +25,8 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
+
     datePicker = findViewById(R.id.datePicker)
-
-    datePicker.addOnDateChanged { _, new ->
-      toast("Date changed: ${new.format()}")
-    }
-
-    datePicker.setMinDate(Calendar.getInstance().apply { add(Calendar.MONTH, -1) })
-    datePicker.setMaxDate(Calendar.getInstance().apply { add(Calendar.MONTH, 1) })
+    datePicker.addOnDateChanged { _, new -> toast("Date changed: ${new.format()}") }
   }
 }

@@ -27,7 +27,7 @@ import androidx.annotation.IntRange
 import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.controllers.DatePickerController
-import com.afollestad.date.controllers.MinMaxController
+
 import com.afollestad.date.controllers.VibratorController
 import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.MonthItem
@@ -50,7 +50,6 @@ class DatePicker(
 ) : ViewGroup(context, attrs) {
 
   internal val controller: DatePickerController
-  internal val minMaxController = MinMaxController()
   private val layoutRunner: DatePickerLayoutRunner
 
   private val monthItemAdapter: MonthItemAdapter
@@ -73,11 +72,8 @@ class DatePicker(
       )
       controller = DatePickerController(
           vibrator = VibratorController(context, ta),
-          minMaxController = minMaxController,
           renderHeaders = layoutRunner::setHeadersContent,
           renderMonthItems = ::renderMonthItems,
-          goBackVisibility = layoutRunner::showOrHideGoPrevious,
-          goForwardVisibility = layoutRunner::showOrHideGoNext,
           switchToDaysOfMonthMode = { layoutRunner.setMode(CALENDAR) },
           dateFormatter = dateFormatter
       )
@@ -89,7 +85,6 @@ class DatePicker(
           context = context,
           typedArray = ta,
           normalFont = normalFont,
-          minMaxController = minMaxController,
           dateFormatter = dateFormatter
       )
     } finally {
@@ -125,44 +120,6 @@ class DatePicker(
 
   /** Gets the selected date, if any. */
   @CheckResult fun getDate(): Calendar? = controller.getFullDate()
-
-  /** Gets the min date, if any. */
-  fun getMinDate(): Calendar? = minMaxController.getMinDate()
-
-  /** Sets a min date. Dates before this are not selectable. */
-  fun setMinDate(calendar: Calendar) {
-    minMaxController.setMinDate(calendar)
-    controller.render()
-  }
-
-  /** Sets a min date. Dates before this are not selectable. */
-  fun setMinDate(
-    @IntRange(from = 1, to = MAX_VALUE) year: Int,
-    @IntRange(from = MONTH_MIN, to = MONTH_MAX) month: Int,
-    @IntRange(from = 1, to = 31) dayOfMonth: Int
-  ) {
-    minMaxController.setMinDate(year = year, month = month, dayOfMonth = dayOfMonth)
-    controller.render()
-  }
-
-  /** Gets the max date, if any. */
-  fun getMaxDate(): Calendar? = minMaxController.getMaxDate()
-
-  /** Sets a max date. Dates after this are not selectable. */
-  fun setMaxDate(calendar: Calendar) {
-    minMaxController.setMaxDate(calendar)
-    controller.render()
-  }
-
-  /** Sets a max date. Dates after this are not selectable. */
-  fun setMaxDate(
-    @IntRange(from = 1, to = MAX_VALUE) year: Int,
-    @IntRange(from = MONTH_MIN, to = MONTH_MAX) month: Int,
-    @IntRange(from = 1, to = 31) dayOfMonth: Int
-  ) {
-    minMaxController.setMaxDate(year = year, month = month, dayOfMonth = dayOfMonth)
-    controller.render()
-  }
 
   @Deprecated(
       message = "Use addOnDateChanged instead.",
