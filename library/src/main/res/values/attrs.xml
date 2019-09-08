@@ -4,7 +4,6 @@
     <attr name="date_picker_selection_vibrates" format="boolean" />
     <attr name="date_picker_header_background_color" format="color" />
     <attr name="date_picker_selection_color" format="color" />
-    <attr name="date_picker_disabled_background_color" format="color" />
     <attr name="date_picker_normal_font" format="reference" />
     <attr name="date_picker_medium_font" format="reference" />
     <attr name="date_picker_calendar_horizontal_padding" format="dimension" />
