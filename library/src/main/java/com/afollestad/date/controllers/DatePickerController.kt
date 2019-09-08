@@ -95,9 +95,14 @@ internal class DatePickerController(
     notifyListeners: Boolean = true,
     fromUserEditInput: Boolean = false
   ) {
+    val newSnapshot = calendar.snapshot()
+    if (newSnapshot == selectedDate) {
+      // no change
+      return
+    }
     val oldSelected: Calendar = currentSelectedOrNow()
     this.didInit = true
-    this.selectedDate = calendar.snapshot()
+    this.selectedDate = newSnapshot
     if (notifyListeners) {
       notifyListeners(oldSelected) { calendar.clone() as Calendar }
     }
