@@ -32,8 +32,8 @@ import com.afollestad.date.controllers.VibratorController
 import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.MonthItem
 import com.afollestad.date.data.MonthItem.DayOfMonth
-import com.afollestad.date.managers.DatePickerLayoutRunner
-import com.afollestad.date.managers.DatePickerLayoutRunner.Mode.CALENDAR
+import com.afollestad.date.runners.DatePickerLayoutRunner
+import com.afollestad.date.runners.DatePickerLayoutRunner.Mode.CALENDAR
 import com.afollestad.date.renderers.MonthItemRenderer
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.font
@@ -64,7 +64,14 @@ class DatePicker(
 
     try {
       dateFormatter = DateFormatter()
-      layoutRunner = DatePickerLayoutRunner.inflateInto(context, ta, this, dateFormatter)
+      layoutRunner = DatePickerLayoutRunner.inflateInto(
+          context = context,
+          typedArray = ta,
+          container = this,
+          dateFormatter = dateFormatter,
+          onDateInput = ::maybeSetDateFromInput,
+          triggerRender = ::triggerRender
+      )
       controller = DatePickerController(
           vibrator = VibratorController(context, ta),
           minMaxController = minMaxController,
@@ -72,7 +79,8 @@ class DatePicker(
           renderMonthItems = ::renderMonthItems,
           goBackVisibility = layoutRunner::showOrHideGoPrevious,
           goForwardVisibility = layoutRunner::showOrHideGoNext,
-          switchToDaysOfMonthMode = { layoutRunner.setMode(CALENDAR) }
+          switchToDaysOfMonthMode = { layoutRunner.setMode(CALENDAR) },
+          dateFormatter = dateFormatter
       )
 
       normalFont = ta.font(context, R.styleable.DatePicker_date_picker_normal_font) {
@@ -209,9 +217,7 @@ class DatePicker(
     top: Int,
     right: Int,
     bottom: Int
-  ) {
-    layoutRunner.onLayout(left = left, top = top)
-  }
+  ) = layoutRunner.onLayout(left = left, top = top)
 
   private fun renderMonthItems(days: List<MonthItem>) {
     val firstDayOfMonth = days.first { it is DayOfMonth } as DayOfMonth
@@ -221,6 +227,14 @@ class DatePicker(
     yearAdapter.getSelectedPosition()
         ?.let(layoutRunner::scrollToYearPosition)
     monthItemAdapter.items = days
+  }
+
+  private fun maybeSetDateFromInput(input: CharSequence) {
+    controller.maybeSetDateFromInput(input)
+  }
+
+  private fun triggerRender(fromUserEditInput: Boolean) {
+    controller.render(fromUserEditInput)
   }
 
   private companion object {

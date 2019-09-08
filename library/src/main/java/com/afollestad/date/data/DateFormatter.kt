@@ -22,6 +22,7 @@ import java.util.Locale
 
 /** @author Aidan Follestad (@afollestad) */
 internal class DateFormatter {
+  val dateInputFormatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
   private val monthAndYearFormatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
   private val yearFormatter = SimpleDateFormat("yyyy", Locale.getDefault())
   private val dateFormatter = SimpleDateFormat("EEE, MMM dd", Locale.getDefault())
@@ -39,6 +40,10 @@ internal class DateFormatter {
   /** Fri, Jul 28 */
   @CheckResult fun date(calendar: Calendar): String =
     dateFormatter.format(calendar.time)
+
+  /** 07/28/1995 */
+  @CheckResult fun inputDate(calendar: Calendar): String =
+    dateInputFormatter.format(calendar.time)
 
   /** July */
   @CheckResult fun month(calendar: Calendar): String =

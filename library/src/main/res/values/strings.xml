@@ -3,4 +3,5 @@
   <string name="previous_month">Previous month</string>
   <string name="next_month">Next month</string>
   <string name="select_date">SELECT DATE</string>
+  <string name="enter_date">Enter Date</string>
 </resources>

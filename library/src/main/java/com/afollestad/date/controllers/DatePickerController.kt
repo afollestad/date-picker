@@ -19,6 +19,7 @@ import androidx.annotation.CheckResult
 import androidx.annotation.IntRange
 import androidx.annotation.VisibleForTesting
 import com.afollestad.date.OnDateChanged
+import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.dayOfMonth
 import com.afollestad.date.decrementMonth
 import com.afollestad.date.incrementMonth
@@ -30,19 +31,22 @@ import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
 import com.afollestad.date.data.snapshot.snapshot
 import com.afollestad.date.data.snapshot.snapshotMonth
+import com.afollestad.date.util.toCalendar
 import com.afollestad.date.year
+import java.text.ParseException
 import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerController(
   private val vibrator: VibratorController,
   private val minMaxController: MinMaxController,
-  private val renderHeaders: (MonthSnapshot, Calendar) -> Unit,
+  private val renderHeaders: (MonthSnapshot, DateSnapshot, Boolean) -> Unit,
   private val renderMonthItems: (List<MonthItem>) -> Unit,
   private val goBackVisibility: (visible: Boolean) -> Unit,
   private val goForwardVisibility: (visible: Boolean) -> Unit,
   private val switchToDaysOfMonthMode: () -> Unit,
-  private val getNow: () -> Calendar = { Calendar.getInstance() }
+  private val getNow: () -> Calendar = { Calendar.getInstance() },
+  private val dateFormatter: DateFormatter
 ) {
   @VisibleForTesting var didInit: Boolean = false
   private val dateChangedListeners: MutableList<OnDateChanged> = mutableListOf()
@@ -98,7 +102,8 @@ internal class DatePickerController(
 
   fun setFullDate(
     calendar: Calendar,
-    notifyListeners: Boolean = true
+    notifyListeners: Boolean = true,
+    fromUserEditInput: Boolean = false
   ) {
     val oldSelected: Calendar = currentSelectedOrNow()
     this.didInit = true
@@ -107,7 +112,7 @@ internal class DatePickerController(
       notifyListeners(oldSelected) { calendar.clone() as Calendar }
     }
     updateCurrentMonth(calendar)
-    render()
+    render(fromUserEditInput)
   }
 
   fun setFullDate(
@@ -125,6 +130,15 @@ internal class DatePickerController(
     }
   }, notifyListeners = notifyListeners)
 
+  fun maybeSetDateFromInput(input: CharSequence) {
+    if (input.trim().isEmpty()) return
+    try {
+      dateFormatter.dateInputFormatter.parse(input.toString())
+          ?.let { setFullDate(it.toCalendar(), fromUserEditInput = true) }
+    } catch (_: ParseException) {
+    }
+  }
+
   @CheckResult fun getFullDate(): Calendar? {
     if (minMaxController.isOutOfMinRange(selectedDate) ||
         minMaxController.isOutOfMaxRange(selectedDate)
@@ -136,9 +150,7 @@ internal class DatePickerController(
 
   fun setDayOfMonth(day: Int) {
     if (!didInit) {
-      setFullDate(getNow().apply {
-        dayOfMonth = day
-      })
+      setFullDate(getNow().apply { dayOfMonth = day })
       return
     }
 
@@ -167,8 +179,8 @@ internal class DatePickerController(
     dateChangedListeners.clear()
   }
 
-  internal fun render() {
-    viewingMonth?.let { renderHeaders(it, selectedDateCalendar!!) }
+  internal fun render(fromUserEditInput: Boolean = false) {
+    viewingMonth?.let { renderHeaders(it, selectedDate!!, fromUserEditInput) }
     selectedDate?.let { monthGraph!!.getMonthItems(it) }
         ?.let { renderMonthItems(it) }
     viewingMonth?.let { minMaxController.canGoBack(it) }

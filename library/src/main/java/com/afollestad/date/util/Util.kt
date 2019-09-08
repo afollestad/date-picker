@@ -145,8 +145,9 @@ internal object Util {
   ): Drawable {
     val result = GradientDrawable().apply {
       shape = OVAL
-      setStroke(context.dimenPx(R.dimen.day_of_month_today_border_width), color)
-      if (!outlineOnly) {
+      if (outlineOnly) {
+        setStroke(context.dimenPx(R.dimen.day_of_month_today_border_width), color)
+      } else {
         colors = intArrayOf(color, color)
       }
     }

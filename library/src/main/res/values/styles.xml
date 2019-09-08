@@ -13,10 +13,25 @@
     <item name="android:textColor">?android:textColorSecondary</item>
     <item name="android:gravity">center</item>
     <item name="android:layout_width">wrap_content</item>
-    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_height">@dimen/current_month_header_height</item>
     <item name="android:background">?selectableItemBackground</item>
     <item name="android:paddingLeft">@dimen/current_month_header_padding_sides</item>
     <item name="android:paddingRight">@dimen/current_month_header_padding_sides</item>
+  </style>
+
+  <style name="DatePicker.EditModeToggle">
+    <item name="android:layout_width">@dimen/edit_mode_toggle_size</item>
+    <item name="android:layout_height">@dimen/edit_mode_toggle_size</item>
+    <item name="android:padding">@dimen/edit_mode_toggle_padding</item>
+    <item name="android:scaleType">fitXY</item>
+    <item name="android:src">@drawable/ic_edit</item>
+  </style>
+
+  <style name="DatePicker.EditInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
+    <item name="android:hint">@string/enter_date</item>
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:visibility">gone</item>
   </style>
 
   <style name="DatePicker.Chevron">

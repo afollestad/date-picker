@@ -14,6 +14,7 @@ ext.versions = [
     androidx          : '1.1.0',
     constraintLayout  : '1.1.3',
     recyclerView      : '1.0.0',
+    material          : '1.0.0',
 
     // Unit testing
     junit             : '4.12',

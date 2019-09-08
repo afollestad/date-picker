@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="current_month_header_height">48dp</dimen>
+  <dimen name="current_month_header_height">56dp</dimen>
   <dimen name="current_month_header_padding_sides">24dp</dimen>
   <dimen name="current_month_top_margin">1dp</dimen>
+
+  <dimen name="edit_mode_toggle_size">48dp</dimen>
+  <dimen name="edit_mode_toggle_padding">10dp</dimen>
+  <dimen name="edit_mode_input_margin_sides">16dp</dimen>
+  <dimen name="edit_mode_input_margin_top">16dp</dimen>
 
   <dimen name="header_main_date_margin_bottom">16dp</dimen>
   <dimen name="header_main_title_margin_top">16dp</dimen>
@@ -27,6 +32,6 @@
   <dimen name="day_of_month_today_border_width">2dp</dimen>
   <dimen name="day_of_month_circle_inset">4dp</dimen>
 
-  <item name="day_of_month_height_ratio" format="float" type="dimen">1.0</item>
+  <item name="day_of_month_height_ratio" format="float" type="dimen">0.95</item>
   <item name="month_sidebar_width_percent" format="float" type="dimen">1.0</item>
 </resources>

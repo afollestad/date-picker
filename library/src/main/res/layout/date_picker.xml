@@ -21,6 +21,22 @@
       tools:background="#8E24AA"
       tools:text="Fri, Jul 28"
       />
+  <androidx.appcompat.widget.AppCompatImageView
+      android:id="@+id/edit_mode_toggle"
+      style="@style/DatePicker.EditModeToggle"
+      />
+
+  <!-- Input Mode Field -->
+  <com.google.android.material.textfield.TextInputLayout
+      android:id="@+id/edit_mode_input"
+      style="@style/DatePicker.EditInputLayout"
+      >
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        />
+  </com.google.android.material.textfield.TextInputLayout>
 
   <!-- Current Month Header -->
   <TextView

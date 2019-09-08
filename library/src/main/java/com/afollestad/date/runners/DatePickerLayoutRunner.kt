@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.managers
+package com.afollestad.date.runners
 
 import android.content.Context
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
@@ -37,11 +37,13 @@ import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.controllers.VibratorController
 import com.afollestad.date.data.DateFormatter
+import com.afollestad.date.data.snapshot.DateSnapshot
 import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
-import com.afollestad.date.managers.DatePickerLayoutRunner.Mode.CALENDAR
-import com.afollestad.date.managers.DatePickerLayoutRunner.Mode.YEAR_LIST
-import com.afollestad.date.managers.DatePickerLayoutRunner.Orientation.PORTRAIT
+import com.afollestad.date.runners.DatePickerLayoutRunner.Mode.CALENDAR
+import com.afollestad.date.runners.DatePickerLayoutRunner.Mode.INPUT_EDIT
+import com.afollestad.date.runners.DatePickerLayoutRunner.Mode.YEAR_LIST
+import com.afollestad.date.runners.DatePickerLayoutRunner.Orientation.PORTRAIT
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.attachTopDivider
@@ -49,16 +51,19 @@ import com.afollestad.date.util.color
 import com.afollestad.date.util.dimenPx
 import com.afollestad.date.util.drawable
 import com.afollestad.date.util.font
+import com.afollestad.date.util.hideKeyboard
 import com.afollestad.date.util.invalidateTopDividerNow
-import com.afollestad.date.util.isVisible
 import com.afollestad.date.util.onClickDebounced
+import com.afollestad.date.util.onTextChanged
 import com.afollestad.date.util.placeAt
 import com.afollestad.date.util.resolveColor
 import com.afollestad.date.util.setCompoundDrawablesCompat
+import com.afollestad.date.util.showKeyboard
 import com.afollestad.date.util.showOrConceal
+import com.afollestad.date.util.showOrHide
 import com.afollestad.date.util.string
 import com.afollestad.date.util.updatePadding
-import java.util.Calendar
+import com.google.android.material.textfield.TextInputLayout
 
 // TODO write unit tests
 /** @author Aidan Follestad (@afollestad) */
@@ -67,7 +72,9 @@ internal class DatePickerLayoutRunner(
   typedArray: TypedArray,
   root: ViewGroup,
   private val vibrator: VibratorController,
-  private val dateFormatter: DateFormatter
+  private val dateFormatter: DateFormatter,
+  private val onDateInput: (CharSequence) -> Unit,
+  private val triggerRender: (fromUserEditInput: Boolean) -> Unit
 ) {
   val selectionColor: Int =
     typedArray.color(R.styleable.DatePicker_date_picker_selection_color) {
@@ -96,6 +103,8 @@ internal class DatePickerLayoutRunner(
 
   private val pickerTitleView: TextView = root.findViewById(R.id.picker_title)
   private val selectedDateView: TextView = root.findViewById(R.id.current_date)
+  private val editModeToggleView: ImageView = root.findViewById(R.id.edit_mode_toggle)
+  private val editModeInput: TextInputLayout = root.findViewById(R.id.edit_mode_input)
 
   private val goPreviousMonthView: ImageView = root.findViewById(R.id.left_chevron)
   private val visibleMonthView: TextView = root.findViewById(R.id.current_month)
@@ -118,6 +127,7 @@ internal class DatePickerLayoutRunner(
 
   private val size = Size(0, 0)
   private val orientation = Orientation.get(context)
+  private var lastMode: Mode? = null
 
   init {
     setupHeaderViews()
@@ -148,6 +158,20 @@ internal class DatePickerLayoutRunner(
           makeMeasureSpec(parentHeight - pickerTitleView.measuredHeight, EXACTLY)
         }
     )
+    context.dimenPx(R.dimen.edit_mode_toggle_size)
+        .let {
+          editModeToggleView.measure(
+              makeMeasureSpec(it, EXACTLY),
+              makeMeasureSpec(it, EXACTLY)
+          )
+        }
+    context.dimenPx(R.dimen.edit_mode_input_margin_sides)
+        .let {
+          editModeInput.measure(
+              makeMeasureSpec(headersWidth - (it * 2), EXACTLY),
+              makeMeasureSpec(0, UNSPECIFIED)
+          )
+        }
 
     // And the current month
     val nonHeadersWidth: Int = if (orientation == PORTRAIT) {
@@ -225,21 +249,15 @@ internal class DatePickerLayoutRunner(
     } else {
       selectedDateView.placeAt(top = top)
     }
-
-    val nonHeaderLeft = if (orientation == PORTRAIT) {
-      left
-    } else {
-      selectedDateView.right
-    }
+    val nonHeaderLeft = (if (orientation == PORTRAIT) left else selectedDateView.right)
 
     // And the current month
-    visibleMonthView.placeAt(
-        top = if (orientation == PORTRAIT) {
-          selectedDateView.bottom + currentMonthTopMargin
-        } else {
-          currentMonthTopMargin
-        }
-    )
+    val visibleMonthViewTop = if (orientation == PORTRAIT) {
+      selectedDateView.bottom + currentMonthTopMargin
+    } else {
+      currentMonthTopMargin
+    }
+    visibleMonthView.placeAt(top = visibleMonthViewTop)
 
     // Then the divider
     listsDividerView.placeAt(
@@ -248,8 +266,9 @@ internal class DatePickerLayoutRunner(
     )
 
     // Then the calendar recycler view
+    val daysRecyclerViewLeft = (nonHeaderLeft + calendarHorizontalPadding)
     daysRecyclerView.placeAt(
-        left = (nonHeaderLeft + calendarHorizontalPadding),
+        left = daysRecyclerViewLeft,
         top = listsDividerView.bottom
     )
 
@@ -257,15 +276,33 @@ internal class DatePickerLayoutRunner(
     val chevronsMiddleY = (visibleMonthView.bottom - (visibleMonthView.measuredHeight / 2))
     val chevronsTop =
       ((chevronsMiddleY - (goPreviousMonthView.measuredHeight / 2)) + chevronsTopMargin)
+    val nextChevronLeft = (daysRecyclerView.right -
+        goNextMonthView.measuredWidth -
+        calendarHorizontalPadding)
+
     goNextMonthView.placeAt(
-        left = (daysRecyclerView.right -
-            goNextMonthView.measuredWidth -
-            calendarHorizontalPadding),
+        left = nextChevronLeft,
         top = chevronsTop
     )
     goPreviousMonthView.placeAt(
-        left = (goNextMonthView.left - goNextMonthView.measuredWidth),
+        left = (nextChevronLeft - goNextMonthView.measuredWidth),
         top = chevronsTop
+    )
+
+    // This goes way down here cause we want to layout the chevrons first
+    val editToggleLeft = nextChevronLeft +
+        ((goPreviousMonthView.measuredWidth - editModeToggleView.measuredWidth) / 2)
+    editModeToggleView.placeAt(
+        top = selectedDateView.top + (editModeToggleView.measuredHeight / 2),
+        left = editToggleLeft
+    )
+
+    // Then the edit mode input field
+    val inputMarginTop = context.dimenPx(R.dimen.edit_mode_input_margin_top)
+    val inputMarginSides = context.dimenPx(R.dimen.edit_mode_input_margin_sides)
+    editModeInput.placeAt(
+        top = selectedDateView.bottom + inputMarginTop,
+        left = inputMarginSides
     )
 
     // Then the year and month recycler views
@@ -285,16 +322,31 @@ internal class DatePickerLayoutRunner(
     yearsRecyclerView.adapter = yearAdapter
   }
 
-  fun showOrHideGoPrevious(show: Boolean) = goPreviousMonthView.showOrConceal(show)
+  fun showOrHideGoPrevious(show: Boolean) {
+    if (INPUT_EDIT == lastMode) return
+    goPreviousMonthView.showOrConceal(show)
+  }
 
-  fun showOrHideGoNext(show: Boolean) = goNextMonthView.showOrConceal(show)
+  fun showOrHideGoNext(show: Boolean) {
+    if (INPUT_EDIT == lastMode) return
+    goNextMonthView.showOrConceal(show)
+  }
 
   fun setHeadersContent(
     currentMonth: MonthSnapshot,
-    selectedDate: Calendar
+    selectedDate: DateSnapshot,
+    fromUserEditInput: Boolean
   ) {
     visibleMonthView.text = dateFormatter.monthAndYear(currentMonth.asCalendar(1))
-    selectedDateView.text = dateFormatter.date(selectedDate)
+    selectedDate.asCalendar()
+        .let {
+          selectedDateView.text = dateFormatter.date(it)
+          val inputDateString = dateFormatter.inputDate(it)
+          if (!fromUserEditInput) {
+            editModeInput.editText?.setText(inputDateString)
+            editModeInput.editText?.setSelection(inputDateString.length)
+          }
+        }
   }
 
   fun scrollToYearPosition(pos: Int) = yearsRecyclerView.scrollToPosition(pos - 2)
@@ -319,6 +371,14 @@ internal class DatePickerLayoutRunner(
       typeface = normalFont
       onClickDebounced { setMode(CALENDAR) }
     }
+    editModeToggleView.apply {
+      background = createCircularSelector(
+          context, context.resolveColor(android.R.attr.textColorPrimaryInverse)
+      )
+      onClickDebounced { toggleMode(INPUT_EDIT) }
+    }
+    editModeInput.editText?.hint = dateFormatter.dateInputFormatter.toLocalizedPattern()
+    editModeInput.editText?.onTextChanged { onDateInput(it) }
   }
 
   private fun setupNavigationViews() {
@@ -347,30 +407,66 @@ internal class DatePickerLayoutRunner(
   }
 
   fun setMode(mode: Mode) {
-    daysRecyclerView.showOrConceal(mode == CALENDAR)
-    yearsRecyclerView.showOrConceal(mode == YEAR_LIST)
+    if (INPUT_EDIT == lastMode && mode != INPUT_EDIT) {
+      triggerRender(false)
+    }
     invalidateCurrentMonthChevron()
 
     when (mode) {
-      CALENDAR -> daysRecyclerView.invalidateTopDividerNow(listsDividerView)
-      YEAR_LIST -> yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
+      CALENDAR -> {
+        daysRecyclerView.invalidateTopDividerNow(listsDividerView)
+        daysRecyclerView.showOrConceal(true)
+        yearsRecyclerView.showOrConceal(false)
+        editModeInput.showOrHide(false)
+        visibleMonthView.showOrHide(true)
+        goPreviousMonthView.showOrHide(true)
+        goNextMonthView.showOrHide(true)
+        editModeInput.editText?.hideKeyboard()
+      }
+      YEAR_LIST -> {
+        yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
+        daysRecyclerView.showOrConceal(false)
+        yearsRecyclerView.showOrConceal(true)
+        editModeInput.showOrHide(false)
+        visibleMonthView.showOrHide(true)
+        goPreviousMonthView.showOrHide(true)
+        goNextMonthView.showOrHide(true)
+        editModeInput.editText?.hideKeyboard()
+      }
+      INPUT_EDIT -> {
+        daysRecyclerView.showOrHide(false)
+        yearsRecyclerView.showOrHide(false)
+        editModeInput.showOrHide(true)
+        visibleMonthView.showOrHide(false)
+        goPreviousMonthView.showOrHide(false)
+        goNextMonthView.showOrHide(false)
+        editModeInput.editText?.showKeyboard()
+      }
     }
 
     pickerTitleView.isSelected = mode == YEAR_LIST
     selectedDateView.isSelected = mode == CALENDAR
+    editModeToggleView.setImageResource(
+        if (mode == CALENDAR) {
+          R.drawable.ic_edit
+        } else {
+          R.drawable.ic_calendar
+        }
+    )
     vibrator.vibrateForSelection()
+    lastMode = mode
   }
 
-  private fun toggleMode() {
-    if (daysRecyclerView.isVisible()) {
-      setMode(YEAR_LIST)
-    } else {
-      setMode(CALENDAR)
+  private fun toggleMode(wantedMode: Mode = YEAR_LIST) {
+    when (lastMode) {
+      null, CALENDAR -> setMode(wantedMode)
+      INPUT_EDIT -> setMode(CALENDAR)
+      else -> setMode(CALENDAR)
     }
   }
 
   private fun invalidateCurrentMonthChevron() {
-    val expanded = yearsRecyclerView.isVisible()
+    val expanded = lastMode == YEAR_LIST
     val currentMonthChevronDrawable = context.drawable(
         if (expanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down,
         context.resolveColor(android.R.attr.textColorSecondary)
@@ -380,7 +476,8 @@ internal class DatePickerLayoutRunner(
 
   enum class Mode {
     CALENDAR,
-    YEAR_LIST
+    YEAR_LIST,
+    INPUT_EDIT
   }
 
   enum class Orientation {
@@ -408,11 +505,15 @@ internal class DatePickerLayoutRunner(
       context: Context,
       typedArray: TypedArray,
       container: ViewGroup,
-      dateFormatter: DateFormatter
+      dateFormatter: DateFormatter,
+      onDateInput: (CharSequence) -> Unit,
+      triggerRender: (fromUserEditInput: Boolean) -> Unit
     ): DatePickerLayoutRunner {
       View.inflate(context, R.layout.date_picker, container)
       val vibrator = VibratorController(context, typedArray)
-      return DatePickerLayoutRunner(context, typedArray, container, vibrator, dateFormatter)
+      return DatePickerLayoutRunner(
+          context, typedArray, container, vibrator, dateFormatter, onDateInput, triggerRender
+      )
     }
 
     private const val DAYS_IN_WEEK = 7

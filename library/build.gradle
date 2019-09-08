@@ -40,6 +40,7 @@ dependencies {
   api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:' + versions.kotlin
 
   implementation 'androidx.recyclerview:recyclerview:' + versions.recyclerView
+  api 'com.google.android.material:material:' + versions.material
 
   testImplementation 'junit:junit:' + versions.junit
   testImplementation 'org.mockito:mockito-core:' + versions.mockito
