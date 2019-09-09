@@ -17,6 +17,7 @@
 
 package com.afollestad.date
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Parcelable
@@ -33,10 +34,12 @@ import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.MonthItem
 import com.afollestad.date.data.MonthItem.DayOfMonth
 import com.afollestad.date.runners.DatePickerLayoutRunner
-import com.afollestad.date.runners.DatePickerLayoutRunner.Mode.CALENDAR
 import com.afollestad.date.renderers.MonthItemRenderer
+import com.afollestad.date.runners.Mode.CALENDAR
 import com.afollestad.date.util.TypefaceHelper
+import com.afollestad.date.util.color
 import com.afollestad.date.util.font
+import com.afollestad.date.util.resolveColor
 import com.afollestad.date.view.DatePickerSavedState
 import java.lang.Long.MAX_VALUE
 import java.util.Calendar
@@ -60,6 +63,7 @@ class DatePicker(
   init {
     val ta = context.obtainStyledAttributes(attrs, R.styleable.DatePicker)
     val normalFont: Typeface
+    val selectionColor: Int
 
     try {
       dateFormatter = DateFormatter()
@@ -81,6 +85,9 @@ class DatePicker(
       normalFont = ta.font(context, R.styleable.DatePicker_date_picker_normal_font) {
         TypefaceHelper.create("sans-serif")
       }
+      selectionColor = ta.color(R.styleable.DatePicker_date_picker_selection_color) {
+        context.resolveColor(R.attr.colorAccent)
+      }
       monthItemRenderer = MonthItemRenderer(
           context = context,
           typedArray = ta,
@@ -96,7 +103,7 @@ class DatePicker(
     ) { controller.setDayOfMonth(it.date) }
     yearAdapter = YearAdapter(
         normalFont = normalFont,
-        selectionColor = layoutRunner.selectionColor
+        selectionColor = selectionColor
     ) { controller.setYear(it) }
 
     layoutRunner.setAdapters(monthItemAdapter, yearAdapter)
@@ -163,17 +170,25 @@ class DatePicker(
     widthMeasureSpec: Int,
     heightMeasureSpec: Int
   ) {
-    layoutRunner.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    layoutRunner.measure(widthMeasureSpec, heightMeasureSpec, 0)
         .let { (width, height) -> setMeasuredDimension(width, height) }
   }
 
+  @SuppressLint("CheckResult")
   override fun onLayout(
     changed: Boolean,
     left: Int,
     top: Int,
     right: Int,
     bottom: Int
-  ) = layoutRunner.onLayout(left = left, top = top)
+  ) {
+    layoutRunner.layout(
+        top = top,
+        left = left,
+        right = right,
+        parentWidth = measuredWidth
+    )
+  }
 
   private fun renderMonthItems(days: List<MonthItem>) {
     val firstDayOfMonth = days.first { it is DayOfMonth } as DayOfMonth

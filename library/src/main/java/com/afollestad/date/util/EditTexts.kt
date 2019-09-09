@@ -42,9 +42,14 @@ internal fun EditText.hideKeyboard() {
 /** @author Aidan Follestad (@afollestad) */
 internal fun EditText.onTextChanged(
   debounceMs: Long = 150,
+  requiredLength: Int? = null,
   block: (input: CharSequence) -> Unit
 ) {
-  val textWatcher = DebouncedTextWatcher(debounceMs, block)
+  val textWatcher = DebouncedTextWatcher(
+      debounceMs = debounceMs,
+      requiredLength = requiredLength,
+      block = block
+  )
   addTextChangedListener(textWatcher)
   addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
     override fun onViewDetachedFromWindow(view: View) {
@@ -59,6 +64,7 @@ internal fun EditText.onTextChanged(
 /** @author Aidan Follestad (@afollestad) */
 private class DebouncedTextWatcher(
   private val debounceMs: Long = 0,
+  private val requiredLength: Int? = null,
   private val block: (input: CharSequence) -> Unit
 ) : TextWatcher {
   private val handler = Handler()
@@ -79,6 +85,7 @@ private class DebouncedTextWatcher(
     before: Int,
     count: Int
   ) {
+    if (requiredLength != null && text.length < requiredLength) return
     scheduledEvent = Runnable { block(text) }
     handler.postDelayed(scheduledEvent!!, debounceMs)
   }

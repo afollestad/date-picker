@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="current_month_header_height">56dp</dimen>
+  <dimen name="current_month_header_height">52dp</dimen>
   <dimen name="current_month_header_padding_sides">24dp</dimen>
   <dimen name="current_month_top_margin">1dp</dimen>
 
@@ -26,7 +26,6 @@
   <dimen name="year_list_text_size">18sp</dimen>
 
   <dimen name="divider_height">1dp</dimen>
-  <dimen name="chevrons_top_margin">1dp</dimen>
   <dimen name="rounded_rectangle_radius">24dp</dimen>
 
   <dimen name="day_of_month_today_border_width">2dp</dimen>
