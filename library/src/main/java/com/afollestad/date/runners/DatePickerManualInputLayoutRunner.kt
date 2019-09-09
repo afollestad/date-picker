@@ -17,6 +17,7 @@ package com.afollestad.date.runners
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.text.InputFilter.LengthFilter
 import android.view.View.MeasureSpec.EXACTLY
 import android.view.View.MeasureSpec.UNSPECIFIED
 import android.view.View.MeasureSpec.getSize
@@ -76,6 +77,7 @@ internal class DatePickerManualInputLayoutRunner(
     editModeInput.editText?.apply {
       val pattern = dateFormatter.dateInputFormatter.toLocalizedPattern()
       hint = pattern
+      filters += LengthFilter(pattern.length)
       onTextChanged(requiredLength = pattern.length) { onDateInput(it) }
     }
   }
@@ -86,10 +88,9 @@ internal class DatePickerManualInputLayoutRunner(
     totalHeightSoFar: Int
   ): Size {
     val parentWidth: Int = getSize(widthMeasureSpec)
-    val nonHeadersWidth = getNonHeadersWidth(parentWidth)
     val totalMargin = (inputMarginSides * 2)
+    val inputWidth = (getNonHeadersWidth(parentWidth) - totalMargin)
 
-    val inputWidth = (nonHeadersWidth - totalMargin)
     editModeInput.measure(
         makeMeasureSpec(inputWidth, EXACTLY),
         makeMeasureSpec(0, UNSPECIFIED)
@@ -109,7 +110,7 @@ internal class DatePickerManualInputLayoutRunner(
   ): Bounds {
     editModeInput.placeAt(
         top = top + inputMarginTop,
-        left = inputMarginSides
+        left = left + inputMarginSides
     )
 
     return bounds.apply {

@@ -85,6 +85,7 @@ internal class DatePickerLayoutRunner(
 
   fun scrollToYearPosition(pos: Int) = yearsLayoutRunner.scrollToPosition(pos)
 
+  @SuppressLint("CheckResult")
   override fun measure(
     widthMeasureSpec: Int,
     heightMeasureSpec: Int,
@@ -92,22 +93,30 @@ internal class DatePickerLayoutRunner(
   ): Size {
     val parentWidth: Int = getSize(widthMeasureSpec)
     var heightSoFar: Int = totalHeightSoFar
-    heightSoFar += headerLayoutRunner
-        .measure(widthMeasureSpec, heightMeasureSpec, heightSoFar)
-        .height
+
+    heightSoFar += nonZeroIf(
+        headerLayoutRunner.measure(widthMeasureSpec, heightMeasureSpec, heightSoFar).height,
+        orientation == PORTRAIT
+    )
     heightSoFar += navigationLayoutRunner
         .measure(widthMeasureSpec, heightMeasureSpec, heightSoFar)
         .height
     heightSoFar += calendarLayoutRunner
         .measure(widthMeasureSpec, heightMeasureSpec, heightSoFar)
         .height
-    heightSoFar += yearsLayoutRunner
-        .measure(widthMeasureSpec, heightMeasureSpec, heightSoFar)
-        .height
-    heightSoFar += manualInputLayoutRunner
-        .measure(widthMeasureSpec, heightMeasureSpec, heightSoFar)
-        .height
+
+    // These last two don't get put into the overall height because they overlay over the above.
+    yearsLayoutRunner.measure(widthMeasureSpec, heightMeasureSpec, heightSoFar)
+    manualInputLayoutRunner.measure(widthMeasureSpec, heightMeasureSpec, heightSoFar)
+
     return Size(width = parentWidth, height = heightSoFar)
+  }
+
+  private fun nonZeroIf(
+    value: Int,
+    condition: Boolean
+  ): Int {
+    return if (condition) value else 0
   }
 
   @SuppressLint("CheckResult")
