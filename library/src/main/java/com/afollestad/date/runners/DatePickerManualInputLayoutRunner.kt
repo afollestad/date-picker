@@ -96,10 +96,10 @@ internal class DatePickerManualInputLayoutRunner(
         makeMeasureSpec(0, UNSPECIFIED)
     )
 
-    return Size(
-        width = inputWidth,
-        height = (inputMarginTop + editModeInput.measuredHeight)
-    )
+    return size.apply {
+      width = inputWidth
+      height = (inputMarginTop + editModeInput.measuredHeight)
+    }
   }
 
   override fun layout(

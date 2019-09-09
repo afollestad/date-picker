@@ -18,7 +18,6 @@ package com.afollestad.date.runners.base
 import android.content.Context
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.content.res.TypedArray
-import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.CheckResult
 import com.afollestad.date.R
@@ -99,11 +98,6 @@ internal data class Size(
   var width: Int = -1,
   var height: Int = -1
 )
-
-/** @author Aidan Follestad (@afollestad) */
-internal fun View.measuredSize(): Size {
-  return Size(width = measuredWidth, height = measuredHeight)
-}
 
 /** @author Aidan Follestad (@afollestad) */
 internal data class Bounds(

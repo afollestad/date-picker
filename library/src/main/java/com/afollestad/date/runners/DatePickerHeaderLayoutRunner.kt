@@ -138,11 +138,11 @@ internal class DatePickerHeaderLayoutRunner(
         makeMeasureSpec(editModeToggleSize, EXACTLY)
     )
 
-    return Size(
-        width = headersWidth,
-        height = (pickerTitleView.measuredHeight +
-            selectedDateView.measuredHeight)
-    )
+    return size.apply {
+      width = headersWidth
+      height = (pickerTitleView.measuredHeight +
+          selectedDateView.measuredHeight)
+    }
   }
 
   override fun layout(

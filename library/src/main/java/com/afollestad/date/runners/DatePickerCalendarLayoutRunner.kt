@@ -92,10 +92,10 @@ internal class DatePickerCalendarLayoutRunner(
         }
     )
 
-    return Size(
-        width = calendarRecyclerView.measuredWidth,
-        height = calendarRecyclerView.measuredHeight
-    )
+    return size.apply {
+      width = calendarRecyclerView.measuredWidth
+      height = calendarRecyclerView.measuredHeight
+    }
   }
 
   override fun layout(

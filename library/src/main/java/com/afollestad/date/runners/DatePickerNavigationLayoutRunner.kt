@@ -155,7 +155,10 @@ internal class DatePickerNavigationLayoutRunner(
     val totalHeight = max(visibleMonthView.measuredHeight, chevronWidthAndHeight) +
         listsDividerView.measuredHeight +
         currentMonthTopMargin
-    return Size(width = parentWidth, height = totalHeight)
+    return size.apply {
+      width = parentWidth
+      height = totalHeight
+    }
   }
 
   override fun layout(

@@ -109,7 +109,10 @@ internal class DatePickerLayoutRunner(
     yearsLayoutRunner.measure(widthMeasureSpec, heightMeasureSpec, heightSoFar)
     manualInputLayoutRunner.measure(widthMeasureSpec, heightMeasureSpec, heightSoFar)
 
-    return Size(width = parentWidth, height = heightSoFar)
+    return size.apply {
+      width = parentWidth
+      height = heightSoFar
+    }
   }
 
   private fun nonZeroIf(

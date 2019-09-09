@@ -32,7 +32,6 @@ import com.afollestad.date.runners.Mode.YEAR_LIST
 import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Size
-import com.afollestad.date.runners.base.measuredSize
 import com.afollestad.date.util.attachTopDivider
 import com.afollestad.date.util.invalidateTopDividerNow
 import com.afollestad.date.util.showOrConceal
@@ -77,7 +76,10 @@ internal class DatePickerYearsLayoutRunner(
         makeMeasureSpec(calendarRecyclerView.measuredWidth, EXACTLY),
         makeMeasureSpec(calendarRecyclerView.measuredHeight, EXACTLY)
     )
-    return yearsRecyclerView.measuredSize()
+    return size.apply {
+      width = calendarRecyclerView.measuredWidth
+      height = calendarRecyclerView.measuredHeight
+    }
   }
 
   override fun layout(
