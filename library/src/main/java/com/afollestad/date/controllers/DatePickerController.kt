@@ -104,9 +104,9 @@ internal class DatePickerController(
     this.didInit = true
     this.selectedDate = newSnapshot
     if (notifyListeners) {
-      notifyListeners(oldSelected) { calendar }
+      notifyListeners(oldSelected) { calendar.clone() as Calendar }
     }
-    updateCurrentMonth(calendar)
+    updateCurrentMonth(calendar.clone() as Calendar)
     render(fromUserEditInput)
   }
 
