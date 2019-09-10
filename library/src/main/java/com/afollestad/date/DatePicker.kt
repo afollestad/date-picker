@@ -113,7 +113,7 @@ class DatePicker(
   fun setDate(
     calendar: Calendar,
     notifyListeners: Boolean = true
-  ) = controller.setFullDate(calendar, notifyListeners)
+  ) = controller.setFullDate(calendar.clone() as Calendar, notifyListeners)
 
   /** Sets the date and year displayed in the view, along with the selected date (optionally). */
   fun setDate(
