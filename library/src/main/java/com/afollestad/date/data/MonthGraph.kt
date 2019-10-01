@@ -28,7 +28,6 @@ import com.afollestad.date.data.snapshot.snapshotMonth
 import com.afollestad.date.totalDaysInMonth
 import com.afollestad.date.year
 import java.util.Calendar
-import kotlin.properties.Delegates
 
 /** @author Aidan Follestad (@afollestad) */
 internal class MonthGraph(
