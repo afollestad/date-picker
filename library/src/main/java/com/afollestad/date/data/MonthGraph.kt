@@ -32,22 +32,16 @@ import kotlin.properties.Delegates
 
 /** @author Aidan Follestad (@afollestad) */
 internal class MonthGraph(
-  @VisibleForTesting val calendar: Calendar,
+  initialCalendar: Calendar,
   @VisibleForTesting today: Calendar = Calendar.getInstance()
 ) {
   private val today: DateSnapshot = today.snapshot()
-  @VisibleForTesting var daysInMonth: Int by Delegates.notNull()
-  @VisibleForTesting var firstWeekDayInMonth: DayOfWeek
-  var orderedWeekDays: List<DayOfWeek>
-
-  init {
-    calendar.dayOfMonth = 1
-    daysInMonth = calendar.totalDaysInMonth
-    firstWeekDayInMonth = calendar.dayOfWeek
-    orderedWeekDays = calendar.firstDayOfWeek
-        .asDayOfWeek()
-        .andTheRest()
-  }
+  @VisibleForTesting val calendar = (initialCalendar.clone() as Calendar).apply { dayOfMonth = 1 }
+  @VisibleForTesting var daysInMonth: Int = calendar.totalDaysInMonth
+  @VisibleForTesting var firstWeekDayInMonth: DayOfWeek = calendar.dayOfWeek
+  var orderedWeekDays: List<DayOfWeek> = calendar.firstDayOfWeek
+      .asDayOfWeek()
+      .andTheRest()
 
   @CheckResult fun getMonthItems(selectedDate: DateSnapshot): List<MonthItem> {
     val daysOfMonth = mutableListOf<MonthItem>()

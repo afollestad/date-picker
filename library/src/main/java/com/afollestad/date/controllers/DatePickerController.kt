@@ -103,10 +103,13 @@ internal class DatePickerController(
     val oldSelected: Calendar = currentSelectedOrNow()
     this.didInit = true
     this.selectedDate = newSnapshot
+
+    val newCalendar = calendar.clone() as Calendar
     if (notifyListeners) {
-      notifyListeners(oldSelected) { calendar.clone() as Calendar }
+      notifyListeners(oldSelected) { newCalendar }
     }
-    updateCurrentMonth(calendar)
+    updateCurrentMonth(newCalendar)
+
     render(fromUserEditInput)
   }
 
