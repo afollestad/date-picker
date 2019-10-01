@@ -6,7 +6,7 @@ ext.versions = [
     publishVersionCode: 17,
 
     gradlePlugin      : '3.5.0',
-    spotlessPlugin    : '3.24.2',
+    spotlessPlugin    : '3.24.3',
     versionsPlugin    : '0.25.0',
     bintrayRelease    : '0.9.1',
 
@@ -18,7 +18,7 @@ ext.versions = [
 
     // Unit testing
     junit             : '4.12',
-    mockito           : '3.0.0',
+    mockito           : '3.1.0',
     mockitoKotlin     : '2.1.0',
     truth             : '1.0'
 ]
