@@ -183,9 +183,9 @@ class DatePicker(
     bottom: Int
   ) {
     layoutRunner.layout(
-        top = top,
-        left = left,
-        right = right,
+        top = 0,
+        left = 0,
+        right = measuredWidth,
         parentWidth = measuredWidth
     )
   }
