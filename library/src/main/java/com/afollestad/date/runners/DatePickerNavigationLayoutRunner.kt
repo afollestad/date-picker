@@ -60,7 +60,7 @@ internal class DatePickerNavigationLayoutRunner(
   private val goPreviousMonthView: ImageView = root.findViewById(R.id.left_chevron)
   private val visibleMonthView: TextView = root.findViewById(R.id.current_month)
   private val goNextMonthView: ImageView = root.findViewById(R.id.right_chevron)
-  private val listsDividerView: View = root.findViewById(R.id.year_month_list_divider)
+  private val listsDividerView: View = root.findViewById(R.id.year_grid_divider)
 
   private val currentMonthHeight: Int =
     context.dimenPx(R.dimen.current_month_header_height)

@@ -60,13 +60,13 @@
       style="@style/DayOfMonthList"
       />
 
-  <!-- Months and years lists -->
+  <!-- Years grid -->
   <View
-      android:id="@+id/year_month_list_divider"
+      android:id="@+id/year_grid_divider"
       style="@style/Divider"
       />
   <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/year_list"
+      android:id="@+id/year_grid"
       style="@style/YearList"
       />
 

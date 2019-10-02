@@ -50,7 +50,7 @@ internal class DatePickerCalendarLayoutRunner(
   typedArray: TypedArray
 ) : LayoutRunner(context, typedArray) {
   private val calendarRecyclerView: RecyclerView = root.findViewById(R.id.day_list)
-  private val listsDividerView: View = root.findViewById(R.id.year_month_list_divider)
+  private val listsDividerView: View = root.findViewById(R.id.year_grid_divider)
 
   private val gridSpan: Int =
     context.resources.getInteger(R.integer.day_grid_span)

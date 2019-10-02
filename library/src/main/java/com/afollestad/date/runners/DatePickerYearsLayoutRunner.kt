@@ -44,8 +44,8 @@ internal class DatePickerYearsLayoutRunner(
   typedArray: TypedArray
 ) : LayoutRunner(context, typedArray) {
   private val calendarRecyclerView: RecyclerView = root.findViewById(R.id.day_list)
-  private val yearsRecyclerView: RecyclerView = root.findViewById(R.id.year_list)
-  private val listsDividerView: View = root.findViewById(R.id.year_month_list_divider)
+  private val yearsRecyclerView: RecyclerView = root.findViewById(R.id.year_grid)
+  private val listsDividerView: View = root.findViewById(R.id.year_grid_divider)
 
   private val gridSpan: Int =
     context.resources.getInteger(integer.year_grid_span)
