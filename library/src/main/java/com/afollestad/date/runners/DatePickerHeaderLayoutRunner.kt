@@ -37,6 +37,7 @@ import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Orientation.PORTRAIT
 import com.afollestad.date.runners.base.Size
+import com.afollestad.date.runners.calendar.DAYS_IN_WEEK
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.color

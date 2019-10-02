@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.runners
+package com.afollestad.date.runners.years
 
 import android.content.Context
 import android.content.res.TypedArray
 import android.view.View
-import android.view.View.MeasureSpec.AT_MOST
 import android.view.View.MeasureSpec.EXACTLY
-import android.view.View.MeasureSpec.UNSPECIFIED
-import android.view.View.MeasureSpec.getSize
 import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.date.R
-import com.afollestad.date.adapters.MonthItemAdapter
+import com.afollestad.date.R.integer
+import com.afollestad.date.adapters.YearAdapter
+import com.afollestad.date.runners.Mode
 import com.afollestad.date.runners.Mode.CALENDAR
 import com.afollestad.date.runners.Mode.INPUT_EDIT
 import com.afollestad.date.runners.Mode.YEAR_LIST
@@ -36,41 +35,36 @@ import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Size
 import com.afollestad.date.util.attachTopDivider
 import com.afollestad.date.util.invalidateTopDividerNow
-import com.afollestad.date.util.placeAt
 import com.afollestad.date.util.showOrConceal
 import com.afollestad.date.util.showOrHide
-import com.afollestad.date.util.updatePadding
-
-internal const val DAYS_IN_WEEK = 7
 
 /** @author Aidan Follestad (@afollestad) */
-internal class DatePickerCalendarLayoutRunner(
+internal class YearsLayoutRunner(
   context: Context,
   root: ViewGroup,
   typedArray: TypedArray
 ) : LayoutRunner(context, typedArray) {
   private val calendarRecyclerView: RecyclerView = root.findViewById(R.id.day_list)
+  private val yearsRecyclerView: RecyclerView = root.findViewById(R.id.year_grid)
   private val listsDividerView: View = root.findViewById(R.id.year_grid_divider)
 
   private val gridSpan: Int =
-    context.resources.getInteger(R.integer.day_grid_span)
+    context.resources.getInteger(integer.year_grid_span)
 
   init {
-    setupCalendar()
+    setupListViews()
   }
 
-  fun setAdapter(monthItemAdapter: MonthItemAdapter) {
-    calendarRecyclerView.adapter = monthItemAdapter
+  fun setAdapter(yearAdapter: YearAdapter) {
+    yearsRecyclerView.adapter = yearAdapter
   }
 
-  private fun setupCalendar() {
-    calendarRecyclerView.apply {
+  fun scrollToPosition(pos: Int) = yearsRecyclerView.scrollToPosition(pos - 2)
+
+  private fun setupListViews() {
+    yearsRecyclerView.apply {
       layoutManager = GridLayoutManager(context, gridSpan)
       attachTopDivider(listsDividerView)
-      updatePadding(
-          left = calendarHorizontalPadding,
-          right = calendarHorizontalPadding
-      )
     }
   }
 
@@ -79,19 +73,10 @@ internal class DatePickerCalendarLayoutRunner(
     heightMeasureSpec: Int,
     totalHeightSoFar: Int
   ): Size {
-    val parentWidth: Int = getSize(widthMeasureSpec)
-    val parentHeight: Int = getSize(heightMeasureSpec)
-    val recyclerViewsWidth: Int = getRecyclerViewWidth(parentWidth)
-
-    calendarRecyclerView.measure(
-        makeMeasureSpec(recyclerViewsWidth, EXACTLY),
-        if (parentHeight > 0) {
-          makeMeasureSpec(parentHeight - totalHeightSoFar, AT_MOST)
-        } else {
-          makeMeasureSpec(0, UNSPECIFIED)
-        }
+    yearsRecyclerView.measure(
+        makeMeasureSpec(calendarRecyclerView.measuredWidth, EXACTLY),
+        makeMeasureSpec(calendarRecyclerView.measuredHeight, EXACTLY)
     )
-
     return size.apply {
       width = calendarRecyclerView.measuredWidth
       height = calendarRecyclerView.measuredHeight
@@ -104,31 +89,32 @@ internal class DatePickerCalendarLayoutRunner(
     right: Int,
     parentWidth: Int
   ): Bounds {
-    val daysRecyclerViewLeft = (left + calendarHorizontalPadding)
-    calendarRecyclerView.placeAt(
-        left = daysRecyclerViewLeft,
-        top = listsDividerView.bottom
+    yearsRecyclerView.layout(
+        calendarRecyclerView.left,
+        calendarRecyclerView.top,
+        calendarRecyclerView.right,
+        calendarRecyclerView.bottom
     )
 
     return bounds.apply {
       this.top = top
       this.left = left
       this.right = right
-      this.bottom = top + calendarRecyclerView.bottom
+      this.bottom = top + yearsRecyclerView.bottom
     }
   }
 
   override fun setMode(mode: Mode) {
     when (mode) {
       CALENDAR -> {
-        calendarRecyclerView.invalidateTopDividerNow(listsDividerView)
-        calendarRecyclerView.showOrConceal(true)
+        yearsRecyclerView.showOrConceal(false)
       }
       YEAR_LIST -> {
-        calendarRecyclerView.showOrConceal(false)
+        yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
+        yearsRecyclerView.showOrConceal(true)
       }
       INPUT_EDIT -> {
-        calendarRecyclerView.showOrHide(false)
+        yearsRecyclerView.showOrHide(false)
       }
     }
     super.setMode(mode)

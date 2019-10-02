@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.runners
+package com.afollestad.date.runners.manualinput
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -26,6 +26,7 @@ import android.view.ViewGroup
 import com.afollestad.date.R
 import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.snapshot.DateSnapshot
+import com.afollestad.date.runners.Mode
 import com.afollestad.date.runners.Mode.CALENDAR
 import com.afollestad.date.runners.Mode.INPUT_EDIT
 import com.afollestad.date.runners.Mode.YEAR_LIST
@@ -42,7 +43,7 @@ import com.afollestad.date.util.string
 import com.google.android.material.textfield.TextInputLayout
 
 /** @author Aidan Follestad (@afollestad) */
-internal class DatePickerManualInputLayoutRunner(
+internal class ManualInputLayoutRunner(
   context: Context,
   root: ViewGroup,
   typedArray: TypedArray,

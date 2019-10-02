@@ -36,6 +36,10 @@ import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Orientation.PORTRAIT
 import com.afollestad.date.runners.base.Size
+import com.afollestad.date.runners.calendar.CalendarNavigationLayoutRunner
+import com.afollestad.date.runners.calendar.DatePickerCalendarLayoutRunner
+import com.afollestad.date.runners.manualinput.ManualInputLayoutRunner
+import com.afollestad.date.runners.years.YearsLayoutRunner
 
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerLayoutRunner(
@@ -49,13 +53,17 @@ internal class DatePickerLayoutRunner(
   private val headerLayoutRunner =
     DatePickerHeaderLayoutRunner(context, root, typedArray, dateFormatter, this)
   private val navigationLayoutRunner =
-    DatePickerNavigationLayoutRunner(context, root, typedArray, dateFormatter, this)
+    CalendarNavigationLayoutRunner(
+        context, root, typedArray, dateFormatter, this
+    )
   private val calendarLayoutRunner =
     DatePickerCalendarLayoutRunner(context, root, typedArray)
   private val yearsLayoutRunner =
-    DatePickerYearsLayoutRunner(context, root, typedArray)
+    YearsLayoutRunner(context, root, typedArray)
   private val manualInputLayoutRunner =
-    DatePickerManualInputLayoutRunner(context, root, typedArray, dateFormatter, onDateInput)
+    ManualInputLayoutRunner(
+        context, root, typedArray, dateFormatter, onDateInput
+    )
 
   init {
     typedArray.getInt(R.styleable.DatePicker_date_picker_default_mode, CALENDAR.rawValue)

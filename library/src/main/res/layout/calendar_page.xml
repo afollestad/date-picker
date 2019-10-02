@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+  <!-- Current Month Header -->
+  <TextView
+      android:id="@+id/current_month"
+      style="@style/DatePicker.CurrentMonth"
+      tools:drawableEnd="@drawable/ic_chevron_down"
+      tools:text="July 2019"
+      />
+  <androidx.appcompat.widget.AppCompatImageView
+      android:id="@+id/left_chevron"
+      style="@style/DatePicker.Chevron.Start"
+      />
+  <androidx.appcompat.widget.AppCompatImageView
+      android:id="@+id/right_chevron"
+      style="@style/DatePicker.Chevron.End"
+      />
+
+  <!-- Days of month grid -->
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/day_list"
+      style="@style/DayOfMonthList"
+      />
+
+</merge>

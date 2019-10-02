@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.afollestad.date.runners
+package com.afollestad.date.runners.calendar
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -30,6 +30,8 @@ import com.afollestad.date.R
 import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
+import com.afollestad.date.runners.DatePickerLayoutRunner
+import com.afollestad.date.runners.Mode
 import com.afollestad.date.runners.Mode.CALENDAR
 import com.afollestad.date.runners.Mode.INPUT_EDIT
 import com.afollestad.date.runners.Mode.YEAR_LIST
@@ -50,7 +52,7 @@ import com.afollestad.date.util.showOrHide
 import kotlin.math.max
 
 /** @author Aidan Follestad (@afollestad) */
-internal class DatePickerNavigationLayoutRunner(
+internal class CalendarNavigationLayoutRunner(
   private val context: Context,
   root: ViewGroup,
   typedArray: TypedArray,
