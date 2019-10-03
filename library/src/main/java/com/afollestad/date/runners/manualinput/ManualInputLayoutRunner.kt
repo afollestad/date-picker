@@ -33,6 +33,7 @@ import com.afollestad.date.runners.Mode.YEAR_LIST
 import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Size
+import com.afollestad.date.util.ObservableValue
 import com.afollestad.date.util.dimenPx
 import com.afollestad.date.util.hideKeyboard
 import com.afollestad.date.util.onTextChanged
@@ -48,14 +49,12 @@ internal class ManualInputLayoutRunner(
   root: ViewGroup,
   typedArray: TypedArray,
   private val dateFormatter: DateFormatter,
-  private val onDateInput: (CharSequence) -> Unit
+  private val onDateInput: (CharSequence) -> Unit,
+  currentMode: ObservableValue<Mode>
 ) : LayoutRunner(context, typedArray) {
   private val editModeInput: TextInputLayout = root.findViewById(R.id.edit_mode_input)
-
-  private val inputMarginSides: Int =
-    context.dimenPx(R.dimen.edit_mode_input_margin_sides)
-  private val inputMarginTop: Int =
-    context.dimenPx(R.dimen.edit_mode_input_margin_top)
+  private val inputMarginSides: Int = context.dimenPx(R.dimen.edit_mode_input_margin_sides)
+  private val inputMarginTop: Int = context.dimenPx(R.dimen.edit_mode_input_margin_top)
 
   private val manualInputLabel: String =
     typedArray.string(context, R.styleable.DatePicker_date_picker_manual_input_label) {
@@ -64,6 +63,22 @@ internal class ManualInputLayoutRunner(
 
   init {
     setupInput()
+    currentMode.on { mode ->
+      when (mode) {
+        CALENDAR -> {
+          editModeInput.showOrHide(false)
+          editModeInput.editText?.hideKeyboard()
+        }
+        YEAR_LIST -> {
+          editModeInput.showOrHide(false)
+          editModeInput.editText?.hideKeyboard()
+        }
+        INPUT_EDIT -> {
+          editModeInput.showOrHide(true)
+          editModeInput.editText?.showKeyboard()
+        }
+      }
+    }
   }
 
   fun setCurrentDate(selectedDate: DateSnapshot) {
@@ -120,23 +135,5 @@ internal class ManualInputLayoutRunner(
       this.right = right
       this.bottom = top + editModeInput.bottom
     }
-  }
-
-  override fun setMode(mode: Mode) {
-    when (mode) {
-      CALENDAR -> {
-        editModeInput.showOrHide(false)
-        editModeInput.editText?.hideKeyboard()
-      }
-      YEAR_LIST -> {
-        editModeInput.showOrHide(false)
-        editModeInput.editText?.hideKeyboard()
-      }
-      INPUT_EDIT -> {
-        editModeInput.showOrHide(true)
-        editModeInput.editText?.showKeyboard()
-      }
-    }
-    super.setMode(mode)
   }
 }

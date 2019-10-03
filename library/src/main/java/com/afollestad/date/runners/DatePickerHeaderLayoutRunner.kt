@@ -38,6 +38,7 @@ import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Orientation.PORTRAIT
 import com.afollestad.date.runners.base.Size
 import com.afollestad.date.runners.calendar.DAYS_IN_WEEK
+import com.afollestad.date.util.ObservableValue
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.color
@@ -47,6 +48,7 @@ import com.afollestad.date.util.onClickDebounced
 import com.afollestad.date.util.placeAt
 import com.afollestad.date.util.resolveColor
 import com.afollestad.date.util.string
+import com.afollestad.date.util.toggleMode
 
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerHeaderLayoutRunner(
@@ -54,12 +56,11 @@ internal class DatePickerHeaderLayoutRunner(
   root: ViewGroup,
   typedArray: TypedArray,
   private val dateFormatter: DateFormatter,
-  private val parentRunner: DatePickerLayoutRunner
+  private val currentModeObsValue: ObservableValue<Mode>
 ) : LayoutRunner(context, typedArray) {
   private val pickerTitleView: TextView = root.findViewById(R.id.picker_title)
   private val selectedDateView: TextView = root.findViewById(R.id.current_date)
   private val editModeToggleView: ImageView = root.findViewById(R.id.edit_mode_toggle)
-
   private val editModeToggleSize: Int = context.dimenPx(R.dimen.edit_mode_toggle_size)
 
   private val headerBackgroundColor: Int =
@@ -79,6 +80,14 @@ internal class DatePickerHeaderLayoutRunner(
     setupTitle()
     setupSelectedDate()
     setupEditModeToggle()
+
+    currentModeObsValue.on { mode ->
+      pickerTitleView.isSelected = mode == YEAR_LIST
+      selectedDateView.isSelected = mode == CALENDAR
+      editModeToggleView.setImageResource(
+          if (mode == CALENDAR) R.drawable.ic_edit else R.drawable.ic_calendar
+      )
+    }
   }
 
   fun setCurrentDate(selectedDate: DateSnapshot) {
@@ -107,7 +116,7 @@ internal class DatePickerHeaderLayoutRunner(
       background = createCircularSelector(
           context, context.resolveColor(android.R.attr.textColorPrimaryInverse)
       )
-      onClickDebounced { parentRunner.toggleMode(INPUT_EDIT) }
+      onClickDebounced { currentModeObsValue.toggleMode(INPUT_EDIT) }
     }
   }
 
@@ -187,18 +196,5 @@ internal class DatePickerHeaderLayoutRunner(
       this.right = selectedDateView.right
       this.bottom = top + selectedDateView.bottom
     }
-  }
-
-  override fun setMode(mode: Mode) {
-    pickerTitleView.isSelected = mode == YEAR_LIST
-    selectedDateView.isSelected = mode == CALENDAR
-    editModeToggleView.setImageResource(
-        if (mode == CALENDAR) {
-          R.drawable.ic_edit
-        } else {
-          R.drawable.ic_calendar
-        }
-    )
-    super.setMode(mode)
   }
 }

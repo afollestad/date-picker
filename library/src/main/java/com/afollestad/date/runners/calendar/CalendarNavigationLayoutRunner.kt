@@ -30,7 +30,6 @@ import com.afollestad.date.R
 import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
-import com.afollestad.date.runners.DatePickerLayoutRunner
 import com.afollestad.date.runners.Mode
 import com.afollestad.date.runners.Mode.CALENDAR
 import com.afollestad.date.runners.Mode.INPUT_EDIT
@@ -38,6 +37,7 @@ import com.afollestad.date.runners.Mode.YEAR_LIST
 import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Size
+import com.afollestad.date.util.ObservableValue
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.color
@@ -49,6 +49,7 @@ import com.afollestad.date.util.placeAt
 import com.afollestad.date.util.resolveColor
 import com.afollestad.date.util.setCompoundDrawablesCompat
 import com.afollestad.date.util.showOrHide
+import com.afollestad.date.util.toggleMode
 import kotlin.math.max
 
 /** @author Aidan Follestad (@afollestad) */
@@ -57,8 +58,30 @@ internal class CalendarNavigationLayoutRunner(
   root: ViewGroup,
   typedArray: TypedArray,
   private val dateFormatter: DateFormatter,
-  private val parentRunner: DatePickerLayoutRunner
+  private val currentModeObsValue: ObservableValue<Mode>
 ) : LayoutRunner(context, typedArray) {
+
+  private var currentMode by currentModeObsValue.on { mode ->
+    when (mode) {
+      CALENDAR -> {
+        visibleMonthView.showOrHide(true)
+        goPreviousMonthView.showOrHide(true)
+        goNextMonthView.showOrHide(true)
+      }
+      YEAR_LIST -> {
+        visibleMonthView.showOrHide(true)
+        goPreviousMonthView.showOrHide(true)
+        goNextMonthView.showOrHide(true)
+      }
+      INPUT_EDIT -> {
+        visibleMonthView.showOrHide(false)
+        goPreviousMonthView.showOrHide(false)
+        goNextMonthView.showOrHide(false)
+      }
+    }
+    invalidateCurrentMonthChevron()
+  }
+
   private val goPreviousMonthView: ImageView = root.findViewById(R.id.left_chevron)
   private val visibleMonthView: TextView = root.findViewById(R.id.current_month)
   private val goNextMonthView: ImageView = root.findViewById(R.id.right_chevron)
@@ -98,13 +121,9 @@ internal class CalendarNavigationLayoutRunner(
   }
 
   private fun invalidateCurrentMonthChevron() {
-    val expanded = lastMode == YEAR_LIST
+    val expanded = currentMode == YEAR_LIST
     val currentMonthChevronDrawable = context.drawable(
-        if (expanded) {
-          R.drawable.ic_chevron_up
-        } else {
-          R.drawable.ic_chevron_down
-        },
+        if (expanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down,
         context.resolveColor(android.R.attr.textColorSecondary)
     )
     visibleMonthView.setCompoundDrawablesCompat(end = currentMonthChevronDrawable)
@@ -113,7 +132,7 @@ internal class CalendarNavigationLayoutRunner(
   private fun setupVisibleMonth() {
     visibleMonthView.apply {
       typeface = mediumFont
-      onClickDebounced { parentRunner.toggleMode() }
+      onClickDebounced { currentModeObsValue.toggleMode() }
     }
   }
 
@@ -204,26 +223,5 @@ internal class CalendarNavigationLayoutRunner(
       this.right = right
       this.bottom = top + visibleMonthView.bottom
     }
-  }
-
-  override fun setMode(mode: Mode) {
-    when (mode) {
-      CALENDAR -> {
-        visibleMonthView.showOrHide(true)
-        goPreviousMonthView.showOrHide(true)
-        goNextMonthView.showOrHide(true)
-      }
-      YEAR_LIST -> {
-        visibleMonthView.showOrHide(true)
-        goPreviousMonthView.showOrHide(true)
-        goNextMonthView.showOrHide(true)
-      }
-      INPUT_EDIT -> {
-        visibleMonthView.showOrHide(false)
-        goPreviousMonthView.showOrHide(false)
-        goNextMonthView.showOrHide(false)
-      }
-    }
-    super.setMode(mode)
   }
 }

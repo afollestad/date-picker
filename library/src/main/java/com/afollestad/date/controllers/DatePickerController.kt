@@ -31,6 +31,9 @@ import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
 import com.afollestad.date.data.snapshot.snapshot
 import com.afollestad.date.data.snapshot.snapshotMonth
+import com.afollestad.date.runners.Mode
+import com.afollestad.date.runners.Mode.CALENDAR
+import com.afollestad.date.util.ObservableValue
 import com.afollestad.date.util.toCalendar
 import com.afollestad.date.year
 import java.text.ParseException
@@ -41,12 +44,13 @@ internal class DatePickerController(
   private val vibrator: VibratorController,
   private val renderHeaders: (MonthSnapshot, DateSnapshot, Boolean) -> Unit,
   private val renderMonthItems: (List<MonthItem>) -> Unit,
-  private val switchToDaysOfMonthMode: () -> Unit,
   private val getNow: () -> Calendar = { Calendar.getInstance() },
-  private val dateFormatter: DateFormatter
+  private val dateFormatter: DateFormatter,
+  currentMode: ObservableValue<Mode>
 ) {
   @VisibleForTesting var didInit: Boolean = false
   private val dateChangedListeners: MutableList<OnDateChanged> = mutableListOf()
+  private var currentMode by currentMode
 
   @VisibleForTesting var viewingMonth: MonthSnapshot? = null
   @VisibleForTesting var monthGraph: MonthGraph? = null
@@ -64,7 +68,7 @@ internal class DatePickerController(
   }
 
   fun previousMonth() {
-    switchToDaysOfMonthMode()
+    currentMode = CALENDAR
     val calendar = viewingMonth!!.asCalendar(1)
         .decrementMonth()
     updateCurrentMonth(calendar)
@@ -73,7 +77,7 @@ internal class DatePickerController(
   }
 
   fun nextMonth() {
-    switchToDaysOfMonthMode()
+    currentMode = CALENDAR
     val calendar = viewingMonth!!.asCalendar(1)
         .incrementMonth()
     updateCurrentMonth(calendar)
@@ -82,7 +86,7 @@ internal class DatePickerController(
   }
 
   fun setMonth(month: Int) {
-    switchToDaysOfMonthMode()
+    currentMode = CALENDAR
     val calendar = viewingMonth!!.asCalendar(1)
         .apply { this.month = month }
     updateCurrentMonth(calendar)
@@ -159,7 +163,7 @@ internal class DatePickerController(
         year = year,
         selectedDate = selectedDate?.day
     )
-    switchToDaysOfMonthMode()
+    currentMode = CALENDAR
   }
 
   fun addDateChangedListener(listener: OnDateChanged) = dateChangedListeners.add(listener)

@@ -36,6 +36,7 @@ import com.afollestad.date.data.MonthItem.DayOfMonth
 import com.afollestad.date.runners.DatePickerLayoutRunner
 import com.afollestad.date.renderers.MonthItemRenderer
 import com.afollestad.date.runners.Mode.CALENDAR
+import com.afollestad.date.util.ObservableValue
 import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.color
 import com.afollestad.date.util.font
@@ -51,6 +52,7 @@ class DatePicker(
   context: Context,
   attrs: AttributeSet?
 ) : ViewGroup(context, attrs) {
+  private var currentMode = ObservableValue(CALENDAR)
 
   internal val controller: DatePickerController
   private val layoutRunner: DatePickerLayoutRunner
@@ -72,14 +74,15 @@ class DatePicker(
           typedArray = ta,
           container = this,
           dateFormatter = dateFormatter,
-          onDateInput = ::maybeSetDateFromInput
+          onDateInput = ::maybeSetDateFromInput,
+          currentMode = currentMode
       )
       controller = DatePickerController(
           vibrator = VibratorController(context, ta),
           renderHeaders = layoutRunner::setHeadersContent,
           renderMonthItems = ::renderMonthItems,
-          switchToDaysOfMonthMode = { layoutRunner.setMode(CALENDAR) },
-          dateFormatter = dateFormatter
+          dateFormatter = dateFormatter,
+          currentMode = currentMode
       )
 
       normalFont = ta.font(context, R.styleable.DatePicker_date_picker_normal_font) {
@@ -127,13 +130,6 @@ class DatePicker(
 
   /** Gets the selected date, if any. */
   @CheckResult fun getDate(): Calendar? = controller.getFullDate()
-
-  @Deprecated(
-      message = "Use addOnDateChanged instead.",
-      replaceWith = ReplaceWith("addOnDateChanged(block)")
-  )
-  fun onDateChanged(block: (date: Calendar) -> Unit) =
-    controller.addDateChangedListener { _, newDate -> block(newDate) }
 
   /** Appends a listener that is invoked when the selected date changes. */
   fun addOnDateChanged(block: OnDateChanged) = controller.addDateChangedListener(block)

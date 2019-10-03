@@ -30,8 +30,6 @@ import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.snapshot.DateSnapshot
 import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.runners.Mode.CALENDAR
-import com.afollestad.date.runners.Mode.INPUT_EDIT
-import com.afollestad.date.runners.Mode.YEAR_LIST
 import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Orientation.PORTRAIT
@@ -40,6 +38,7 @@ import com.afollestad.date.runners.calendar.CalendarNavigationLayoutRunner
 import com.afollestad.date.runners.calendar.DatePickerCalendarLayoutRunner
 import com.afollestad.date.runners.manualinput.ManualInputLayoutRunner
 import com.afollestad.date.runners.years.YearsLayoutRunner
+import com.afollestad.date.util.ObservableValue
 
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerLayoutRunner(
@@ -48,27 +47,28 @@ internal class DatePickerLayoutRunner(
   root: ViewGroup,
   private val vibrator: VibratorController,
   dateFormatter: DateFormatter,
-  onDateInput: (CharSequence) -> Unit
+  onDateInput: (CharSequence) -> Unit,
+  currentModeObsValue: ObservableValue<Mode>
 ) : LayoutRunner(context, typedArray) {
+  private var currentMode by currentModeObsValue
+
   private val headerLayoutRunner =
-    DatePickerHeaderLayoutRunner(context, root, typedArray, dateFormatter, this)
+    DatePickerHeaderLayoutRunner(context, root, typedArray, dateFormatter, currentModeObsValue)
   private val navigationLayoutRunner =
-    CalendarNavigationLayoutRunner(
-        context, root, typedArray, dateFormatter, this
-    )
+    CalendarNavigationLayoutRunner(context, root, typedArray, dateFormatter, currentModeObsValue)
   private val calendarLayoutRunner =
-    DatePickerCalendarLayoutRunner(context, root, typedArray)
+    DatePickerCalendarLayoutRunner(context, root, typedArray, currentModeObsValue)
   private val yearsLayoutRunner =
-    YearsLayoutRunner(context, root, typedArray)
-  private val manualInputLayoutRunner =
-    ManualInputLayoutRunner(
-        context, root, typedArray, dateFormatter, onDateInput
-    )
+    YearsLayoutRunner(context, root, typedArray, currentModeObsValue)
+  private val manualInputLayoutRunner = ManualInputLayoutRunner(
+      context, root, typedArray, dateFormatter, onDateInput, currentModeObsValue
+  )
 
   init {
     typedArray.getInt(R.styleable.DatePicker_date_picker_default_mode, CALENDAR.rawValue)
         .let { Mode.fromRawValue(it) }
-        .let { if (it != CALENDAR) setMode(it) }
+        .let { if (it != CALENDAR) currentMode = it }
+    currentModeObsValue.on { vibrator.vibrateForSelection() }
   }
 
   fun setAdapters(
@@ -186,36 +186,19 @@ internal class DatePickerLayoutRunner(
     onGoToNext: () -> Unit
   ) = navigationLayoutRunner.onNavigate(onGoToPrevious, onGoToNext)
 
-  override fun setMode(mode: Mode) {
-    headerLayoutRunner.setMode(mode)
-    navigationLayoutRunner.setMode(mode)
-    calendarLayoutRunner.setMode(mode)
-    yearsLayoutRunner.setMode(mode)
-    manualInputLayoutRunner.setMode(mode)
-    vibrator.vibrateForSelection()
-    super.setMode(mode)
-  }
-
-  fun toggleMode(wantedMode: Mode = YEAR_LIST) {
-    when (lastMode) {
-      null, CALENDAR -> setMode(wantedMode)
-      INPUT_EDIT -> setMode(CALENDAR)
-      else -> setMode(CALENDAR)
-    }
-  }
-
   companion object {
     @CheckResult fun inflateInto(
       context: Context,
       typedArray: TypedArray,
       container: ViewGroup,
       dateFormatter: DateFormatter,
-      onDateInput: (CharSequence) -> Unit
+      onDateInput: (CharSequence) -> Unit,
+      currentMode: ObservableValue<Mode>
     ): DatePickerLayoutRunner {
       View.inflate(context, R.layout.date_picker, container)
       val vibrator = VibratorController(context, typedArray)
       return DatePickerLayoutRunner(
-          context, typedArray, container, vibrator, dateFormatter, onDateInput
+          context, typedArray, container, vibrator, dateFormatter, onDateInput, currentMode
       )
     }
   }

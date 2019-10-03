@@ -18,10 +18,8 @@ package com.afollestad.date.runners.base
 import android.content.Context
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.content.res.TypedArray
-import androidx.annotation.CallSuper
 import androidx.annotation.CheckResult
 import com.afollestad.date.R
-import com.afollestad.date.runners.Mode
 import com.afollestad.date.runners.base.Orientation.PORTRAIT
 
 /** @author Aidan Follestad (@afollestad) */
@@ -32,8 +30,6 @@ internal abstract class LayoutRunner(
   protected val orientation = Orientation.get(context)
   protected val bounds: Bounds = Bounds()
   protected val size: Size = Size()
-  protected var lastMode: Mode? = null
-    private set
 
   private val headersWidthFactor: Int =
     context.resources.getInteger(R.integer.headers_width_factor)
@@ -54,10 +50,6 @@ internal abstract class LayoutRunner(
     right: Int,
     parentWidth: Int
   ): Bounds
-
-  @CallSuper open fun setMode(mode: Mode) {
-    this.lastMode = mode
-  }
 
   @CheckResult fun getHeadersWidth(parentWidth: Int): Int {
     return (parentWidth / headersWidthFactor)

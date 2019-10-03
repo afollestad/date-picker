@@ -33,6 +33,7 @@ import com.afollestad.date.runners.Mode.YEAR_LIST
 import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Size
+import com.afollestad.date.util.ObservableValue
 import com.afollestad.date.util.attachTopDivider
 import com.afollestad.date.util.invalidateTopDividerNow
 import com.afollestad.date.util.showOrConceal
@@ -42,17 +43,30 @@ import com.afollestad.date.util.showOrHide
 internal class YearsLayoutRunner(
   context: Context,
   root: ViewGroup,
-  typedArray: TypedArray
+  typedArray: TypedArray,
+  currentMode: ObservableValue<Mode>
 ) : LayoutRunner(context, typedArray) {
   private val calendarRecyclerView: RecyclerView = root.findViewById(R.id.day_list)
   private val yearsRecyclerView: RecyclerView = root.findViewById(R.id.year_grid)
   private val listsDividerView: View = root.findViewById(R.id.year_grid_divider)
-
-  private val gridSpan: Int =
-    context.resources.getInteger(integer.year_grid_span)
+  private val gridSpan: Int = context.resources.getInteger(integer.year_grid_span)
 
   init {
     setupListViews()
+    currentMode.on { mode ->
+      when (mode) {
+        CALENDAR -> {
+          yearsRecyclerView.showOrConceal(false)
+        }
+        YEAR_LIST -> {
+          yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
+          yearsRecyclerView.showOrConceal(true)
+        }
+        INPUT_EDIT -> {
+          yearsRecyclerView.showOrHide(false)
+        }
+      }
+    }
   }
 
   fun setAdapter(yearAdapter: YearAdapter) {
@@ -102,21 +116,5 @@ internal class YearsLayoutRunner(
       this.right = right
       this.bottom = top + yearsRecyclerView.bottom
     }
-  }
-
-  override fun setMode(mode: Mode) {
-    when (mode) {
-      CALENDAR -> {
-        yearsRecyclerView.showOrConceal(false)
-      }
-      YEAR_LIST -> {
-        yearsRecyclerView.invalidateTopDividerNow(listsDividerView)
-        yearsRecyclerView.showOrConceal(true)
-      }
-      INPUT_EDIT -> {
-        yearsRecyclerView.showOrHide(false)
-      }
-    }
-    super.setMode(mode)
   }
 }

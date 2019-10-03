@@ -35,6 +35,7 @@ import com.afollestad.date.runners.Mode.YEAR_LIST
 import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Size
+import com.afollestad.date.util.ObservableValue
 import com.afollestad.date.util.attachTopDivider
 import com.afollestad.date.util.invalidateTopDividerNow
 import com.afollestad.date.util.placeAt
@@ -48,16 +49,29 @@ internal const val DAYS_IN_WEEK = 7
 internal class DatePickerCalendarLayoutRunner(
   context: Context,
   root: ViewGroup,
-  typedArray: TypedArray
+  typedArray: TypedArray,
+  currentMode: ObservableValue<Mode>
 ) : LayoutRunner(context, typedArray) {
   private val calendarRecyclerView: RecyclerView = root.findViewById(R.id.day_list)
   private val listsDividerView: View = root.findViewById(R.id.year_grid_divider)
-
-  private val gridSpan: Int =
-    context.resources.getInteger(R.integer.day_grid_span)
+  private val gridSpan: Int = context.resources.getInteger(R.integer.day_grid_span)
 
   init {
     setupCalendar()
+    currentMode.on { mode ->
+      when (mode) {
+        CALENDAR -> {
+          calendarRecyclerView.invalidateTopDividerNow(listsDividerView)
+          calendarRecyclerView.showOrConceal(true)
+        }
+        YEAR_LIST -> {
+          calendarRecyclerView.showOrConceal(false)
+        }
+        INPUT_EDIT -> {
+          calendarRecyclerView.showOrHide(false)
+        }
+      }
+    }
   }
 
   fun setAdapter(monthItemAdapter: MonthItemAdapter) {
@@ -117,21 +131,5 @@ internal class DatePickerCalendarLayoutRunner(
       this.right = right
       this.bottom = top + calendarRecyclerView.bottom
     }
-  }
-
-  override fun setMode(mode: Mode) {
-    when (mode) {
-      CALENDAR -> {
-        calendarRecyclerView.invalidateTopDividerNow(listsDividerView)
-        calendarRecyclerView.showOrConceal(true)
-      }
-      YEAR_LIST -> {
-        calendarRecyclerView.showOrConceal(false)
-      }
-      INPUT_EDIT -> {
-        calendarRecyclerView.showOrHide(false)
-      }
-    }
-    super.setMode(mode)
   }
 }
