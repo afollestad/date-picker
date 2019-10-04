@@ -16,7 +16,6 @@
 package com.afollestad.date.runners.calendar
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.view.View
 import android.view.View.MeasureSpec.AT_MOST
 import android.view.View.MeasureSpec.EXACTLY
@@ -26,16 +25,15 @@ import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.date.DatePickerConfig
 import com.afollestad.date.R
 import com.afollestad.date.adapters.MonthItemAdapter
-import com.afollestad.date.runners.Mode
 import com.afollestad.date.runners.Mode.CALENDAR
 import com.afollestad.date.runners.Mode.INPUT_EDIT
 import com.afollestad.date.runners.Mode.YEAR_LIST
 import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Size
-import com.afollestad.date.util.ObservableValue
 import com.afollestad.date.util.attachTopDivider
 import com.afollestad.date.util.invalidateTopDividerNow
 import com.afollestad.date.util.placeAt
@@ -48,17 +46,17 @@ internal const val DAYS_IN_WEEK = 7
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerCalendarLayoutRunner(
   context: Context,
-  root: ViewGroup,
-  typedArray: TypedArray,
-  currentMode: ObservableValue<Mode>
-) : LayoutRunner(context, typedArray) {
+  config: DatePickerConfig,
+  root: ViewGroup
+) : LayoutRunner(context, config) {
+
   private val calendarRecyclerView: RecyclerView = root.findViewById(R.id.day_list)
   private val listsDividerView: View = root.findViewById(R.id.year_grid_divider)
   private val gridSpan: Int = context.resources.getInteger(R.integer.day_grid_span)
 
   init {
     setupCalendar()
-    currentMode.on { mode ->
+    config.currentMode.on { mode ->
       when (mode) {
         CALENDAR -> {
           calendarRecyclerView.invalidateTopDividerNow(listsDividerView)
@@ -83,8 +81,8 @@ internal class DatePickerCalendarLayoutRunner(
       layoutManager = GridLayoutManager(context, gridSpan)
       attachTopDivider(listsDividerView)
       updatePadding(
-          left = calendarHorizontalPadding,
-          right = calendarHorizontalPadding
+          left = config.horizontalPadding,
+          right = config.horizontalPadding
       )
     }
   }
@@ -119,7 +117,7 @@ internal class DatePickerCalendarLayoutRunner(
     right: Int,
     parentWidth: Int
   ): Bounds {
-    val daysRecyclerViewLeft = (left + calendarHorizontalPadding)
+    val daysRecyclerViewLeft = (left + config.horizontalPadding)
     calendarRecyclerView.placeAt(
         left = daysRecyclerViewLeft,
         top = listsDividerView.bottom

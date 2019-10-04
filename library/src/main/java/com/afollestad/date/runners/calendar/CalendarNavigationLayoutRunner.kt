@@ -16,8 +16,6 @@
 package com.afollestad.date.runners.calendar
 
 import android.content.Context
-import android.content.res.TypedArray
-import android.graphics.Typeface
 import android.view.View
 import android.view.View.MeasureSpec.AT_MOST
 import android.view.View.MeasureSpec.EXACTLY
@@ -26,24 +24,19 @@ import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.afollestad.date.DatePickerConfig
 import com.afollestad.date.R
-import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
-import com.afollestad.date.runners.Mode
 import com.afollestad.date.runners.Mode.CALENDAR
 import com.afollestad.date.runners.Mode.INPUT_EDIT
 import com.afollestad.date.runners.Mode.YEAR_LIST
 import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Size
-import com.afollestad.date.util.ObservableValue
-import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
-import com.afollestad.date.util.color
 import com.afollestad.date.util.dimenPx
 import com.afollestad.date.util.drawable
-import com.afollestad.date.util.font
 import com.afollestad.date.util.onClickDebounced
 import com.afollestad.date.util.placeAt
 import com.afollestad.date.util.resolveColor
@@ -55,13 +48,11 @@ import kotlin.math.max
 /** @author Aidan Follestad (@afollestad) */
 internal class CalendarNavigationLayoutRunner(
   private val context: Context,
-  root: ViewGroup,
-  typedArray: TypedArray,
-  private val dateFormatter: DateFormatter,
-  private val currentModeObsValue: ObservableValue<Mode>
-) : LayoutRunner(context, typedArray) {
+  config: DatePickerConfig,
+  root: ViewGroup
+) : LayoutRunner(context, config) {
 
-  private var currentMode by currentModeObsValue.on { mode ->
+  private var currentMode by config.currentMode.on { mode ->
     when (mode) {
       CALENDAR -> {
         visibleMonthView.showOrHide(true)
@@ -87,21 +78,9 @@ internal class CalendarNavigationLayoutRunner(
   private val goNextMonthView: ImageView = root.findViewById(R.id.right_chevron)
   private val listsDividerView: View = root.findViewById(R.id.year_grid_divider)
 
-  private val currentMonthHeight: Int =
-    context.dimenPx(R.dimen.current_month_header_height)
-  private val currentMonthTopMargin: Int =
-    context.dimenPx(R.dimen.current_month_top_margin)
-  private val dividerHeight: Int =
-    context.dimenPx(R.dimen.divider_height)
-
-  private val selectionColor: Int =
-    typedArray.color(R.styleable.DatePicker_date_picker_selection_color) {
-      context.resolveColor(R.attr.colorAccent)
-    }
-  private val mediumFont: Typeface =
-    typedArray.font(context, R.styleable.DatePicker_date_picker_medium_font) {
-      TypefaceHelper.create("sans-serif-medium")
-    }
+  private val currentMonthHeight: Int = context.dimenPx(R.dimen.current_month_header_height)
+  private val currentMonthTopMargin: Int = context.dimenPx(R.dimen.current_month_top_margin)
+  private val dividerHeight: Int = context.dimenPx(R.dimen.divider_height)
 
   init {
     setupVisibleMonth()
@@ -109,7 +88,7 @@ internal class CalendarNavigationLayoutRunner(
   }
 
   fun setCurrentDate(currentMonth: MonthSnapshot) {
-    visibleMonthView.text = dateFormatter.monthAndYear(currentMonth.asCalendar(1))
+    visibleMonthView.text = config.dateFormatter.monthAndYear(currentMonth.asCalendar(1))
   }
 
   fun onNavigate(
@@ -131,15 +110,15 @@ internal class CalendarNavigationLayoutRunner(
 
   private fun setupVisibleMonth() {
     visibleMonthView.apply {
-      typeface = mediumFont
-      onClickDebounced { currentModeObsValue.toggleMode() }
+      typeface = config.mediumFont
+      onClickDebounced { config.currentMode.toggleMode() }
     }
   }
 
   private fun setupChevrons() {
-    goPreviousMonthView.background = createCircularSelector(context, selectionColor)
+    goPreviousMonthView.background = createCircularSelector(context, config.selectionColor)
     invalidateCurrentMonthChevron()
-    goNextMonthView.background = createCircularSelector(context, selectionColor)
+    goNextMonthView.background = createCircularSelector(context, config.selectionColor)
   }
 
   override fun measure(
@@ -205,7 +184,7 @@ internal class CalendarNavigationLayoutRunner(
     val chevronsHalfHeight = (goPreviousMonthView.measuredHeight / 2)
     val chevronsTop = ((chevronsMiddleY - chevronsHalfHeight) + currentMonthTopMargin)
     val nextChevronLeft = (right -
-        (calendarHorizontalPadding * 2) -
+        (config.horizontalPadding * 2) -
         goNextMonthView.measuredWidth)
 
     goPreviousMonthView.placeAt(

@@ -17,15 +17,15 @@ package com.afollestad.date.runners.base
 
 import android.content.Context
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
-import android.content.res.TypedArray
 import androidx.annotation.CheckResult
+import com.afollestad.date.DatePickerConfig
 import com.afollestad.date.R
 import com.afollestad.date.runners.base.Orientation.PORTRAIT
 
 /** @author Aidan Follestad (@afollestad) */
 internal abstract class LayoutRunner(
   context: Context,
-  typedArray: TypedArray
+  protected val config: DatePickerConfig
 ) {
   protected val orientation = Orientation.get(context)
   protected val bounds: Bounds = Bounds()
@@ -33,10 +33,6 @@ internal abstract class LayoutRunner(
 
   private val headersWidthFactor: Int =
     context.resources.getInteger(R.integer.headers_width_factor)
-  protected val calendarHorizontalPadding: Int =
-    typedArray.getDimensionPixelSize(
-        R.styleable.DatePicker_date_picker_calendar_horizontal_padding, 0
-    )
 
   @CheckResult abstract fun measure(
     widthMeasureSpec: Int,
@@ -65,8 +61,10 @@ internal abstract class LayoutRunner(
 
   @CheckResult fun getRecyclerViewWidth(parentWidth: Int): Int {
     val nonHeadersWidth = getNonHeadersWidth(parentWidth)
-    return (nonHeadersWidth - (calendarHorizontalPadding * 2))
+    return (nonHeadersWidth - (config.horizontalPadding * 2))
   }
+
+  companion object
 }
 
 /** @author Aidan Follestad (@afollestad) */

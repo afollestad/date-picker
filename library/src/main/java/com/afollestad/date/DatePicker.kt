@@ -19,7 +19,6 @@ package com.afollestad.date
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Typeface
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.ViewGroup
@@ -28,19 +27,10 @@ import androidx.annotation.IntRange
 import com.afollestad.date.adapters.MonthItemAdapter
 import com.afollestad.date.adapters.YearAdapter
 import com.afollestad.date.controllers.DatePickerController
-
-import com.afollestad.date.controllers.VibratorController
-import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.MonthItem
 import com.afollestad.date.data.MonthItem.DayOfMonth
-import com.afollestad.date.runners.DatePickerLayoutRunner
 import com.afollestad.date.renderers.MonthItemRenderer
-import com.afollestad.date.runners.Mode.CALENDAR
-import com.afollestad.date.util.ObservableValue
-import com.afollestad.date.util.TypefaceHelper
-import com.afollestad.date.util.color
-import com.afollestad.date.util.font
-import com.afollestad.date.util.resolveColor
+import com.afollestad.date.runners.DatePickerLayoutRunner
 import com.afollestad.date.view.DatePickerSavedState
 import java.lang.Long.MAX_VALUE
 import java.util.Calendar
@@ -52,7 +42,7 @@ class DatePicker(
   context: Context,
   attrs: AttributeSet?
 ) : ViewGroup(context, attrs) {
-  private var currentMode = ObservableValue(CALENDAR)
+  private var datePickerConfig = DatePickerConfig.create(context, attrs)
 
   internal val controller: DatePickerController
   private val layoutRunner: DatePickerLayoutRunner
@@ -60,54 +50,25 @@ class DatePicker(
   private val monthItemAdapter: MonthItemAdapter
   private val yearAdapter: YearAdapter
   private val monthItemRenderer: MonthItemRenderer
-  private val dateFormatter: DateFormatter
 
   init {
-    val ta = context.obtainStyledAttributes(attrs, R.styleable.DatePicker)
-    val normalFont: Typeface
-    val selectionColor: Int
+    layoutRunner = DatePickerLayoutRunner.inflateInto(
+        context = context,
+        config = datePickerConfig,
+        container = this,
+        onDateInput = ::maybeSetDateFromInput
+    )
+    controller = DatePickerController(
+        config = datePickerConfig,
+        renderHeaders = layoutRunner::setHeadersContent,
+        renderMonthItems = ::renderMonthItems
+    )
 
-    try {
-      dateFormatter = DateFormatter()
-      layoutRunner = DatePickerLayoutRunner.inflateInto(
-          context = context,
-          typedArray = ta,
-          container = this,
-          dateFormatter = dateFormatter,
-          onDateInput = ::maybeSetDateFromInput,
-          currentMode = currentMode
-      )
-      controller = DatePickerController(
-          vibrator = VibratorController(context, ta),
-          renderHeaders = layoutRunner::setHeadersContent,
-          renderMonthItems = ::renderMonthItems,
-          dateFormatter = dateFormatter,
-          currentMode = currentMode
-      )
-
-      normalFont = ta.font(context, R.styleable.DatePicker_date_picker_normal_font) {
-        TypefaceHelper.create("sans-serif")
-      }
-      selectionColor = ta.color(R.styleable.DatePicker_date_picker_selection_color) {
-        context.resolveColor(R.attr.colorAccent)
-      }
-      monthItemRenderer = MonthItemRenderer(
-          context = context,
-          typedArray = ta,
-          normalFont = normalFont,
-          dateFormatter = dateFormatter
-      )
-    } finally {
-      ta.recycle()
+    monthItemRenderer = MonthItemRenderer(datePickerConfig)
+    monthItemAdapter = MonthItemAdapter(itemRenderer = monthItemRenderer) {
+      controller.setDayOfMonth(it.date)
     }
-
-    monthItemAdapter = MonthItemAdapter(
-        itemRenderer = monthItemRenderer
-    ) { controller.setDayOfMonth(it.date) }
-    yearAdapter = YearAdapter(
-        normalFont = normalFont,
-        selectionColor = selectionColor
-    ) { controller.setYear(it) }
+    yearAdapter = YearAdapter(datePickerConfig) { controller.setYear(it) }
 
     layoutRunner.setAdapters(monthItemAdapter, yearAdapter)
   }

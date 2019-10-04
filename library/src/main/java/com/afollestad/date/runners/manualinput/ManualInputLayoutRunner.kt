@@ -16,54 +16,44 @@
 package com.afollestad.date.runners.manualinput
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.text.InputFilter.LengthFilter
 import android.view.View.MeasureSpec.EXACTLY
 import android.view.View.MeasureSpec.UNSPECIFIED
 import android.view.View.MeasureSpec.getSize
 import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup
+import com.afollestad.date.DatePickerConfig
 import com.afollestad.date.R
-import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.snapshot.DateSnapshot
-import com.afollestad.date.runners.Mode
 import com.afollestad.date.runners.Mode.CALENDAR
 import com.afollestad.date.runners.Mode.INPUT_EDIT
 import com.afollestad.date.runners.Mode.YEAR_LIST
 import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Size
-import com.afollestad.date.util.ObservableValue
 import com.afollestad.date.util.dimenPx
 import com.afollestad.date.util.hideKeyboard
 import com.afollestad.date.util.onTextChanged
 import com.afollestad.date.util.placeAt
 import com.afollestad.date.util.showKeyboard
 import com.afollestad.date.util.showOrHide
-import com.afollestad.date.util.string
 import com.google.android.material.textfield.TextInputLayout
 
 /** @author Aidan Follestad (@afollestad) */
 internal class ManualInputLayoutRunner(
   context: Context,
+  config: DatePickerConfig,
   root: ViewGroup,
-  typedArray: TypedArray,
-  private val dateFormatter: DateFormatter,
-  private val onDateInput: (CharSequence) -> Unit,
-  currentMode: ObservableValue<Mode>
-) : LayoutRunner(context, typedArray) {
+  private val onDateInput: (CharSequence) -> Unit
+) : LayoutRunner(context, config) {
+
   private val editModeInput: TextInputLayout = root.findViewById(R.id.edit_mode_input)
   private val inputMarginSides: Int = context.dimenPx(R.dimen.edit_mode_input_margin_sides)
   private val inputMarginTop: Int = context.dimenPx(R.dimen.edit_mode_input_margin_top)
 
-  private val manualInputLabel: String =
-    typedArray.string(context, R.styleable.DatePicker_date_picker_manual_input_label) {
-      context.getString(R.string.enter_date)
-    }
-
   init {
     setupInput()
-    currentMode.on { mode ->
+    config.currentMode.on { mode ->
       when (mode) {
         CALENDAR -> {
           editModeInput.showOrHide(false)
@@ -83,15 +73,15 @@ internal class ManualInputLayoutRunner(
 
   fun setCurrentDate(selectedDate: DateSnapshot) {
     val inputDateString = selectedDate.asCalendar()
-        .let { dateFormatter.inputDate(it) }
+        .let { config.dateFormatter.inputDate(it) }
     editModeInput.editText?.setText(inputDateString)
     editModeInput.editText?.setSelection(inputDateString.length)
   }
 
   private fun setupInput() {
-    editModeInput.hint = manualInputLabel
+    editModeInput.hint = config.manualInputLabel
     editModeInput.editText?.apply {
-      val pattern = dateFormatter.dateInputFormatter.toLocalizedPattern()
+      val pattern = config.dateFormatter.dateInputFormatter.toLocalizedPattern()
       hint = pattern
       filters += LengthFilter(pattern.length)
       onTextChanged(requiredLength = pattern.length) { onDateInput(it) }

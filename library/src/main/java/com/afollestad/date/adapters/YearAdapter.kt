@@ -15,12 +15,11 @@
  */
 package com.afollestad.date.adapters
 
-import android.graphics.Typeface
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.afollestad.date.DatePickerConfig
 import com.afollestad.date.R
 import com.afollestad.date.util.Util.createRoundedRectangleSelector
 import com.afollestad.date.util.inflate
@@ -44,8 +43,7 @@ internal class YearViewHolder(
 
 /** @author Aidan Follestad (@afollestad) */
 internal class YearAdapter(
-  private val normalFont: Typeface,
-  @ColorInt private val selectionColor: Int,
+  private val config: DatePickerConfig,
   private val onSelection: (year: Int) -> Unit
 ) : RecyclerView.Adapter<YearViewHolder>() {
 
@@ -76,8 +74,9 @@ internal class YearAdapter(
   ): YearViewHolder {
     val context = parent.context
     val view = parent.inflate<ViewGroup>(R.layout.year_list_row)
-    return YearViewHolder(view, this)
-        .apply { textView.background = createRoundedRectangleSelector(context, selectionColor) }
+    return YearViewHolder(view, this).apply {
+      textView.background = createRoundedRectangleSelector(context, config.selectionColor)
+    }
   }
 
   override fun getItemCount(): Int = yearRange.second - yearRange.first
@@ -91,7 +90,7 @@ internal class YearAdapter(
 
     holder.itemView.isSelected = isSelected
     holder.textView.text = currentYear.toString()
-    holder.textView.typeface = normalFont
+    holder.textView.typeface = config.normalFont
   }
 
   fun getSelectedPosition(): Int? = selectedYear?.asPosition()

@@ -15,44 +15,24 @@
  */
 package com.afollestad.date.renderers
 
-import android.content.Context
-import android.content.res.TypedArray
-import android.graphics.Typeface
 import android.view.Gravity.CENTER
 import android.view.View
 import android.widget.TextView
-import com.afollestad.date.R
-import com.afollestad.date.data.DateFormatter
+import com.afollestad.date.DatePickerConfig
 import com.afollestad.date.data.DayOfWeek
 import com.afollestad.date.data.MonthItem
 import com.afollestad.date.data.MonthItem.DayOfMonth
 import com.afollestad.date.data.MonthItem.WeekHeader
 import com.afollestad.date.data.NO_DATE
+import com.afollestad.date.dayOfWeek
 import com.afollestad.date.util.Util.createCircularSelector
 import com.afollestad.date.util.Util.createTextSelector
-import com.afollestad.date.util.color
-import com.afollestad.date.util.resolveColor
-import com.afollestad.date.util.withAlpha
-import com.afollestad.date.dayOfWeek
 import com.afollestad.date.util.onClickDebounced
+import com.afollestad.date.util.resolveColor
 import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */
-internal class MonthItemRenderer(
-  private val context: Context,
-  typedArray: TypedArray,
-  private val normalFont: Typeface,
-  private val dateFormatter: DateFormatter
-) {
-  private val selectionColor: Int =
-    typedArray.color(R.styleable.DatePicker_date_picker_selection_color) {
-      context.resolveColor(R.attr.colorAccent)
-    }
-  private val todayStrokeColor: Int =
-    typedArray.color(R.styleable.DatePicker_date_picker_calendar_today_stroke_color) {
-      context.resolveColor(android.R.attr.textColorPrimary)
-          .withAlpha(DEFAULT_TODAY_STROKE_OPACITY)
-    }
+internal class MonthItemRenderer(private val config: DatePickerConfig) {
   private val calendar = Calendar.getInstance()
 
   fun render(
@@ -74,8 +54,8 @@ internal class MonthItemRenderer(
     textView.apply {
       setTextColor(context.resolveColor(android.R.attr.textColorSecondary))
       calendar.dayOfWeek = dayOfWeek
-      text = dateFormatter.weekdayAbbreviation(calendar)
-      typeface = normalFont
+      text = config.dateFormatter.weekdayAbbreviation(calendar)
+      typeface = config.normalFont
     }
   }
 
@@ -87,9 +67,9 @@ internal class MonthItemRenderer(
   ) {
     rootView.background = null
     textView.apply {
-      setTextColor(createTextSelector(context, selectionColor))
+      setTextColor(createTextSelector(context, config.selectionColor))
       text = dayOfMonth.date.positiveOrEmptyAsString()
-      typeface = normalFont
+      typeface = config.normalFont
       gravity = CENTER
       background = null
       setOnClickListener(null)
@@ -109,8 +89,8 @@ internal class MonthItemRenderer(
       isActivated = dayOfMonth.isToday
       background = createCircularSelector(
           context = context,
-          selectedColor = selectionColor,
-          todayStrokeColor = todayStrokeColor
+          selectedColor = config.selectionColor,
+          todayStrokeColor = config.todayStrokeColor
       )
       onClickDebounced { onSelection(dayOfMonth) }
     }
@@ -118,9 +98,5 @@ internal class MonthItemRenderer(
 
   private fun Int.positiveOrEmptyAsString(): String {
     return if (this < 1) "" else toString()
-  }
-
-  private companion object {
-    const val DEFAULT_TODAY_STROKE_OPACITY: Float = 0.6f
   }
 }

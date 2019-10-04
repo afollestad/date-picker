@@ -16,24 +16,22 @@
 package com.afollestad.date.runners.years
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.view.View
 import android.view.View.MeasureSpec.EXACTLY
 import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.date.DatePickerConfig
 import com.afollestad.date.R
 import com.afollestad.date.R.integer
 import com.afollestad.date.adapters.YearAdapter
-import com.afollestad.date.runners.Mode
 import com.afollestad.date.runners.Mode.CALENDAR
 import com.afollestad.date.runners.Mode.INPUT_EDIT
 import com.afollestad.date.runners.Mode.YEAR_LIST
 import com.afollestad.date.runners.base.Bounds
 import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Size
-import com.afollestad.date.util.ObservableValue
 import com.afollestad.date.util.attachTopDivider
 import com.afollestad.date.util.invalidateTopDividerNow
 import com.afollestad.date.util.showOrConceal
@@ -42,10 +40,9 @@ import com.afollestad.date.util.showOrHide
 /** @author Aidan Follestad (@afollestad) */
 internal class YearsLayoutRunner(
   context: Context,
-  root: ViewGroup,
-  typedArray: TypedArray,
-  currentMode: ObservableValue<Mode>
-) : LayoutRunner(context, typedArray) {
+  config: DatePickerConfig,
+  root: ViewGroup
+) : LayoutRunner(context, config) {
   private val calendarRecyclerView: RecyclerView = root.findViewById(R.id.day_list)
   private val yearsRecyclerView: RecyclerView = root.findViewById(R.id.year_grid)
   private val listsDividerView: View = root.findViewById(R.id.year_grid_divider)
@@ -53,7 +50,7 @@ internal class YearsLayoutRunner(
 
   init {
     setupListViews()
-    currentMode.on { mode ->
+    config.currentMode.on { mode ->
       when (mode) {
         CALENDAR -> {
           yearsRecyclerView.showOrConceal(false)

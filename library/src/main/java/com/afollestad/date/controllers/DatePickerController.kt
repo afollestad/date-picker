@@ -18,22 +18,20 @@ package com.afollestad.date.controllers
 import androidx.annotation.CheckResult
 import androidx.annotation.IntRange
 import androidx.annotation.VisibleForTesting
+import com.afollestad.date.DatePickerConfig
 import com.afollestad.date.OnDateChanged
-import com.afollestad.date.data.DateFormatter
-import com.afollestad.date.dayOfMonth
-import com.afollestad.date.decrementMonth
-import com.afollestad.date.incrementMonth
 import com.afollestad.date.data.MonthGraph
 import com.afollestad.date.data.MonthItem
-import com.afollestad.date.month
 import com.afollestad.date.data.snapshot.DateSnapshot
 import com.afollestad.date.data.snapshot.MonthSnapshot
 import com.afollestad.date.data.snapshot.asCalendar
 import com.afollestad.date.data.snapshot.snapshot
 import com.afollestad.date.data.snapshot.snapshotMonth
-import com.afollestad.date.runners.Mode
+import com.afollestad.date.dayOfMonth
+import com.afollestad.date.decrementMonth
+import com.afollestad.date.incrementMonth
+import com.afollestad.date.month
 import com.afollestad.date.runners.Mode.CALENDAR
-import com.afollestad.date.util.ObservableValue
 import com.afollestad.date.util.toCalendar
 import com.afollestad.date.year
 import java.text.ParseException
@@ -41,16 +39,14 @@ import java.util.Calendar
 
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerController(
-  private val vibrator: VibratorController,
+  private val config: DatePickerConfig,
   private val renderHeaders: (MonthSnapshot, DateSnapshot, Boolean) -> Unit,
   private val renderMonthItems: (List<MonthItem>) -> Unit,
-  private val getNow: () -> Calendar = { Calendar.getInstance() },
-  private val dateFormatter: DateFormatter,
-  currentMode: ObservableValue<Mode>
+  private val getNow: () -> Calendar = { Calendar.getInstance() }
 ) {
   @VisibleForTesting var didInit: Boolean = false
   private val dateChangedListeners: MutableList<OnDateChanged> = mutableListOf()
-  private var currentMode by currentMode
+  private var currentMode by config.currentMode
 
   @VisibleForTesting var viewingMonth: MonthSnapshot? = null
   @VisibleForTesting var monthGraph: MonthGraph? = null
@@ -73,7 +69,7 @@ internal class DatePickerController(
         .decrementMonth()
     updateCurrentMonth(calendar)
     render()
-    vibrator.vibrateForSelection()
+    config.vibrator?.vibrateForSelection()
   }
 
   fun nextMonth() {
@@ -82,7 +78,7 @@ internal class DatePickerController(
         .incrementMonth()
     updateCurrentMonth(calendar)
     render()
-    vibrator.vibrateForSelection()
+    config.vibrator?.vibrateForSelection()
   }
 
   fun setMonth(month: Int) {
@@ -91,7 +87,7 @@ internal class DatePickerController(
         .apply { this.month = month }
     updateCurrentMonth(calendar)
     render()
-    vibrator.vibrateForSelection()
+    config.vibrator?.vibrateForSelection()
   }
 
   fun setFullDate(
@@ -135,7 +131,7 @@ internal class DatePickerController(
   fun maybeSetDateFromInput(input: CharSequence) {
     if (input.trim().isEmpty()) return
     try {
-      dateFormatter.dateInputFormatter.parse(input.toString())
+      config.dateFormatter.dateInputFormatter.parse(input.toString())
           ?.let { setFullDate(it.toCalendar(), fromUserEditInput = true) }
     } catch (_: ParseException) {
     }
@@ -152,7 +148,7 @@ internal class DatePickerController(
     val oldSelected: Calendar = currentSelectedOrNow()
     val calendar = viewingMonth!!.asCalendar(day)
     selectedDate = calendar.snapshot()
-    vibrator.vibrateForSelection()
+    config.vibrator?.vibrateForSelection()
     notifyListeners(oldSelected) { calendar }
     render()
   }

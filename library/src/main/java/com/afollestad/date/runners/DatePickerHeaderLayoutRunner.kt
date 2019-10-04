@@ -16,8 +16,6 @@
 package com.afollestad.date.runners
 
 import android.content.Context
-import android.content.res.TypedArray
-import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.view.View.MeasureSpec.EXACTLY
 import android.view.View.MeasureSpec.UNSPECIFIED
@@ -27,8 +25,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.ViewCompat.getPaddingStart
+import com.afollestad.date.DatePickerConfig
 import com.afollestad.date.R
-import com.afollestad.date.data.DateFormatter
 import com.afollestad.date.data.snapshot.DateSnapshot
 import com.afollestad.date.runners.Mode.CALENDAR
 import com.afollestad.date.runners.Mode.INPUT_EDIT
@@ -38,50 +36,30 @@ import com.afollestad.date.runners.base.LayoutRunner
 import com.afollestad.date.runners.base.Orientation.PORTRAIT
 import com.afollestad.date.runners.base.Size
 import com.afollestad.date.runners.calendar.DAYS_IN_WEEK
-import com.afollestad.date.util.ObservableValue
-import com.afollestad.date.util.TypefaceHelper
 import com.afollestad.date.util.Util.createCircularSelector
-import com.afollestad.date.util.color
 import com.afollestad.date.util.dimenPx
-import com.afollestad.date.util.font
 import com.afollestad.date.util.onClickDebounced
 import com.afollestad.date.util.placeAt
 import com.afollestad.date.util.resolveColor
-import com.afollestad.date.util.string
 import com.afollestad.date.util.toggleMode
 
 /** @author Aidan Follestad (@afollestad) */
 internal class DatePickerHeaderLayoutRunner(
   context: Context,
-  root: ViewGroup,
-  typedArray: TypedArray,
-  private val dateFormatter: DateFormatter,
-  private val currentModeObsValue: ObservableValue<Mode>
-) : LayoutRunner(context, typedArray) {
+  config: DatePickerConfig,
+  root: ViewGroup
+) : LayoutRunner(context, config) {
   private val pickerTitleView: TextView = root.findViewById(R.id.picker_title)
   private val selectedDateView: TextView = root.findViewById(R.id.current_date)
   private val editModeToggleView: ImageView = root.findViewById(R.id.edit_mode_toggle)
   private val editModeToggleSize: Int = context.dimenPx(R.dimen.edit_mode_toggle_size)
-
-  private val headerBackgroundColor: Int =
-    typedArray.color(R.styleable.DatePicker_date_picker_header_background_color) {
-      context.resolveColor(R.attr.colorAccent)
-    }
-  private val pickerTitle: String =
-    typedArray.string(context, R.styleable.DatePicker_date_picker_title) {
-      context.getString(R.string.select_date)
-    }
-  private val normalFont: Typeface =
-    typedArray.font(context, R.styleable.DatePicker_date_picker_normal_font) {
-      TypefaceHelper.create("sans-serif")
-    }
 
   init {
     setupTitle()
     setupSelectedDate()
     setupEditModeToggle()
 
-    currentModeObsValue.on { mode ->
+    config.currentMode.on { mode ->
       pickerTitleView.isSelected = mode == YEAR_LIST
       selectedDateView.isSelected = mode == CALENDAR
       editModeToggleView.setImageResource(
@@ -92,22 +70,22 @@ internal class DatePickerHeaderLayoutRunner(
 
   fun setCurrentDate(selectedDate: DateSnapshot) {
     selectedDate.asCalendar()
-        .let { selectedDateView.text = dateFormatter.date(it) }
+        .let { selectedDateView.text = config.dateFormatter.date(it) }
   }
 
   private fun setupTitle() {
     pickerTitleView.apply {
-      background = ColorDrawable(headerBackgroundColor)
-      typeface = normalFont
-      text = pickerTitle
+      background = ColorDrawable(config.headerBackgroundColor)
+      typeface = config.normalFont
+      text = config.title
     }
   }
 
   private fun setupSelectedDate() {
     selectedDateView.apply {
       isSelected = true
-      background = ColorDrawable(headerBackgroundColor)
-      typeface = normalFont
+      background = ColorDrawable(config.headerBackgroundColor)
+      typeface = config.normalFont
     }
   }
 
@@ -116,7 +94,7 @@ internal class DatePickerHeaderLayoutRunner(
       background = createCircularSelector(
           context, context.resolveColor(android.R.attr.textColorPrimaryInverse)
       )
-      onClickDebounced { currentModeObsValue.toggleMode(INPUT_EDIT) }
+      onClickDebounced { config.currentMode.toggleMode(INPUT_EDIT) }
     }
   }
 
@@ -172,7 +150,7 @@ internal class DatePickerHeaderLayoutRunner(
     // Manual input mode toggle
     if (orientation == PORTRAIT) {
       val chevronWidthAndHeight = (getRecyclerViewWidth(parentWidth) / DAYS_IN_WEEK)
-      val chevronHalfWidth = (chevronWidthAndHeight / 2) + calendarHorizontalPadding
+      val chevronHalfWidth = (chevronWidthAndHeight / 2) + config.horizontalPadding
       val editToggleHalfWidth = (editModeToggleView.measuredWidth / 2)
 
       editModeToggleView.placeAt(
