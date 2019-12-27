@@ -17,5 +17,6 @@
       <enum name="year_list" value="2" />
       <enum name="input_edit" value="3" />
     </attr>
+    <attr name="date_picker_enble_chinese_lunar_calendar" format="boolean"/>
   </declare-styleable>
 </resources>

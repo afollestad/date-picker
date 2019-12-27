@@ -9,6 +9,7 @@
       android:id="@+id/datePicker"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      app:date_picker_enble_chinese_lunar_calendar="true"
       app:date_picker_calendar_horizontal_padding="4dp"
       tools:ignore="UnusedAttribute"
       />

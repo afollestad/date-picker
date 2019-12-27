@@ -48,7 +48,8 @@ internal data class DatePickerConfig(
   val dateFormatter: DateFormatter = DateFormatter(),
   var currentMode: ObservableValue<Mode> = ObservableValue(defaultMode),
   @ColorInt var bodyBackgroundColor: Int,
-  var backgroundRadius: Float = 32f
+  var backgroundRadius: Float = 32f,
+  val enableChineseCalendar:Boolean=false
 ) {
   companion object {
     const val DEFAULT_TODAY_STROKE_OPACITY: Float = 0.6f
@@ -97,6 +98,7 @@ internal fun DatePickerConfig.Companion.create(
           context.resolveColor(android.R.attr.colorBackground)
       },
       backgroundRadius = ta.getDimensionPixelSize(
-          R.styleable.DatePicker_date_picker_background_radius,0).toFloat()
+          R.styleable.DatePicker_date_picker_background_radius,0).toFloat(),
+      enableChineseCalendar = ta.getBoolean(R.styleable.DatePicker_date_picker_enble_chinese_lunar_calendar,false)
   ).also { ta.recycle() }
 }
