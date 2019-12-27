@@ -14,6 +14,7 @@ buildscript {
     classpath 'com.novoda:bintray-release:' + versions.bintrayRelease
     classpath 'com.github.ben-manes:gradle-versions-plugin:' + versions.versionsPlugin
     classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:' + versions.kotlin
+    classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
   }
 }
 

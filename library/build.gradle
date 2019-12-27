@@ -4,6 +4,11 @@ apply from: '../dependencies.gradle'
 
 apply from: '../bintrayconfig.gradle'
 
+// JitPack Maven
+apply plugin: 'com.github.dcendents.android-maven'
+// Your Group
+group='com.github.caoyanglee'
+
 android {
   compileSdkVersion versions.compileSdk
   buildToolsVersion versions.buildTools
