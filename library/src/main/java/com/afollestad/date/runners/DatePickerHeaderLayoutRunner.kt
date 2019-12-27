@@ -17,6 +17,7 @@ package com.afollestad.date.runners
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
 import android.view.View.MeasureSpec.EXACTLY
 import android.view.View.MeasureSpec.UNSPECIFIED
 import android.view.View.MeasureSpec.getSize
@@ -75,7 +76,10 @@ internal class DatePickerHeaderLayoutRunner(
 
   private fun setupTitle() {
     pickerTitleView.apply {
-      background = ColorDrawable(config.headerBackgroundColor)
+      background = GradientDrawable().apply {
+          setColor(config.headerBackgroundColor)
+          cornerRadii = floatArrayOf(config.backgroundRadius,config.backgroundRadius,config.backgroundRadius,config.backgroundRadius,0f,0f,0f,0f)
+      }
       typeface = config.normalFont
       text = config.title
     }

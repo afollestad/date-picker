@@ -19,6 +19,7 @@ package com.afollestad.date
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.GradientDrawable
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.ViewGroup
@@ -71,9 +72,20 @@ class DatePicker(
     yearAdapter = YearAdapter(datePickerConfig) { controller.setYear(it) }
 
     layoutRunner.setAdapters(monthItemAdapter, yearAdapter)
+
+      setBackground()
   }
 
-  /** Sets the date displayed in the view, along with the selected date. */
+    //setup background
+    fun setBackground() {
+        background = GradientDrawable().apply {
+            setColor(datePickerConfig.bodyBackgroundColor)
+            cornerRadius = datePickerConfig.backgroundRadius
+        }
+    }
+
+
+    /** Sets the date displayed in the view, along with the selected date. */
   fun setDate(
     calendar: Calendar,
     notifyListeners: Boolean = true

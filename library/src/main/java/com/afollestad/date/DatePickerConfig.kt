@@ -46,7 +46,9 @@ internal data class DatePickerConfig(
   val defaultMode: Mode,
   val vibrator: VibratorController?,
   val dateFormatter: DateFormatter = DateFormatter(),
-  var currentMode: ObservableValue<Mode> = ObservableValue(defaultMode)
+  var currentMode: ObservableValue<Mode> = ObservableValue(defaultMode),
+  @ColorInt var bodyBackgroundColor: Int,
+  var backgroundRadius: Float = 32f
 ) {
   companion object {
     const val DEFAULT_TODAY_STROKE_OPACITY: Float = 0.6f
@@ -90,6 +92,11 @@ internal fun DatePickerConfig.Companion.create(
       },
       defaultMode = ta.getInt(R.styleable.DatePicker_date_picker_default_mode, CALENDAR.rawValue)
           .let { Mode.fromRawValue(it) },
-      vibrator = if (selectionVibrates) VibratorController(context) else null
+      vibrator = if (selectionVibrates) VibratorController(context) else null,
+      bodyBackgroundColor = ta.color(R.styleable.DatePicker_date_picker_background_color) {
+          context.resolveColor(android.R.attr.colorBackground)
+      },
+      backgroundRadius = ta.getDimensionPixelSize(
+          R.styleable.DatePicker_date_picker_background_radius,0).toFloat()
   ).also { ta.recycle() }
 }
