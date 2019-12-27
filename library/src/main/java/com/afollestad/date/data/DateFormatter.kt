@@ -51,5 +51,6 @@ internal class DateFormatter {
 
   /** F */
   @CheckResult fun weekdayAbbreviation(calendar: Calendar): String =
-    weekdayFormatter.format(calendar.time).first().toUpperCase(Locale.getDefault()).toString()
+    //weekdayFormatter.format(calendar.time).first().toUpperCase(Locale.getDefault()).toString()
+    weekdayFormatter.format(calendar.time).toString()
 }
