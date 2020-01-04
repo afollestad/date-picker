@@ -20,13 +20,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.afollestad.date.DatePicker
 
 class MainActivity : AppCompatActivity() {
-  private lateinit var datePicker: DatePicker
+  private val datePicker: DatePicker by lazy {
+    findViewById(R.id.datePicker)
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    datePicker = findViewById(R.id.datePicker)
     datePicker.addOnDateChanged { _, new -> toast("Date changed: ${new.format()}") }
   }
 }

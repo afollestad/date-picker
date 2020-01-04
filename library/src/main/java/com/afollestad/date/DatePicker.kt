@@ -83,7 +83,7 @@ class DatePicker(
   fun setDate(
     @IntRange(from = 1, to = MAX_VALUE) year: Int? = null,
     @IntRange(from = MONTH_MIN, to = MONTH_MAX) month: Int,
-    @IntRange(from = 1, to = 31) selectedDate: Int? = null,
+    @IntRange(from = DAY_MIN, to = DAY_MAX) selectedDate: Int? = null,
     notifyListeners: Boolean = true
   ) = controller.setFullDate(
       year = year, month = month, selectedDate = selectedDate, notifyListeners = notifyListeners
@@ -160,9 +160,9 @@ class DatePicker(
   private fun maybeSetDateFromInput(input: CharSequence) {
     controller.maybeSetDateFromInput(input)
   }
-
-  private companion object {
-    const val MONTH_MIN: Long = 0 // Calendar.JANUARY
-    const val MONTH_MAX: Long = 11 // Calendar.DECEMBER
-  }
 }
+
+internal const val MONTH_MIN: Long = 0 // Calendar.JANUARY
+internal const val MONTH_MAX: Long = 11 // Calendar.DECEMBER
+internal const val DAY_MIN: Long = 1
+internal const val DAY_MAX: Long = 31
