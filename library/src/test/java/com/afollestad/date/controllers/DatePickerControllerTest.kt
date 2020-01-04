@@ -33,9 +33,9 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
-import org.junit.Test
 import java.util.Calendar
 import java.util.GregorianCalendar
+import org.junit.Test
 
 /** @author Aidan Follestad (@afollestad) */
 class DatePickerControllerTest {

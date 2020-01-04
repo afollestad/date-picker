@@ -17,9 +17,9 @@ package com.afollestad.date.util
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.annotation.CheckResult
-import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes

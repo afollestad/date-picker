@@ -25,13 +25,13 @@ import com.afollestad.date.data.DayOfWeek.WEDNESDAY
 import com.afollestad.date.data.MonthGraph
 import com.afollestad.date.data.MonthItem.DayOfMonth
 import com.afollestad.date.data.MonthItem.WeekHeader
+import com.afollestad.date.data.NO_DATE
 import com.afollestad.date.data.snapshot.snapshot
 import com.afollestad.date.data.snapshot.snapshotMonth
-import com.afollestad.date.data.NO_DATE
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
 import java.util.Calendar
 import java.util.Locale
+import org.junit.Test
 
 class MonthGraphTest {
 

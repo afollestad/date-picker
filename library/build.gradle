@@ -1,51 +1,16 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply from: '../dependencies.gradle'
+ext.module_group = "com.afollestad"
+ext.module_name = "date-picker"
 
-apply from: '../bintrayconfig.gradle'
-
-android {
-  compileSdkVersion versions.compileSdk
-  buildToolsVersion versions.buildTools
-
-  compileOptions {
-    sourceCompatibility 1.8
-    targetCompatibility 1.8
-
-    if (modulePackageId != null && modulePackageId != '') {
-      logger.warn('Package for current module: ' + modulePackageId)
-      kotlinOptions.freeCompilerArgs += ['-module-name', modulePackageId]
-    } else {
-      logger.warn('Skipping setting compiler module name, no package to use.')
-    }
-  }
-
-  defaultConfig {
-    minSdkVersion versions.minSdk
-    targetSdkVersion versions.compileSdk
-    versionCode versions.publishVersionCode
-    versionName versions.publishVersion
-  }
-
-  sourceSets {
-    main.res.srcDirs = [
-        'src/main/res',
-        'src/main/res-public'
-    ]
-  }
-}
+apply from: rootProject.file("gradle/android_library_config.gradle")
 
 dependencies {
-  api 'androidx.appcompat:appcompat:' + versions.androidx
-  api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:' + versions.kotlin
+  implementation deps.kotlin.stdlib8
+  implementation deps.support.app_compat
+  implementation deps.support.recycler_view
+  implementation deps.support.material
 
-  implementation 'androidx.recyclerview:recyclerview:' + versions.recyclerView
-  api 'com.google.android.material:material:' + versions.material
-
-  testImplementation 'junit:junit:' + versions.junit
-  testImplementation 'org.mockito:mockito-core:' + versions.mockito
-  testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:' + versions.mockitoKotlin
-  testImplementation "com.google.truth:truth:" + versions.truth
+  testImplementation deps.kotlin.test.mockito
+  testImplementation deps.test.junit
+  testImplementation deps.test.mockito_core
+  testImplementation deps.test.truth
 }
-
-apply from: '../spotless.gradle'
