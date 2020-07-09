@@ -21,7 +21,7 @@ import com.afollestad.date.DatePicker
 
 class MainActivity : AppCompatActivity() {
   private val datePicker: DatePicker by lazy {
-    findViewById(R.id.datePicker)
+    findViewById<DatePicker>(R.id.datePicker)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {

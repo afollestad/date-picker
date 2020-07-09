@@ -44,11 +44,13 @@
   <style name="DatePicker.Chevron.Start" parent="DatePicker.Chevron">
     <item name="android:src">@drawable/ic_chevron_left</item>
     <item name="android:contentDescription">@string/previous_month</item>
+    <item name="android:tint">?android:textColorSecondary</item>
   </style>
 
   <style name="DatePicker.Chevron.End" parent="DatePicker.Chevron">
     <item name="android:src">@drawable/ic_chevron_right</item>
     <item name="android:contentDescription">@string/next_month</item>
+    <item name="android:tint">?android:textColorSecondary</item>
   </style>
 
   <style name="DatePicker.HeaderTitle">
